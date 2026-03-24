@@ -781,7 +781,7 @@ body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--text
     <div class="stat-card">
       <div class="stat-label">合計配布枚数</div>
       <div class="stat-value" style="font-size:16px;">45,259<span class="stat-unit">枚</span></div>
-      <div class="stat-sub">衆院選期間中</div>
+      <div class="stat-sub">衆院選期間中〜2026/03/23</div>
     </div>
 
   </div>
@@ -858,7 +858,6 @@ function renderPosting() {
     return `<tr>
       <td>${d.地域}</td>
       <td style="font-weight:${d.配布枚数>0?'700':'400'};color:${d.配布枚数>0?'var(--green-mid)':'var(--muted)'};">${d.配布枚数>0?d.配布枚数.toLocaleString()+'枚':'—'}</td>
-      <td>${d.エリア数>0?d.エリア数:'—'}</td>
       <td class="${rateClass}">${d.得票率}%</td>
     </tr>`;
   }).join('');
@@ -980,7 +979,6 @@ document.addEventListener('click', e=>{
   });
   if(nearest) alert(`${nearest.地域}
 配布枚数: ${nearest.配布枚数.toLocaleString()}枚
-エリア数: ${nearest.エリア数}
 得票率: ${nearest.得票率}%`);
 });
 
