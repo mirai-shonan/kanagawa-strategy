@@ -128,6 +128,7 @@ body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--text
       <button class="tab-btn" onclick="sw('cost')">コスパ</button>
       <button class="tab-btn" onclick="sw('nobiro')">伸びしろ</button>
       <button class="tab-btn" onclick="sw('events')">イベント</button>
+      <button class="tab-btn" onclick="sw('posting')">ポスティング</button>
     </div>
   </div>
   <div class="tab-group">
@@ -151,7 +152,7 @@ body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--text
     <div class="stat-card">
       <div class="stat-label">参院比例<br>チームみらい（神奈川）</div>
       <div class="stat-value">186,395<span class="stat-unit">票</span></div>
-      <div class="stat-sub">4.34% ← 衆院で倍増！</div>
+      <div class="stat-sub">4.34% → 衆院で10.04%に倍増！</div>
     </div>
     <div class="stat-card">
       <div class="stat-label">衆院 最高得票率</div>
@@ -160,8 +161,8 @@ body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--text
     </div>
     <div class="stat-card">
       <div class="stat-label">衆院選 南関東ブロック<br>チーム神奈川</div>
-      <div class="stat-value" style="font-size:15px;color:var(--green-mid);">2名当選</div>
-      <div class="stat-sub">河合みちお・山田えり R8.2</div>
+      <div class="stat-value" style="font-size:15px;color:var(--green-mid);">3名当選</div>
+      <div class="stat-sub">河合みちお・山田えり・小林しゅうへい R8.2</div>
     </div>
   </div>
 
@@ -265,8 +266,8 @@ body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--text
   <div class="sec-header">R8.2 衆院選 チーム神奈川 当選議員</div>
 
   <div style="background:linear-gradient(135deg,#6eddc4,#95e3cd);border-radius:13px;padding:14px;margin-bottom:11px;color:#0a3d22;">
-    <div style="font-size:11px;color:rgba(10,61,34,.6);font-family:'DM Mono',monospace;margin-bottom:10px;">南関東ブロック 比例代表 2名当選🎉</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+    <div style="font-size:11px;color:rgba(10,61,34,.6);font-family:'DM Mono',monospace;margin-bottom:10px;">南関東ブロック 比例代表 2名当選🎉　＋　比例代表（他ブロック）1名</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
       <div style="background:rgba(255,255,255,.45);border-radius:10px;padding:12px;">
         <div style="font-size:16px;font-weight:900;margin-bottom:2px;color:#0a3d22;">河合 みちお</div>
         <div style="font-size:10px;color:rgba(10,61,34,.55);font-family:'DM Mono',monospace;margin-bottom:8px;">KAWAI MICHIO</div>
@@ -277,6 +278,11 @@ body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--text
         <div style="font-size:10px;color:rgba(10,61,34,.55);font-family:'DM Mono',monospace;margin-bottom:8px;">YAMADA ERI</div>
         <div style="font-size:10px;color:rgba(10,61,34,.8);line-height:1.6;">衆院選のみ出馬<br>R8.2 衆院南関東ブロック <span style="color:#0a6e3f;font-weight:700;">当選</span></div>
       </div>
+    </div>
+    <div style="background:rgba(255,255,255,.25);border-radius:10px;padding:12px;">
+      <div style="font-size:16px;font-weight:900;margin-bottom:2px;color:#0a3d22;">小林 しゅうへい</div>
+      <div style="font-size:10px;color:rgba(10,61,34,.55);font-family:'DM Mono',monospace;margin-bottom:8px;">KOBAYASHI SHUHEI</div>
+      <div style="font-size:10px;color:rgba(10,61,34,.8);line-height:1.6;">R8.2 衆院比例代表 <span style="color:#0a6e3f;font-weight:700;">当選</span>　／　<span style="color:rgba(10,61,34,.6);">※神奈川での活動なし</span></div>
     </div>
   </div>
 
@@ -749,6 +755,72 @@ body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--text
   </div>
 </div>
 
+
+<!-- ===== ポスティング ===== -->
+<div class="section" id="sec-posting">
+  <div class="sec-header">ポスティング × 得票率 分析（衆院選R8.2）</div>
+
+  <div class="card" style="background:#fffbe6;border-color:#f5d87a;">
+    <div style="font-size:12px;color:#7a5c00;line-height:1.7;">
+      衆院選挙期間中〜2026/03/23のポスティング実績と比例得票率の相関分析。<strong>神奈川全体で45,259枚</strong>で活動。<br>データ提供：なるみ_愛知豊田さん
+    </div>
+  </div>
+
+  <!-- サマリー -->
+  <div class="stat-grid">
+    <div class="stat-card">
+      <div class="stat-label">ポスティングあり<br>平均得票率</div>
+      <div class="stat-value">10.7<span class="stat-unit">%</span></div>
+      <div class="stat-sub">27エリア</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">ポスティングなし<br>平均得票率</div>
+      <div class="stat-value">7.7<span class="stat-unit">%</span></div>
+      <div class="stat-sub">31エリア</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">合計配布枚数</div>
+      <div class="stat-value" style="font-size:16px;">45,259<span class="stat-unit">枚</span></div>
+      <div class="stat-sub">衆院選期間中</div>
+    </div>
+
+  </div>
+
+  <div class="insight">
+    <strong>ポスティングの効果：</strong>ポスティングを実施したエリアの平均得票率は<strong>10.7%</strong>で、未実施エリア（7.7%）より<strong>+3.0pt高い</strong>。因果関係の断定は難しいが、もともと活動しやすいエリアに集中している可能性もある。今後の参院選データとの比較でより精度の高い分析が可能になる。
+  </div>
+
+  <!-- 散布図 -->
+  <div class="card">
+    <div class="card-label">配布枚数 × 得票率 散布図</div>
+    <div style="font-size:10px;color:var(--muted);margin-bottom:8px;">● ポスティングあり（緑）　● ポスティングなし（グレー）　※点にタップで詳細表示</div>
+    <canvas id="scatter-chart" style="width:100%;max-height:280px;"></canvas>
+  </div>
+
+  <!-- ランキング -->
+  <div class="card">
+    <div class="card-label">配布枚数ランキング（上位15エリア）</div>
+    <div id="posting-ranking"></div>
+  </div>
+
+  <!-- エリア別一覧 -->
+  <div class="card">
+    <div class="card-label">全エリア一覧（配布枚数順）</div>
+    <div class="scroll-wrap">
+      <table class="area-table" id="posting-table">
+        <thead>
+          <tr>
+            <th>地域</th>
+            <th>配布<br>枚数</th>
+            <th>得票率</th>
+          </tr>
+        </thead>
+        <tbody id="posting-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
 <div class="footer">
   データ出典：神奈川県選挙管理委員会<br>
   <a href="https://www.pref.kanagawa.jp/docs/em7/cnt/f5/syuugikekka.html" style="color:var(--green-mid);">衆院比例 R8.2.8執行</a>
@@ -758,6 +830,160 @@ body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--text
 </div>
 
 <script>
+
+// ===== ポスティングデータ =====
+const POSTING = [{"地域":"三浦市","配布枚数":0,"エリア数":0,"得票率":6.1,"得票数":1164},{"地域":"中井町","配布枚数":0,"エリア数":0,"得票率":6.1,"得票数":242},{"地域":"二宮町","配布枚数":0,"エリア数":0,"得票率":8.8,"得票数":1147},{"地域":"伊勢原市","配布枚数":25,"エリア数":1,"得票率":7.6,"得票数":3391},{"地域":"南足柄市","配布枚数":0,"エリア数":0,"得票率":6.9,"得票数":1171},{"地域":"厚木市","配布枚数":0,"エリア数":0,"得票率":7.8,"得票数":7188},{"地域":"大井町","配布枚数":0,"エリア数":0,"得票率":6.4,"得票数":467},{"地域":"大和市","配布枚数":1465,"エリア数":29,"得票率":8.4,"得票数":9311},{"地域":"大磯町","配布枚数":184,"エリア数":6,"得票率":9.6,"得票数":1395},{"地域":"寒川町","配布枚数":0,"エリア数":0,"得票率":6.6,"得票数":1280},{"地域":"小田原市","配布枚数":80,"エリア数":1,"得票率":7.8,"得票数":6351},{"地域":"山北町","配布枚数":0,"エリア数":0,"得票率":5.5,"得票数":258},{"地域":"川崎市中原区","配布枚数":2286,"エリア数":31,"得票率":14.3,"得票数":18673},{"地域":"川崎市多摩区","配布枚数":512,"エリア数":7,"得票率":11.6,"得票数":11973},{"地域":"川崎市宮前区","配布枚数":2462,"エリア数":39,"得票率":11.6,"得票数":12668},{"地域":"川崎市川崎区","配布枚数":500,"エリア数":4,"得票率":8.7,"得票数":7902},{"地域":"川崎市幸区","配布枚数":2354,"エリア数":8,"得票率":11.7,"得票数":9419},{"地域":"川崎市高津区","配布枚数":1290,"エリア数":5,"得票率":12.4,"得票数":13377},{"地域":"川崎市麻生区","配布枚数":550,"エリア数":4,"得票率":11.9,"得票数":10538},{"地域":"平塚市","配布枚数":0,"エリア数":0,"得票率":8.1,"得票数":8616},{"地域":"座間市","配布枚数":0,"エリア数":0,"得票率":8.0,"得票数":4577},{"地域":"愛川町","配布枚数":0,"エリア数":0,"得票率":4.8,"得票数":697},{"地域":"松田町","配布枚数":0,"エリア数":0,"得票率":6.6,"得票数":319},{"地域":"横浜市中区","配布枚数":1800,"エリア数":4,"得票率":11.8,"得票数":7666},{"地域":"横浜市保土ケ谷区","配布枚数":20,"エリア数":1,"得票率":10.2,"得票数":9487},{"地域":"横浜市南区","配布枚数":0,"エリア数":0,"得票率":9.4,"得票数":7985},{"地域":"横浜市戸塚区","配布枚数":3065,"エリア数":16,"得票率":10.7,"得票数":14339},{"地域":"横浜市旭区","配布枚数":0,"エリア数":0,"得票率":8.9,"得票数":10007},{"地域":"横浜市栄区","配布枚数":2002,"エリア数":7,"得票率":9.5,"得票数":5718},{"地域":"横浜市泉区","配布枚数":0,"エリア数":0,"得票率":9.7,"得票数":6810},{"地域":"横浜市港北区","配布枚数":5915,"エリア数":51,"得票率":13.4,"得票数":23939},{"地域":"横浜市港南区","配布枚数":0,"エリア数":0,"得票率":10.2,"得票数":10476},{"地域":"横浜市瀬谷区","配布枚数":0,"エリア数":0,"得票率":8.0,"得票数":4411},{"地域":"横浜市磯子区","配布枚数":0,"エリア数":0,"得票率":9.4,"得票数":7117},{"地域":"横浜市神奈川区","配布枚数":200,"エリア数":1,"得票率":12.4,"得票数":14021},{"地域":"横浜市緑区","配布枚数":0,"エリア数":0,"得票率":10.0,"得票数":8546},{"地域":"横浜市西区","配布枚数":340,"エリア数":10,"得票率":13.6,"得票数":6821},{"地域":"横浜市都筑区","配布枚数":1500,"エリア数":6,"得票率":11.9,"得票数":12629},{"地域":"横浜市金沢区","配布枚数":0,"エリア数":0,"得票率":9.4,"得票数":8932},{"地域":"横浜市青葉区","配布枚数":2403,"エリア数":21,"得票率":12.9,"得票数":20327},{"地域":"横浜市鶴見区","配布枚数":200,"エリア数":1,"得票率":10.5,"得票数":13537},{"地域":"横須賀市","配布枚数":0,"エリア数":0,"得票率":6.7,"得票数":11604},{"地域":"海老名市","配布枚数":0,"エリア数":0,"得票率":9.3,"得票数":6273},{"地域":"清川村","配布枚数":0,"エリア数":0,"得票率":5.7,"得票数":76},{"地域":"湯河原町","配布枚数":0,"エリア数":0,"得票率":6.5,"得票数":673},{"地域":"相模原市中央区","配布枚数":3490,"エリア数":15,"得票率":7.7,"得票数":8916},{"地域":"相模原市南区","配布枚数":2395,"エリア数":13,"得票率":9.0,"得票数":11820},{"地域":"相模原市緑区","配布枚数":172,"エリア数":5,"得票率":7.1,"得票数":5423},{"地域":"真鶴町","配布枚数":0,"エリア数":0,"得票率":6.9,"得票数":212},{"地域":"秦野市","配布枚数":0,"エリア数":0,"得票率":7.6,"得票数":4981},{"地域":"箱根町","配布枚数":0,"エリア数":0,"得票率":5.0,"得票数":199},{"地域":"綾瀬市","配布枚数":0,"エリア数":0,"得票率":6.5,"得票数":2150},{"地域":"茅ヶ崎市","配布枚数":3000,"エリア数":13,"得票率":10.1,"得票数":11467},{"地域":"葉山町","配布枚数":0,"エリア数":0,"得票率":10.1,"得票数":1660},{"地域":"藤沢市","配布枚数":3950,"エリア数":8,"得票率":10.1,"得票数":20708},{"地域":"逗子市","配布枚数":0,"エリア数":0,"得票率":11.1,"得票数":3451},{"地域":"鎌倉市","配布枚数":3099,"エリア数":71,"得票率":11.3,"得票数":10492},{"地域":"開成町","配布枚数":0,"エリア数":0,"得票率":7.9,"得票数":689}];
+
+function renderPosting() {
+  // ランキング
+  const sorted = [...POSTING].sort((a,b)=>b.配布枚数-a.配布枚数);
+  const top15 = sorted.filter(d=>d.配布枚数>0).slice(0,15);
+  const maxVal = top15[0]?.配布枚数||1;
+
+  document.getElementById('posting-ranking').innerHTML = top15.map((d,i)=>`
+    <div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid #f0f4f1;">
+      <div style="font-size:10px;color:var(--muted);width:18px;font-family:'DM Mono',monospace;">${String(i+1).padStart(2,'0')}</div>
+      <div style="flex:1;font-size:12px;font-weight:700;">${d.地域}</div>
+      <div style="width:60px;height:5px;background:#e8f5ec;border-radius:3px;overflow:hidden;">
+        <div style="height:100%;width:${Math.round(d.配布枚数/maxVal*100)}%;background:#95e3cd;border-radius:3px;"></div>
+      </div>
+      <div style="font-size:11px;font-weight:900;color:var(--green-mid);font-family:'DM Mono',monospace;min-width:50px;text-align:right;">${d.配布枚数.toLocaleString()}枚</div>
+      <div style="font-size:11px;color:var(--muted);min-width:36px;text-align:right;">${d.得票率}%</div>
+    </div>`).join('');
+
+  // テーブル
+  const tbody = document.getElementById('posting-tbody');
+  tbody.innerHTML = sorted.map(d=>{
+    const rateClass = d.得票率>=12?'high':d.得票率<=7?'low':'';
+    return `<tr>
+      <td>${d.地域}</td>
+      <td style="font-weight:${d.配布枚数>0?'700':'400'};color:${d.配布枚数>0?'var(--green-mid)':'var(--muted)'};">${d.配布枚数>0?d.配布枚数.toLocaleString()+'枚':'—'}</td>
+      <td>${d.エリア数>0?d.エリア数:'—'}</td>
+      <td class="${rateClass}">${d.得票率}%</td>
+    </tr>`;
+  }).join('');
+
+  // 散布図
+  setTimeout(renderScatter, 100);
+}
+
+function renderScatter() {
+  const canvas = document.getElementById('scatter-chart');
+  if(!canvas) return;
+  const dpr = window.devicePixelRatio||1;
+  const W = Math.max(canvas.parentElement.offsetWidth - 26, 300);
+  const H = 280;
+  canvas.width = W * dpr;
+  canvas.height = H * dpr;
+  canvas.style.width = W + 'px';
+  canvas.style.height = H + 'px';
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+
+  const pad = {l:40, r:20, t:20, b:44};
+  const pw = W - pad.l - pad.r;
+  const ph = H - pad.t - pad.b;
+
+  const maxX = 7000;
+  const maxY = 16;
+
+  ctx.clearRect(0,0,W,H);
+
+  // 背景
+  ctx.fillStyle='#f9fafb';
+  ctx.fillRect(pad.l, pad.t, pw, ph);
+
+  // グリッド線・Y軸ラベル
+  ctx.strokeStyle='#e5e7eb'; ctx.lineWidth=1;
+  ctx.font=`${Math.round(9*dpr)/dpr}px 'DM Mono',monospace`;
+  ctx.fillStyle='#9ca3af'; ctx.textAlign='right';
+  [0,4,8,12,16].forEach(y=>{
+    const cy = pad.t + ph - (y/maxY*ph);
+    ctx.beginPath(); ctx.moveTo(pad.l,cy); ctx.lineTo(pad.l+pw,cy); ctx.stroke();
+    ctx.fillText(y+'%', pad.l-6, cy+3);
+  });
+
+  // X軸ラベル
+  ctx.textAlign='center';
+  [0,1000,2000,3000,4000,5000,6000,7000].forEach(x=>{
+    const cx = pad.l + (x/maxX*pw);
+    ctx.beginPath(); ctx.strokeStyle='#e5e7eb';
+    ctx.moveTo(cx, pad.t); ctx.lineTo(cx, pad.t+ph); ctx.stroke();
+    ctx.fillStyle='#9ca3af';
+    ctx.fillText(x===0?'0':(x/1000)+'k', cx, pad.t+ph+14);
+  });
+
+  // 軸線
+  ctx.strokeStyle='#d1d5db'; ctx.lineWidth=1.5;
+  ctx.beginPath(); ctx.moveTo(pad.l,pad.t); ctx.lineTo(pad.l,pad.t+ph); ctx.lineTo(pad.l+pw,pad.t+ph); ctx.stroke();
+
+  // 軸ラベル
+  ctx.fillStyle='#6b7b6e'; ctx.font=`10px 'Noto Sans JP',sans-serif`;
+  ctx.textAlign='center';
+  ctx.fillText('配布枚数（枚）', pad.l+pw/2, H-4);
+  ctx.save(); ctx.translate(12, pad.t+ph/2); ctx.rotate(-Math.PI/2);
+  ctx.fillText('得票率', 0, 0); ctx.restore();
+
+  // トレンドライン
+  const pts = POSTING.filter(d=>d.配布枚数>0);
+  if(pts.length>1){
+    const n=pts.length;
+    const sx=pts.reduce((s,d)=>s+d.配布枚数,0);
+    const sy=pts.reduce((s,d)=>s+d.得票率,0);
+    const sxy=pts.reduce((s,d)=>s+d.配布枚数*d.得票率,0);
+    const sx2=pts.reduce((s,d)=>s+d.配布枚数**2,0);
+    const slope=(n*sxy-sx*sy)/(n*sx2-sx**2);
+    const intercept=(sy-slope*sx)/n;
+    ctx.beginPath();
+    ctx.strokeStyle='rgba(15,169,104,0.35)'; ctx.lineWidth=1.5; ctx.setLineDash([5,4]);
+    ctx.moveTo(pad.l, pad.t+ph-Math.min(intercept/maxY*ph, ph));
+    ctx.lineTo(pad.l+pw, pad.t+ph-Math.min((slope*maxX+intercept)/maxY*ph, ph));
+    ctx.stroke(); ctx.setLineDash([]);
+  }
+
+  // 点を描画
+  POSTING.forEach(d=>{
+    const cx = pad.l + (d.配布枚数/maxX*pw);
+    const cy = pad.t + ph - (d.得票率/maxY*ph);
+    ctx.beginPath();
+    ctx.arc(cx, cy, 5, 0, Math.PI*2);
+    if(d.配布枚数>0){
+      ctx.fillStyle='#0fa968';
+      ctx.fill();
+      ctx.strokeStyle='white'; ctx.lineWidth=1.5; ctx.stroke();
+    } else {
+      ctx.fillStyle='rgba(156,163,175,0.5)';
+      ctx.fill();
+      ctx.strokeStyle='rgba(156,163,175,0.8)'; ctx.lineWidth=1; ctx.stroke();
+    }
+  });
+
+  // クリックイベント保存
+  canvas._data = POSTING;
+  canvas._pad = pad; canvas._pw = pw; canvas._ph = ph;
+  canvas._maxX = maxX; canvas._maxY = maxY;
+}
+
+// タップで詳細表示
+document.addEventListener('click', e=>{
+  const canvas = document.getElementById('scatter-chart');
+  if(!canvas || e.target!==canvas) return;
+  const rect = canvas.getBoundingClientRect();
+  const mx = e.clientX-rect.left, my = e.clientY-rect.top;
+  const {_data:data,_pad:pad,_pw:pw,_ph:ph,_maxX:maxX,_maxY:maxY} = canvas;
+  if(!data) return;
+  let nearest=null, minDist=30;
+  data.forEach(d=>{
+    const cx=pad.l+(d.配布枚数/maxX*pw), cy=pad.t+ph-(d.得票率/maxY*ph);
+    const dist=Math.hypot(cx-mx,cy-my);
+    if(dist<minDist){minDist=dist;nearest=d;}
+  });
+  if(nearest) alert(`${nearest.地域}
+配布枚数: ${nearest.配布枚数.toLocaleString()}枚
+エリア数: ${nearest.エリア数}
+得票率: ${nearest.得票率}%`);
+});
+
 const DATA = [{"地域":"川崎市中原区","チームみらい":18673,"チームみらい率":14.3,"合計":130638,"チームみらい率_参":7.0,"衆参差":7.3,"チームみらい_参票数":9970},{"地域":"横浜市西区","チームみらい":6821,"チームみらい率":13.6,"合計":50101,"チームみらい率_参":6.4,"衆参差":7.2,"チームみらい_参票数":3424},{"地域":"横浜市港北区","チームみらい":23939,"チームみらい率":13.4,"合計":179071,"チームみらい率_参":6.5,"衆参差":6.9,"チームみらい_参票数":12429},{"地域":"横浜市青葉区","チームみらい":20327,"チームみらい率":12.9,"合計":157906,"チームみらい率_参":5.4,"衆参差":7.5,"チームみらい_参票数":8912},{"地域":"川崎市高津区","チームみらい":13377,"チームみらい率":12.4,"合計":108107,"チームみらい率_参":5.6,"衆参差":6.8,"チームみらい_参票数":6651},{"地域":"横浜市神奈川区","チームみらい":14021,"チームみらい率":12.4,"合計":113090,"チームみらい率_参":5.5,"衆参差":6.9,"チームみらい_参票数":6796},{"地域":"横浜市都筑区","チームみらい":12629,"チームみらい率":11.9,"合計":106104,"チームみらい率_参":5.2,"衆参差":6.7,"チームみらい_参票数":5873},{"地域":"川崎市麻生区","チームみらい":10538,"チームみらい率":11.9,"合計":88552,"チームみらい率_参":4.9,"衆参差":7.0,"チームみらい_参票数":4716},{"地域":"横浜市中区","チームみらい":7666,"チームみらい率":11.8,"合計":64837,"チームみらい率_参":5.3,"衆参差":6.5,"チームみらい_参票数":3670},{"地域":"川崎市幸区","チームみらい":9419,"チームみらい率":11.7,"合計":80522,"チームみらい率_参":5.5,"衆参差":6.2,"チームみらい_参票数":4887},{"地域":"川崎市多摩区","チームみらい":11973,"チームみらい率":11.6,"合計":103587,"チームみらい率_参":5.1,"衆参差":6.5,"チームみらい_参票数":5831},{"地域":"川崎市宮前区","チームみらい":12668,"チームみらい率":11.6,"合計":109121,"チームみらい率_参":5.2,"衆参差":6.4,"チームみらい_参票数":6144},{"地域":"鎌倉市","チームみらい":10492,"チームみらい率":11.3,"合計":93241,"チームみらい率_参":5.2,"衆参差":6.1,"チームみらい_参票数":4805},{"地域":"逗子市","チームみらい":3451,"チームみらい率":11.1,"合計":31111,"チームみらい率_参":4.8,"衆参差":6.3,"チームみらい_参票数":1508},{"地域":"横浜市戸塚区","チームみらい":14339,"チームみらい率":10.7,"合計":134294,"チームみらい率_参":4.0,"衆参差":6.7,"チームみらい_参票数":5825},{"地域":"横浜市鶴見区","チームみらい":13537,"チームみらい率":10.5,"合計":128697,"チームみらい率_参":4.4,"衆参差":6.1,"チームみらい_参票数":6157},{"地域":"横浜市港南区","チームみらい":10476,"チームみらい率":10.2,"合計":102326,"チームみらい率_参":3.7,"衆参差":6.5,"チームみらい_参票数":4065},{"地域":"横浜市保土ケ谷区","チームみらい":9487,"チームみらい率":10.2,"合計":93066,"チームみらい率_参":4.1,"衆参差":6.1,"チームみらい_参票数":4215},{"地域":"藤沢市","チームみらい":20708,"チームみらい率":10.1,"合計":204477,"チームみらい率_参":3.9,"衆参差":6.2,"チームみらい_参票数":8553},{"地域":"葉山町","チームみらい":1660,"チームみらい率":10.1,"合計":16360,"チームみらい率_参":3.9,"衆参差":6.2,"チームみらい_参票数":639},{"地域":"茅ヶ崎市","チームみらい":11467,"チームみらい率":10.1,"合計":113596,"チームみらい率_参":3.9,"衆参差":6.2,"チームみらい_参票数":4894},{"地域":"横浜市緑区","チームみらい":8546,"チームみらい率":10.0,"合計":85657,"チームみらい率_参":4.1,"衆参差":5.9,"チームみらい_参票数":3755},{"地域":"横浜市泉区","チームみらい":6810,"チームみらい率":9.7,"合計":70216,"チームみらい率_参":3.6,"衆参差":6.1,"チームみらい_参票数":2794},{"地域":"大磯町","チームみらい":1395,"チームみらい率":9.6,"合計":14577,"チームみらい率_参":3.4,"衆参差":6.2,"チームみらい_参票数":551},{"地域":"横浜市栄区","チームみらい":5718,"チームみらい率":9.5,"合計":60205,"チームみらい率_参":3.7,"衆参差":5.8,"チームみらい_参票数":2361},{"地域":"横浜市磯子区","チームみらい":7117,"チームみらい率":9.4,"合計":75522,"チームみらい率_参":3.7,"衆参差":5.7,"チームみらい_参票数":2990},{"地域":"横浜市南区","チームみらい":7985,"チームみらい率":9.4,"合計":85365,"チームみらい率_参":3.7,"衆参差":5.7,"チームみらい_参票数":3426},{"地域":"横浜市金沢区","チームみらい":8932,"チームみらい率":9.4,"合計":95258,"チームみらい率_参":3.5,"衆参差":5.9,"チームみらい_参票数":3510},{"地域":"海老名市","チームみらい":6273,"チームみらい率":9.3,"合計":67511,"チームみらい率_参":4.0,"衆参差":5.3,"チームみらい_参票数":2858},{"地域":"相模原市南区","チームみらい":11820,"チームみらい率":9.0,"合計":131399,"チームみらい率_参":3.4,"衆参差":5.6,"チームみらい_参票数":4844},{"地域":"横浜市旭区","チームみらい":10007,"チームみらい率":8.9,"合計":112336,"チームみらい率_参":3.3,"衆参差":5.6,"チームみらい_参票数":4041},{"地域":"二宮町","チームみらい":1147,"チームみらい率":8.8,"合計":13090,"チームみらい率_参":3.0,"衆参差":5.8,"チームみらい_参票数":435},{"地域":"川崎市川崎区","チームみらい":7902,"チームみらい率":8.7,"合計":90440,"チームみらい率_参":3.6,"衆参差":5.1,"チームみらい_参票数":3696},{"地域":"大和市","チームみらい":9311,"チームみらい率":8.4,"合計":110394,"チームみらい率_参":3.4,"衆参差":5.0,"チームみらい_参票数":3934},{"地域":"平塚市","チームみらい":8616,"チームみらい率":8.1,"合計":106590,"チームみらい率_参":2.6,"衆参差":5.5,"チームみらい_参票数":3154},{"地域":"横浜市瀬谷区","チームみらい":4411,"チームみらい率":8.0,"合計":54978,"チームみらい率_参":3.1,"衆参差":4.9,"チームみらい_参票数":1809},{"地域":"座間市","チームみらい":4577,"チームみらい率":8.0,"合計":57069,"チームみらい率_参":2.9,"衆参差":5.1,"チームみらい_参票数":1765},{"地域":"開成町","チームみらい":689,"チームみらい率":7.9,"合計":8734,"チームみらい率_参":2.9,"衆参差":5.0,"チームみらい_参票数":274},{"地域":"小田原市","チームみらい":6351,"チームみらい率":7.8,"合計":81288,"チームみらい率_参":2.6,"衆参差":5.2,"チームみらい_参票数":2320},{"地域":"厚木市","チームみらい":7188,"チームみらい率":7.8,"合計":92679,"チームみらい率_参":2.7,"衆参差":5.1,"チームみらい_参票数":2695},{"地域":"相模原市中央区","チームみらい":8916,"チームみらい率":7.7,"合計":116357,"チームみらい率_参":2.7,"衆参差":5.0,"チームみらい_参票数":3493},{"地域":"秦野市","チームみらい":4981,"チームみらい率":7.6,"合計":65238,"チームみらい率_参":2.4,"衆参差":5.2,"チームみらい_参票数":1795},{"地域":"伊勢原市","チームみらい":3391,"チームみらい率":7.6,"合計":44620,"チームみらい率_参":2.7,"衆参差":4.9,"チームみらい_参票数":1288},{"地域":"相模原市緑区","チームみらい":5423,"チームみらい率":7.1,"合計":75894,"チームみらい率_参":2.4,"衆参差":4.7,"チームみらい_参票数":1969},{"地域":"南足柄市","チームみらい":1171,"チームみらい率":6.9,"合計":17030,"チームみらい率_参":2.0,"衆参差":4.9,"チームみらい_参票数":385},{"地域":"真鶴町","チームみらい":212,"チームみらい率":6.9,"合計":3073,"チームみらい率_参":2.1,"衆参差":4.8,"チームみらい_参票数":74},{"地域":"横須賀市","チームみらい":11604,"チームみらい率":6.7,"合計":173036,"チームみらい率_参":2.2,"衆参差":4.5,"チームみらい_参票数":3671},{"地域":"松田町","チームみらい":319,"チームみらい率":6.6,"合計":4832,"チームみらい率_参":2.1,"衆参差":4.5,"チームみらい_参票数":113},{"地域":"寒川町","チームみらい":1280,"チームみらい率":6.6,"合計":19355,"チームみらい率_参":2.2,"衆参差":4.4,"チームみらい_参票数":471},{"地域":"湯河原町","チームみらい":673,"チームみらい率":6.5,"合計":10347,"チームみらい率_参":1.8,"衆参差":4.7,"チームみらい_参票数":208},{"地域":"綾瀬市","チームみらい":2150,"チームみらい率":6.5,"合計":33061,"チームみらい率_参":2.2,"衆参差":4.3,"チームみらい_参票数":824},{"地域":"大井町","チームみらい":467,"チームみらい率":6.4,"合計":7244,"チームみらい率_参":1.9,"衆参差":4.5,"チームみらい_参票数":157},{"地域":"三浦市","チームみらい":1164,"チームみらい率":6.1,"合計":19138,"チームみらい率_参":1.7,"衆参差":4.4,"チームみらい_参票数":302},{"地域":"中井町","チームみらい":242,"チームみらい率":6.1,"合計":3968,"チームみらい率_参":1.5,"衆参差":4.6,"チームみらい_参票数":66},{"地域":"清川村","チームみらい":76,"チームみらい率":5.7,"合計":1343,"チームみらい率_参":1.6,"衆参差":4.1,"チームみらい_参票数":23},{"地域":"山北町","チームみらい":258,"チームみらい率":5.5,"合計":4724,"チームみらい率_参":1.6,"衆参差":3.9,"チームみらい_参票数":83},{"地域":"箱根町","チームみらい":199,"チームみらい率":5.0,"合計":3947,"チームみらい率_参":1.4,"衆参差":3.6,"チームみらい_参票数":65},{"地域":"愛川町","チームみらい":697,"チームみらい率":4.8,"合計":14391,"チームみらい率_参":1.4,"衆参差":3.4,"チームみらい_参票数":232}];
 
 const KAWAI = [
@@ -868,16 +1094,22 @@ function renderKawai(){
     </div>`).join('');
 }
 
+window.addEventListener('resize', ()=>{
+  if(document.getElementById('sec-posting').classList.contains('active')) renderScatter();
+});
+
 function sw(t){
   document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('sec-'+t).classList.add('active');
   event.target.classList.add('active');
   window.scrollTo({top:0,behavior:'smooth'});
+  if(t==='posting') setTimeout(renderScatter, 50);
 }
 
 // 初期化
 renderTop10();
+renderPosting();
 sortTable('チームみらい率', true, null);
 renderDiffLists();
 renderKawai();
