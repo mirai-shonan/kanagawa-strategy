@@ -3,121 +3,663 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>チームみらい 神奈川 活動戦略 v2</title>
+<title>チームみらい ポスティング大会＠神奈川</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{
   --green:#0fa968;--green-light:#e6f7f0;--green-mid:#1d9e75;
   --dark:#0f1a13;--text:#1a1a1a;--muted:#6b7b6e;
-  --border:#d4e8d8;--bg:#f5faf6;--white:#ffffff;
+  --border:#d4e8d8;--bg:#f5faf6;--white:#ffffff;--amber:#c07a10;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.6;max-width:480px;margin:0 auto;}
-.header{background:var(--dark);color:white;padding:18px 16px 14px;position:sticky;top:0;z-index:100;}
-.header-top{display:flex;align-items:center;gap:10px;margin-bottom:11px;}
-.logo-mark{width:30px;height:30px;background:#95e3cd;border-radius:7px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:15px;color:white;flex-shrink:0;}
-.header-title{font-size:13px;font-weight:700;line-height:1.3;}
-.header-sub{font-size:10px;color:rgba(255,255,255,.5);margin-top:2px;font-family:'DM Mono',monospace;}
-.tab-group{margin-bottom:4px;}
-.tab-group-label{font-size:9px;color:rgba(255,255,255,.4);font-family:'DM Mono',monospace;letter-spacing:.08em;margin-bottom:3px;padding-left:2px;}
-.tabs{display:flex;gap:4px;flex-wrap:wrap;padding-bottom:1px;}
-.tab-btn{flex-shrink:0;padding:5px 11px;border-radius:20px;border:1px solid rgba(255,255,255,.15);background:transparent;color:rgba(255,255,255,.6);font-size:11px;cursor:pointer;font-family: inherit;}
-.tab-btn.active{background:#95e3cd;border-color:var(--green);color:white;font-weight:700;}
+body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--text);font-size:14px;max-width:480px;margin:0 auto;min-height:100vh;}
+.header{background:var(--dark);color:white;padding:16px;position:sticky;top:0;z-index:100;}
+.header-top{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.logo{width:32px;height:32px;background:#95e3cd;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:16px;color:white;}
+.header-title{font-size:14px;font-weight:700;}
+.header-sub{font-size:10px;color:rgba(255,255,255,.45);font-family:'DM Mono',monospace;margin-top:2px;}
+.tabs{display:flex;gap:4px;}
+.tab{flex:1;padding:7px 0;border-radius:20px;border:1px solid rgba(255,255,255,.15);background:transparent;color:rgba(255,255,255,.6);font-size:11px;font-family:'Noto Sans JP',sans-serif;cursor:pointer;text-align:center;}
+.tab.active{background:#95e3cd;border-color:var(--green);color:white;font-weight:700;}
 .section{display:none;padding:14px;}
 .section.active{display:block;}
-.card{background:var(--white);border-radius:13px;border:1px solid var(--border);padding:13px;margin-bottom:11px;}
-.card-label{font-size:10px;font-weight:700;color:var(--green-mid);letter-spacing:.08em;margin-bottom:5px;font-family:'DM Mono',monospace;}
-.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:11px;}
-.stat-card{background:var(--white);border:1px solid var(--border);border-radius:11px;padding:11px;}
-.stat-label{font-size:10px;color:var(--muted);margin-bottom:3px;line-height:1.3;}
-.stat-value{font-size:20px;font-weight:900;color:var(--green-mid);line-height:1;font-family:'DM Mono',monospace;}
-.stat-unit{font-size:11px;margin-left:2px;}
-.insight{background:var(--green-light);border-left:3px solid var(--green);border-radius:0 7px 7px 0;padding:9px 11px;margin-top:9px;font-size:12px;line-height:1.7;}
-.sec-header{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.1em;margin-bottom:9px;font-family:'DM Mono',monospace;}
-.footer{text-align:center;padding:18px 16px;font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;}
+.summary-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px;}
+.summary-card{background:var(--white);border:1px solid var(--border);border-radius:11px;padding:10px 8px;text-align:center;}
+.summary-label{font-size:9px;color:var(--muted);margin-bottom:3px;}
+.summary-value{font-size:20px;font-weight:900;color:var(--green-mid);font-family:'DM Mono',monospace;line-height:1;}
+.summary-unit{font-size:10px;font-weight:400;color:var(--muted);}
+.progress-wrap{background:var(--white);border:1px solid var(--border);border-radius:11px;padding:11px;margin-bottom:12px;}
+.progress-label{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px;}
+.progress-title{font-size:12px;font-weight:700;}
+.progress-pct{font-size:13px;font-weight:900;color:var(--green-mid);font-family:'DM Mono',monospace;}
+.progress-bar-bg{height:7px;background:#e8f5ec;border-radius:4px;overflow:hidden;}
+.progress-bar-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,#0fa968,#95e3cd);transition:width .6s ease;}
+.area-list-wrap{background:var(--white);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:10px;}
+.area-list-header{display:flex;align-items:center;justify-content:space-between;padding:10px 13px;cursor:pointer;user-select:none;border-bottom:1px solid var(--border);}
+.area-block-badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;}
+.area-rows{display:none;padding:0 13px 4px;}
+.area-rows.open{display:block;}
+.progress-area-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #f0f4f1;}
+.progress-area-row:last-child{border-bottom:none;}
+.achieved-badge{display:inline-flex;align-items:center;gap:3px;background:#dcfce7;color:#166534;font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;white-space:nowrap;flex-shrink:0;}
+.challenge-badge{display:inline-flex;align-items:center;gap:3px;background:#fef3c7;color:#92400e;font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;white-space:nowrap;flex-shrink:0;animation:pulse 2s infinite;}
+.banned-badge{display:inline-flex;align-items:center;font-size:10px;font-weight:700;background:#fef3c7;color:#92400e;padding:2px 7px;border-radius:20px;white-space:nowrap;flex-shrink:0;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.6;}}
+.area-name-undone{font-size:13px;font-weight:700;color:var(--text);}
+.ban-tag{display:inline-flex;font-size:9px;background:#fef3c7;color:#92400e;padding:1px 5px;border-radius:5px;font-weight:700;margin-left:4px;}
+.form-card{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:11px;}
+.form-label{font-size:11px;font-weight:700;color:var(--muted);margin-bottom:5px;display:block;font-family:'DM Mono',monospace;letter-spacing:.06em;}
+.form-select,.form-input{width:100%;padding:9px 11px;border:1px solid var(--border);border-radius:9px;font-family:'Noto Sans JP',sans-serif;font-size:13px;color:var(--text);background:var(--bg);margin-bottom:11px;}
+.form-select:focus,.form-input:focus{outline:none;border-color:var(--green-mid);}
+.btn-submit{width:100%;padding:12px;background:var(--green-mid);color:white;border:none;border-radius:10px;font-size:14px;font-weight:700;font-family:'Noto Sans JP',sans-serif;cursor:pointer;}
+.btn-submit:active{opacity:.85;}
+.success-msg{background:var(--green-light);border:1px solid var(--green-mid);border-radius:9px;padding:11px 13px;font-size:12px;color:#0a3d22;margin-top:9px;display:none;}
+.ranking-item{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #f0f4f1;}
+.ranking-item:last-child{border-bottom:none;}
+.rank-num{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;flex-shrink:0;}
+.rank-1{background:#ffd700;color:#7a5c00;}
+.rank-2{background:#c0c0c0;color:#3a3a3a;}
+.rank-3{background:#cd7f32;color:#fff;}
+.rank-other{background:#f0f4f1;color:var(--muted);}
+.rank-name{flex:1;font-size:13px;font-weight:700;}
+.log-item{padding:7px 0;border-bottom:1px solid #f0f4f1;font-size:12px;}
+.log-item:last-child{border-bottom:none;}
+.log-meta{color:var(--muted);font-size:10px;font-family:'DM Mono',monospace;margin-bottom:1px;}
+.admin-note{background:#fff3cd;border:1px solid #f5d87a;border-radius:10px;padding:11px 13px;margin-bottom:11px;font-size:11px;color:#7a5c00;line-height:1.6;}
+.ban-list-item{display:flex;align-items:flex-start;justify-content:space-between;padding:9px 0;border-bottom:1px solid #f0f4f1;gap:8px;}
+.ban-list-item:last-child{border-bottom:none;}
+.ban-list-info{flex:1;}
+.ban-list-name{font-size:12px;font-weight:700;}
+.ban-list-period{font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;margin-top:2px;}
+.btn-del{padding:4px 10px;background:#fee2e2;color:#991b1b;border:none;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;}
+.ban-active-badge{display:inline-block;background:#dc2626;color:white;font-size:9px;font-weight:700;padding:1px 5px;border-radius:4px;margin-left:4px;}
+.ban-upcoming-badge{display:inline-block;background:#d97706;color:white;font-size:9px;font-weight:700;padding:1px 5px;border-radius:4px;margin-left:4px;}
+.ban-alert{background:#fff3cd;border:1px solid #f5d87a;border-radius:11px;padding:10px 12px;margin-bottom:12px;}
+.ban-alert-title{font-size:11px;font-weight:700;color:#92400e;margin-bottom:5px;}
+.ban-alert-item{font-size:11px;color:#7a5c00;padding:3px 0;border-bottom:1px solid rgba(245,216,122,.4);line-height:1.5;}
+.ban-alert-item:last-child{border-bottom:none;}
+.block-yokohama{background:#dbeafe;color:#1e40af;}
+.block-kawasaki{background:#ede9fe;color:#5b21b6;}
+.block-miura{background:#d1fae5;color:#065f46;}
+.block-kennan{background:#fef3c7;color:#92400e;}
+.block-shonan{background:#fce7f3;color:#9d174d;}
+.block-seisou{background:#fed7aa;color:#9a3412;}
+.suggest-group{padding:5px 12px 2px;font-size:10px;font-weight:700;color:var(--muted);font-family:'DM Mono',monospace;letter-spacing:.06em;background:var(--bg);}
+.suggest-item{padding:9px 14px;font-size:13px;cursor:pointer;border-bottom:1px solid #f0f4f1;}
+.suggest-item:last-child{border-bottom:none;}
+.suggest-item:hover{background:var(--green-light);color:var(--green-mid);}
+.suggest-item.banned{color:#92400e;background:#fffbe6;}
+.pin-btn{background:none;border:none;cursor:pointer;font-size:14px;padding:3px 5px;line-height:1;opacity:.3;transition:all .15s;flex-shrink:0;border-radius:6px;}
+.pin-btn.pinned{opacity:1;background:var(--green-light);}
+.pinned-wrap{background:var(--green-light);border:1.5px solid var(--green-mid);border-radius:12px;overflow:hidden;margin-bottom:10px;}
+.pinned-header{padding:9px 13px 5px;font-size:10px;font-weight:700;color:var(--green-mid);font-family:'DM Mono',monospace;letter-spacing:.06em;display:flex;align-items:center;gap:5px;}
+.empty{text-align:center;padding:20px;color:var(--muted);font-size:12px;}
+.loading-screen{position:fixed;inset:0;background:var(--dark);display:flex;align-items:center;justify-content:center;z-index:999;flex-direction:column;gap:12px;}
+.loading-screen .logo-big{width:56px;height:56px;background:#95e3cd;border-radius:14px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:28px;color:white;}
+.loading-screen p{color:rgba(255,255,255,.6);font-size:12px;font-family:'DM Mono',monospace;}
 </style>
 </head>
 <body>
 
+<div class="loading-screen" id="loading-screen">
+  <div class="logo-big">み</div>
+  <p>データを読み込んでいます...</p>
+</div>
+
 <div class="header">
   <div class="header-top">
-    <div class="logo-mark">み</div>
+    <div class="logo">み</div>
     <div>
-      <div class="header-title">チームみらい 神奈川活動戦略</div>
-      <div class="header-sub">FOR KANAGAWA PROGRESS 2026</div>
+      <div class="header-title">ポスティング大会＠神奈川</div>
+      <div class="header-sub">チームみらい ／ 4月末〆切</div>
     </div>
   </div>
-  <div class="tab-group">
-    <div class="tab-group-label">メニュー</div>
-    <div class="tabs">
-      <button class="tab-btn active" onclick="sw('overview', this)">概況</button>
-      <button class="tab-btn" onclick="sw('posting', this)">ポスティング</button>
-      <button class="tab-btn" onclick="sw('events', this)">イベント</button>
-      <button class="tab-btn" onclick="sw('gakujutsu', this)">学術・若者</button>
-    </div>
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('report',this)">報告</button>
+    <button class="tab" onclick="showTab('list',this)">進捗</button>
+    <button class="tab" onclick="showTab('ranking',this)">順位</button>
+    <button class="tab" onclick="showTab('stamp',this)">スタンプ</button>
+    <button class="tab" onclick="showTab('admin',this)">管理</button>
   </div>
 </div>
 
-<div class="section active" id="sec-overview">
-  <div class="stat-grid">
-    <div class="stat-card">
-      <div class="stat-label">衆院比例 神奈川</div>
-      <div class="stat-value">425,686<span class="stat-unit">票</span></div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">衆院得票率</div>
-      <div class="stat-value">10.04<span class="stat-unit">%</span></div>
-    </div>
+<div class="section" id="sec-list">
+  <div style="position:relative;margin-bottom:11px;">
+    <span style="position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:15px;pointer-events:none;">🔍</span>
+    <input id="list-search" type="text" placeholder="市区町村名で検索..."
+      style="width:100%;padding:10px 12px 10px 34px;border:1px solid var(--border);border-radius:10px;font-family:'Noto Sans JP',sans-serif;font-size:13px;color:var(--text);background:var(--white);"
+      oninput="onSearchInput()">
   </div>
-  <div class="card">
-    <div class="card-label">最新の戦略サマリー</div>
-    <p style="font-size:12px;">データに基づいた重点エリアへのリソース集中により、2026年のさらなる支持拡大を目指します。</p>
+  <div id="pinned-area"></div>
+  <div id="list-content"><div class="empty">読み込み中...</div></div>
+</div>
+
+<div class="section active" id="sec-report">
+  <div id="rpt-ban-alert"></div>
+  <div id="rpt-summary"></div>
+  <div class="form-card">
+    <div style="font-size:13px;font-weight:700;margin-bottom:12px;color:var(--dark);">ポスティング完了報告</div>
+    <label class="form-label">あなたの名前<br><span style="font-weight:400;color:var(--muted);font-size:10px;">※できればオプチャまたはSlackで使用しているニックネームを入力してください（配布エリアに入力した名前が表示されます）</span></label>
+    <input class="form-input" id="reporter-name" type="text" placeholder="例：みらい">
+    <label class="form-label">エリア</label>
+    <div style="position:relative;margin-bottom:11px;">
+      <input class="form-input" id="area-search-input" type="text" placeholder="市区町村名で絞り込み..."
+        style="margin-bottom:0;" autocomplete="off"
+        oninput="filterAreaSuggest()" onfocus="filterAreaSuggest()" onblur="setTimeout(()=>hideSuggest(),180)">
+      <input type="hidden" id="select-area" value="">
+      <div id="area-suggest" style="display:none;position:absolute;top:100%;left:0;right:0;background:var(--white);border:1px solid var(--border);border-radius:0 0 10px 10px;max-height:220px;overflow-y:auto;z-index:50;box-shadow:0 4px 12px rgba(0,0,0,.08);"></div>
+    </div>
+    <label class="form-label">配布枚数</label>
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:11px;">
+      <input class="form-input" id="report-comment" type="number" min="1" placeholder="100" inputmode="numeric" style="margin-bottom:0;flex:1;">
+      <span style="font-size:14px;font-weight:700;color:var(--text);white-space:nowrap;">枚</span>
+    </div>
+    <button class="btn-submit" onclick="submitReport()">完了報告を送る</button>
+    <div class="success-msg" id="success-msg">✅ お疲れさまです！</div>
+  </div>
+  <div class="form-card" style="background:#fffbe6;border-color:#f5d87a;">
+    <div style="font-size:11px;color:#7a5c00;line-height:1.7;"><strong>管理者の方へ：</strong>LINEで報告を受けた場合は代理入力してください。</div>
   </div>
 </div>
 
-<div class="section" id="sec-posting">
-  <div class="sec-header">リアルタイム配布進捗マップ</div>
-  <div class="card">
-    <div class="card-label">市区町村別 配布枚数（Datawrapper連携）</div>
-    
-    <div id="map-container" style="min-height: 600px;">
-        <iframe title="[ 神奈川ポスティング進捗2026 ]" aria-label="Choropleth map" id="datawrapper-chart-1bJI3" src="https://datawrapper.dwcdn.net/1bJI3/1/" scrolling="no" frameborder="0" style="width: 0; min-width: 100% !important; border: none;" height="574" data-external="1"></iframe><script type="text/javascript">window.addEventListener("message",function(a){if(void 0!==a.data["datawrapper-height"]){var e=document.querySelectorAll("iframe");for(var t in a.data["datawrapper-height"])for(var r,i=0;r=e[i];i++)if(r.contentWindow===a.source){var d=a.data["datawrapper-height"][t]+"px";r.style.height=d}}});</script>
+<div class="section" id="sec-ranking">
+  <div style="background:var(--white);border:1px solid var(--border);border-radius:12px;padding:13px;margin-bottom:11px;">
+    <div style="font-size:10px;font-weight:700;color:var(--green-mid);font-family:'DM Mono',monospace;margin-bottom:10px;">配布枚数ランキング</div>
+    <div id="ranking-list"><div class="empty">読み込み中...</div></div>
+  </div>
+  <div style="background:var(--white);border:1px solid var(--border);border-radius:12px;padding:13px;">
+    <div style="font-size:10px;font-weight:700;color:var(--green-mid);font-family:'DM Mono',monospace;margin-bottom:8px;">最新の活動ログ</div>
+    <div style="position:relative;margin-bottom:10px;">
+      <span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:13px;pointer-events:none;">🔍</span>
+      <input id="log-search" type="text" placeholder="名前・エリアで検索..."
+        style="width:100%;padding:7px 10px 7px 30px;border:1px solid var(--border);border-radius:8px;font-family:'Noto Sans JP',sans-serif;font-size:12px;color:var(--text);background:var(--bg);"
+        oninput="renderRanking()">
     </div>
+    <div id="log-list"><div class="empty">読み込み中...</div></div>
+  </div>
+</div>
 
-    <div class="insight">
-      <strong>ポスティング戦略：</strong> マップ上で色が濃い地域は活動が順調です。色が薄い「伸びしろ」のある地域を重点的に強化しましょう。
+<div class="section" id="sec-stamp">
+  <div style="background:var(--white);border:1px solid var(--border);border-radius:12px;padding:13px;margin-bottom:11px;">
+    <div style="font-size:10px;font-weight:700;color:var(--green-mid);font-family:'DM Mono',monospace;margin-bottom:6px;">あなたの名前</div>
+    <input id="my-name-input" type="text" placeholder="ニックネームを入力..."
+      style="width:100%;padding:8px 11px;border:1px solid var(--border);border-radius:9px;font-family:'Noto Sans JP',sans-serif;font-size:13px;color:var(--text);background:var(--bg);"
+      oninput="saveMyName()">
+  </div>
+  <div id="my-stamp-board"></div>
+  <div style="background:var(--white);border:1px solid var(--border);border-radius:12px;padding:13px;margin-top:11px;">
+    <div style="font-size:10px;font-weight:700;color:var(--green-mid);font-family:'DM Mono',monospace;margin-bottom:2px;">みんなの進捗</div>
+    <div style="font-size:10px;color:var(--muted);margin-bottom:12px;">チーム全体の獲得済みスタンプ</div>
+    <div id="stamp-board"></div>
+  </div>
+</div>
+
+<div class="section" id="sec-admin">
+  <div class="admin-note">⚠️ <strong>管理者向け。</strong>選挙の告示日〜投票日を登録するとポスティング禁止期間として表示されます。</div>
+  <div class="form-card">
+    <div style="font-size:13px;font-weight:700;margin-bottom:12px;color:var(--dark);">禁止期間を追加</div>
+    <label class="form-label">対象エリア</label>
+    <select class="form-select" id="ban-block-sel" onchange="updateBanAreaSel()">
+      <option value="">--- ブロック選択 ---</option>
+    </select>
+    <select class="form-select" id="ban-area-sel"><option value="">--- エリア選択 ---</option></select>
+    <label class="form-label">禁止期間</label>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:11px;">
+      <div><div style="font-size:10px;color:var(--muted);margin-bottom:4px;">開始日（告示日）</div>
+      <input class="form-input" id="ban-start" type="date" style="margin-bottom:0;"></div>
+      <div><div style="font-size:10px;color:var(--muted);margin-bottom:4px;">終了日（投票日）</div>
+      <input class="form-input" id="ban-end" type="date" style="margin-bottom:0;"></div>
     </div>
+    <label class="form-label">選挙名（任意）</label>
+    <input class="form-input" id="ban-label" type="text" placeholder="例：茅ヶ崎市長選挙">
+    <button class="btn-submit" onclick="addBan()">禁止期間を登録</button>
   </div>
-</div>
-
-<div class="section" id="sec-events">
-  <div class="sec-header">テクノロジー・次世代イベント</div>
-  <div class="card">
-    <p style="font-size:12px;">展示会や街頭活動のスケジュールを管理するエリアです。</p>
+  <div class="form-card">
+    <div style="font-size:10px;font-weight:700;color:var(--green-mid);font-family:'DM Mono',monospace;margin-bottom:10px;">登録済み禁止期間</div>
+    <div id="ban-list"><div class="empty">登録なし</div></div>
   </div>
-</div>
-
-<div class="section" id="sec-gakujutsu">
-  <div class="sec-header">ターゲット戦略：学術都市</div>
-  <div class="card">
-    <p style="font-size:12px;">大学周辺やテック集積エリアでのアプローチ計画です。</p>
-  </div>
-</div>
-
-<div class="footer">
-  TEAM MIRAI STRATEGY DASHBOARD v2.0
 </div>
 
 <script>
-function sw(id, btn) {
-  document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  const target = document.getElementById('sec-' + id);
-  if (target) target.classList.add('active');
-  btn.classList.add('active');
-  window.dispatchEvent(new Event('resize'));
-}
-</script>
+const AREAS = [
+  {block:'横浜地域',blockKey:'yokohama',areas:[
+    {id:'y01',name:'横浜市鶴見区'},{id:'y02',name:'横浜市神奈川区'},
+    {id:'y03',name:'横浜市西区'},{id:'y04',name:'横浜市中区'},{id:'y05',name:'横浜市南区'},
+    {id:'y06',name:'横浜市保土ケ谷区'},{id:'y07',name:'横浜市旭区'},{id:'y08',name:'横浜市磯子区'},
+    {id:'y09',name:'横浜市金沢区'},{id:'y10',name:'横浜市港北区'},{id:'y11',name:'横浜市緑区'},
+    {id:'y12',name:'横浜市港南区'},{id:'y13',name:'横浜市瀬谷区'},{id:'y14',name:'横浜市泉区'},
+    {id:'y15',name:'横浜市青葉区'},{id:'y16',name:'横浜市都筑区'},
+    {id:'y17',name:'横浜市戸塚区'},{id:'y18',name:'横浜市栄区'},
+  ]},
+  {block:'川崎地域',blockKey:'kawasaki',areas:[
+    {id:'k01',name:'川崎市川崎区'},{id:'k02',name:'川崎市幸区'},{id:'k03',name:'川崎市中原区'},
+    {id:'k04',name:'川崎市高津区'},{id:'k05',name:'川崎市宮前区'},
+    {id:'k06',name:'川崎市多摩区'},{id:'k07',name:'川崎市麻生区'},
+  ]},
+  {block:'横須賀三浦地域',blockKey:'miura',areas:[
+    {id:'m01',name:'横須賀市'},{id:'m02',name:'鎌倉市'},
+    {id:'m03',name:'逗子市'},{id:'m04',name:'三浦市'},{id:'m05',name:'葉山町'},
+  ]},
+  {block:'県央地域',blockKey:'kennan',areas:[
+    {id:'n01',name:'相模原市'},{id:'n02',name:'厚木市'},{id:'n03',name:'大和市'},
+    {id:'n04',name:'海老名市'},{id:'n05',name:'座間市'},
+    {id:'n06',name:'綾瀬市'},{id:'n07',name:'愛川町'},{id:'n08',name:'清川村'},{id:'n09',name:'伊勢原市'},
+  ]},
+  {block:'湘南地域',blockKey:'shonan',areas:[
+    {id:'s01',name:'平塚市'},{id:'s02',name:'藤沢市'},{id:'s03',name:'茅ヶ崎市'},
+    {id:'s06',name:'寒川町'},{id:'s07',name:'大磯町'},{id:'s08',name:'二宮町'},
+  ]},
+  {block:'県西地域',blockKey:'seisou',areas:[
+    {id:'w01',name:'小田原市'},{id:'w02',name:'南足柄市'},{id:'w03',name:'中井町'},{id:'w11',name:'秦野市'},
+    {id:'w04',name:'大井町'},{id:'w05',name:'松田町'},{id:'w06',name:'山北町'},
+    {id:'w07',name:'開成町'},{id:'w08',name:'箱根町'},{id:'w09',name:'真鶴町'},{id:'w10',name:'湯河原町'},
+  ]},
+];
 
+const BLOCK_CSS = {
+  '横浜地域':'block-yokohama','川崎地域':'block-kawasaki',
+  '横須賀三浦地域':'block-miura','県央地域':'block-kennan',
+  '湘南地域':'block-shonan','県西地域':'block-seisou'
+};
+
+const STAMPS = {
+  y01:{e:'🌉',t:'鶴見区'}, y02:{e:'🏮',t:'神奈川区'}, y03:{e:'🎪',t:'西区'},
+  y04:{e:'🎑',t:'中区'}, y05:{e:'🌸',t:'南区'},
+  y06:{e:'🌳',t:'保土ケ谷区'}, y07:{e:'🌅',t:'旭区'}, y08:{e:'🏭',t:'磯子区'},
+  y09:{e:'🦀',t:'金沢区'}, y10:{e:'🏟',t:'港北区'},
+  y11:{e:'🌿',t:'緑区'}, y12:{e:'🌻',t:'港南区'}, y13:{e:'🦉',t:'瀬谷区'},
+  y14:{e:'⛲',t:'泉区'}, y15:{e:'🌱',t:'青葉区'},
+  y16:{e:'🛍',t:'都筑区'}, y17:{e:'🛖',t:'戸塚区'}, y18:{e:'🌲',t:'栄区'},
+  k01:{e:'🏢',t:'川崎区'}, k02:{e:'🦝',t:'幸区'}, k03:{e:'🏙',t:'中原区'},
+  k04:{e:'❄️',t:'高津区'}, k05:{e:'🍈',t:'宮前区'}, k06:{e:'🦜',t:'多摩区'},
+  k07:{e:'🎨',t:'麻生区'},
+  m01:{e:'⚓',t:'横須賀市'}, m02:{e:'🪻',t:'鎌倉市'}, m03:{e:'🏄',t:'逗子市'},
+  m04:{e:'🐟',t:'三浦市'}, m05:{e:'⛵',t:'葉山町'},
+  n01:{e:'🚀',t:'相模原市'}, n02:{e:'🍁',t:'厚木市'}, n03:{e:'🚉',t:'大和市'},
+  n04:{e:'🦐',t:'海老名市'}, n05:{e:'🌞',t:'座間市'}, n06:{e:'✈️',t:'綾瀬市'},
+  n07:{e:'🎏',t:'愛川町'}, n08:{e:'🏕',t:'清川村'},
+  s01:{e:'🎋',t:'平塚市'}, s02:{e:'🏝',t:'藤沢市'}, s03:{e:'🏖',t:'茅ヶ崎市'},
+  s06:{e:'⛩️',t:'寒川町'},
+  s07:{e:'🌊',t:'大磯町'}, s08:{e:'🐇',t:'二宮町'},
+  n09:{e:'🗻',t:'伊勢原市'},
+  w11:{e:'🥜',t:'秦野市'},
+  w01:{e:'🏯',t:'小田原市'}, w02:{e:'🦌',t:'南足柄市'}, w03:{e:'🌾',t:'中井町'},
+  w04:{e:'🎃',t:'大井町'}, w05:{e:'🚂',t:'松田町'}, w06:{e:'🍵',t:'山北町'},
+  w07:{e:'💐',t:'開成町'}, w08:{e:'⛴️',t:'箱根町'}, w09:{e:'🐠',t:'真鶴町'}, w10:{e:'♨️',t:'湯河原町'},
+};
+
+const areaIdToName = {};
+AREAS.forEach(b=>b.areas.forEach(a=>{ areaIdToName[a.id]=a.name; }));
+function allAreas(){ return AREAS.flatMap(b=>b.areas); }
+
+let state = {logs:[], bans:[]};
+
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbwMevDHlUCShYp2jQdsNNIrvyiXCzOZWU1wSnJQ8hu6tOpqMtc3eealxY7wxKjf8DNK/exec';
+
+async function gasRequest(body){
+  const r = await fetch(GAS_URL, {
+    method:'POST',
+    mode:'no-cors',
+    headers:{'Content-Type':'text/plain'},
+    body: JSON.stringify(body)
+  });
+  return r;
+}
+
+async function loadState(){
+  try{
+    // no-corsではレスポンスが読めないのでGETで取得
+    const r = await fetch(GAS_URL + '?action=loadState');
+    const json = await r.json();
+    if(json.ok && json.data) state = json.data;
+    if(!state.bans) state.bans=[];
+    if(!state.logs) state.logs=[];
+  }catch(e){ console.log('load error:', e); }
+}
+
+async function saveState(){
+  try{
+    await fetch(GAS_URL, {
+      method:'POST',
+      mode:'no-cors',
+      headers:{'Content-Type':'text/plain'},
+      body: JSON.stringify({action:'saveState', state})
+    });
+  }catch(e){ console.log('save error:', e); }
+}
+
+function today(){ return new Date().toISOString().slice(0,10); }
+function getActiveBan(id){ const t=today(); return state.bans.find(b=>b.areaId===id&&b.start<=t&&t<=b.end)||null; }
+function getUpcomingBan(id){
+  const t=today(), s=new Date(); s.setDate(s.getDate()+7);
+  return state.bans.find(b=>b.areaId===id&&b.start>t&&b.start<=s.toISOString().slice(0,10))||null;
+}
+function fmtDate(s){ return s?s.replace(/-/g,'/'):''; }
+function isDone(id){ return state.logs.some(l=>l.areaId===id); }
+function areaLogs(id){ return state.logs.filter(l=>l.areaId===id); }
+function countReporters(){ return new Set(state.logs.map(l=>l.reporter)).size; }
+function parseCount(c){
+  if(!c) return 0;
+  const m=c.match(/(\d+)\s*[枚部冊]/); if(m) return parseInt(m[1]);
+  const m2=c.match(/^(\d+)$/); if(m2) return parseInt(m2[1]);
+  return 0;
+}
+
+async function addLog(areaId, areaName, reporter, comment){
+  state.logs.unshift({id:Date.now().toString(), areaId, areaName, reporter, comment, time:new Date().toISOString()});
+  await saveState(); renderAll();
+}
+async function deleteLog(logId){
+  if(!confirm('この報告を削除しますか？')) return;
+  state.logs = state.logs.filter(l=>l.id!==logId);
+  await saveState(); renderAll();
+}
+
+function renderSummary(){
+  const aa=allAreas(), done=aa.filter(a=>isDone(a.id)).length, total=aa.length, pct=Math.round(done/total*100);
+  const totalSheets=state.logs.reduce((s,l)=>s+parseCount(l.comment),0);
+  document.getElementById('rpt-summary').innerHTML=`
+    <div class="summary-grid">
+      <div class="summary-card"><div class="summary-label">完了エリア</div><div class="summary-value">${done}<span class="summary-unit">/${total}</span></div></div>
+      <div class="summary-card"><div class="summary-label">累計枚数</div><div class="summary-value" style="font-size:16px;">${totalSheets.toLocaleString()}<span class="summary-unit">枚</span></div></div>
+      <div class="summary-card"><div class="summary-label">参加人数</div><div class="summary-value">${countReporters()}<span class="summary-unit">人</span></div></div>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-label"><span class="progress-title">全体進捗</span><span class="progress-pct">${pct}%</span></div>
+      <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${pct}%;"></div></div>
+    </div>`;
+}
+
+function getPins(){ try{ return JSON.parse(localStorage.getItem('kanagawa_pins')||'[]'); }catch(e){ return []; } }
+function savePins(pins){ try{ localStorage.setItem('kanagawa_pins', JSON.stringify(pins)); }catch(e){} }
+function togglePin(areaId){
+  let pins=getPins();
+  pins=pins.includes(areaId)?pins.filter(p=>p!==areaId):[...pins,areaId];
+  savePins(pins); renderPinned(); renderList(document.getElementById('list-search')?.value||'');
+}
+
+function progressAreaRowHtml(a){
+  const done=isDone(a.id), ban=getActiveBan(a.id), upBan=!ban?getUpcomingBan(a.id):null;
+  const logs=areaLogs(a.id), totalN=logs.reduce((s,l)=>s+parseCount(l.comment),0);
+  const pins=getPins(), isPinned=pins.includes(a.id);
+  let badge=ban?`<span class="banned-badge">🚫 禁止中</span>`:done?`<span class="achieved-badge">✓ 達成中！</span>`:`<span class="challenge-badge">⚡ 挑戦者求む！</span>`;
+  return `<div class="progress-area-row">
+    <div style="flex:1;min-width:0;">
+      <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+        <span class="area-name-undone">${a.name}</span>${badge}
+        ${upBan?`<span class="ban-tag">⏰${fmtDate(upBan.start)}〜</span>`:''}
+      </div>
+      ${done?`<div style="margin-top:3px;">
+        ${logs.map(l=>`<div style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--green-mid);margin-top:1px;">
+          <span>✓ ${l.reporter}${l.comment?' — '+l.comment:''}</span>
+          <button onclick="deleteLog('${l.id}')" style="background:none;border:none;cursor:pointer;font-size:10px;color:#d1a0a0;padding:0;line-height:1;" title="削除">✕</button>
+        </div>`).join('')}
+        ${totalN>0?`<div style="font-size:10px;color:var(--green-mid);font-family:'DM Mono',monospace;font-weight:700;margin-top:2px;">計 ${totalN.toLocaleString()}枚 — まだまだ伸ばそう！</div>`:''}
+      </div>`:''}
+      ${!done&&!ban?`<div style="font-size:10px;color:var(--muted);margin-top:2px;">まだ誰も配布していません</div>`:''}
+    </div>
+    <div style="flex-shrink:0;">
+      <button class="pin-btn ${isPinned?'pinned':''}" onclick="togglePin('${a.id}')" title="${isPinned?'ピンを外す':'固定'}">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="${isPinned?'#1d9e75':'none'}" stroke="${isPinned?'#1d9e75':'#9ca3af'}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="17" x2="12" y2="22"/><path d="M5 17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V6h1a2 2 0 0 0 0-4H8a2 2 0 0 0 0 4h1v4.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24Z"/></svg>
+      </button>
+    </div>
+  </div>`;
+}
+
+function renderPinned(){
+  const pins=getPins(), el=document.getElementById('pinned-area');
+  if(!pins.length){ el.innerHTML=''; return; }
+  const rows=pins.map(id=>{ const a=allAreas().find(a=>a.id===id); return a?progressAreaRowHtml(a):''; }).join('');
+  el.innerHTML=`<div class="pinned-wrap"><div class="pinned-header"><svg width="12" height="12" viewBox="0 0 24 24" fill="#1d9e75" stroke="#1d9e75" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="17" x2="12" y2="22"/><path d="M5 17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V6h1a2 2 0 0 0 0-4H8a2 2 0 0 0 0 4h1v4.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24Z"/></svg> よく行くエリア</div><div style="padding:0 13px 4px;">${rows}</div></div>`;
+}
+
+function renderList(query=''){
+  const q=query.trim();
+  let html='';
+  if(q){
+    const matched=allAreas().filter(a=>a.name.includes(q));
+    html=matched.length?'<div class="area-list-wrap"><div class="area-rows open">'+matched.map(a=>progressAreaRowHtml(a)).join('')+'</div></div>':'<div class="empty">「'+q+'」に一致するエリアが見つかりません</div>';
+  } else {
+    AREAS.forEach((block,bi)=>{
+      const doneCnt=block.areas.filter(a=>isDone(a.id)).length, total=block.areas.length, pct=Math.round(doneCnt/total*100);
+      const cssCls=BLOCK_CSS[block.block]||'block-yokohama', allDone=doneCnt===total;
+      html+=`<div class="area-list-wrap" style="${allDone?'border-color:#86efac;':doneCnt>0?'border-color:#fde68a;':''}">
+        <div class="area-list-header" onclick="toggleListBlock(${bi})">
+          <div style="display:flex;align-items:center;gap:7px;">
+            <span class="area-block-badge ${cssCls}">${block.block}</span>
+            <span style="font-size:11px;color:var(--muted);">${doneCnt}/${total}</span>
+            ${allDone?`<span style="font-size:10px;font-weight:700;color:#166534;">🏆 制覇！</span>`:doneCnt>0?`<span style="font-size:10px;color:#92400e;font-weight:700;">残り${total-doneCnt}</span>`:''}
+          </div>
+          <div style="display:flex;align-items:center;gap:7px;">
+            <span style="font-size:11px;font-weight:700;color:${pct>=100?'#166534':pct>=50?'var(--green-mid)':'var(--muted)'};">${pct}%</span>
+            <span style="font-size:12px;color:var(--muted);transition:transform .2s;" id="ltog-${bi}">▼</span>
+          </div>
+        </div>
+        <div class="area-rows open" id="lblock-${bi}">${block.areas.map(a=>progressAreaRowHtml(a)).join('')}</div>
+      </div>`;
+    });
+  }
+  document.getElementById('list-content').innerHTML=html;
+  AREAS.forEach((_,bi)=>{ const t=document.getElementById('ltog-'+bi); if(t) t.style.transform='rotate(180deg)'; });
+}
+
+function toggleListBlock(bi){
+  const e=document.getElementById('lblock-'+bi), t=document.getElementById('ltog-'+bi);
+  const o=e.classList.toggle('open');
+  if(t) t.style.transform=o?'rotate(180deg)':'rotate(0deg)';
+}
+function onSearchInput(){ renderList(document.getElementById('list-search').value); }
+
+function renderRanking(){
+  const pc={};
+  state.logs.forEach(l=>{ const n=parseCount(l.comment); if(n>0) pc[l.reporter]=(pc[l.reporter]||0)+n; });
+  const sorted=Object.entries(pc).sort((a,b)=>b[1]-a[1]), maxVal=sorted.length?sorted[0][1]:1;
+  const rkEl=document.getElementById('ranking-list');
+  rkEl.innerHTML=!sorted.length?'<div class="empty">報告時に枚数を入力すると集計されます</div>':sorted.map(([name,cnt],i)=>`
+    <div class="ranking-item">
+      <div class="rank-num ${i===0?'rank-1':i===1?'rank-2':i===2?'rank-3':'rank-other'}">${i+1}</div>
+      <div class="rank-name">${name}</div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div style="width:70px;height:5px;background:#e8f5ec;border-radius:3px;overflow:hidden;"><div style="height:100%;border-radius:3px;background:#1d9e75;width:${Math.round(cnt/maxVal*100)}%;"></div></div>
+        <span style="font-size:14px;font-weight:900;color:var(--green-mid);font-family:'DM Mono',monospace;">${cnt.toLocaleString()}</span><span style="font-size:10px;color:var(--muted);">枚</span>
+      </div>
+    </div>`).join('');
+  const logEl=document.getElementById('log-list');
+  if(!state.logs.length){ logEl.innerHTML='<div class="empty">まだ活動記録がありません</div>'; return; }
+  const q=document.getElementById('log-search')?.value.trim()||'';
+  const filtered=q?state.logs.filter(l=>l.reporter.includes(q)||l.areaName.includes(q)):state.logs;
+  logEl.innerHTML=!filtered.length?`<div class="empty">「${q}」の記録が見つかりません</div>`:filtered.slice(0,50).map(l=>{
+    const dt=new Date(l.time), ts=`${dt.getMonth()+1}/${dt.getDate()} ${String(dt.getHours()).padStart(2,'0')}:${String(dt.getMinutes()).padStart(2,'0')}`;
+    return `<div class="log-item" style="display:flex;align-items:flex-start;gap:8px;">
+      <div style="flex:1;"><div class="log-meta">${ts} ／ ${l.reporter}</div><div>📮 <strong>${l.areaName}</strong>${l.comment?' — '+l.comment:''}</div></div>
+      <button onclick="deleteLog('${l.id}')" style="background:none;border:none;cursor:pointer;font-size:11px;color:#d1a0a0;padding:2px 4px;flex-shrink:0;margin-top:2px;" title="削除">✕</button>
+    </div>`;
+  }).join('');
+}
+
+function getMyName(){ return localStorage.getItem('kanagawa_my_name')||''; }
+function saveMyName(){
+  localStorage.setItem('kanagawa_my_name', document.getElementById('my-name-input')?.value.trim()||'');
+  renderStamp();
+}
+function initMyName(){ const el=document.getElementById('my-name-input'); if(el) el.value=getMyName(); }
+
+function renderStamp(){
+  const myName=getMyName();
+  const myEl=document.getElementById('my-stamp-board');
+  if(myEl){
+    if(!myName){
+      myEl.innerHTML=`<div style="background:var(--green-light);border:1px solid var(--border);border-radius:12px;padding:14px;text-align:center;color:var(--muted);font-size:12px;margin-bottom:11px;">名前を入力するとあなたのスタンプが表示されます</div>`;
+    } else {
+      const myAreaIds=new Set(state.logs.filter(l=>l.reporter===myName).map(l=>l.areaId));
+      const myCnt=myAreaIds.size, total=allAreas().length;
+      let html=`<div style="background:linear-gradient(135deg,#0f2d1a,#1a4d2a);border-radius:12px;padding:14px;margin-bottom:11px;color:white;">
+        <div style="font-size:11px;color:rgba(255,255,255,.6);margin-bottom:6px;">📮 ${myName}さんが集めたスタンプ</div>
+        <div style="font-size:26px;font-weight:900;font-family:'DM Mono',monospace;color:#4ade80;">${myCnt}<span style="font-size:13px;color:rgba(255,255,255,.5);"> / ${total}</span></div>
+        <div style="height:5px;background:rgba(255,255,255,.15);border-radius:3px;margin-top:8px;overflow:hidden;">
+          <div style="height:100%;background:#4ade80;border-radius:3px;width:${Math.round(myCnt/total*100)}%;transition:width .6s;"></div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:12px;">`;
+      allAreas().forEach(a=>{
+        const got=myAreaIds.has(a.id), s=STAMPS[a.id]||{e:'📮',t:a.name};
+        html+=`<div style="text-align:center;padding:6px 2px;border-radius:8px;background:${got?'rgba(74,222,128,.2)':'rgba(255,255,255,.05)'};">
+          <div style="font-size:20px;${got?'':'filter:grayscale(1);opacity:.2;'}">${s.e}</div>
+          <div style="font-size:8px;color:${got?'#4ade80':'rgba(255,255,255,.3)'};margin-top:2px;line-height:1.2;">${s.t}</div>
+        </div>`;
+      });
+      html+=`</div></div>`;
+      myEl.innerHTML=html;
+    }
+  }
+  const el=document.getElementById('stamp-board');
+  if(!el) return;
+  let html='';
+  const doneTotal=allAreas().filter(a=>isDone(a.id)).length, total=allAreas().length;
+  html+=`<div style="text-align:center;margin-bottom:14px;">
+    <div style="font-size:28px;font-weight:900;color:var(--green-mid);font-family:'DM Mono',monospace;">${doneTotal}<span style="font-size:14px;color:var(--muted);"> / ${total}</span></div>
+    <div style="font-size:11px;color:var(--muted);margin-top:2px;">チームで獲得済み</div>
+  </div>`;
+  AREAS.forEach(block=>{
+    const blockDone=block.areas.filter(a=>isDone(a.id)).length, allBlockDone=blockDone===block.areas.length;
+    const cssCls=BLOCK_CSS[block.block]||'block-yokohama';
+    html+=`<div style="margin-bottom:16px;">
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;">
+        <span class="area-block-badge ${cssCls}">${block.block}</span>
+        <span style="font-size:10px;color:var(--muted);">${blockDone}/${block.areas.length}</span>
+        ${allBlockDone?`<span style="font-size:11px;font-weight:700;color:#166534;">🏆 全制覇！</span>`:''}
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;">
+        ${block.areas.map(a=>{
+          const done=isDone(a.id), s=STAMPS[a.id]||{e:'📮',t:a.name};
+          const logs=areaLogs(a.id), totalN=logs.reduce((sum,l)=>sum+parseCount(l.comment),0);
+          const isMe=myName&&logs.some(l=>l.reporter===myName);
+          return `<div style="text-align:center;padding:8px 4px;border-radius:10px;border:1.5px solid ${done?'#86efac':'#e8f5ec'};background:${isMe?'#f0fdf4':done?'#f0fdf4':'#f9fafb'};transition:all .3s;position:relative;">
+            ${isMe?`<div style="position:absolute;top:3px;right:4px;font-size:8px;font-weight:700;color:var(--green-mid);">✓私</div>`:''}
+            <div style="font-size:26px;${done?'':'filter:grayscale(1);opacity:.3;'}">${s.e}</div>
+            <div style="font-size:9px;font-weight:700;color:${done?'#166534':'var(--muted)'};margin-top:3px;line-height:1.3;">${s.t}</div>
+            ${done&&totalN>0?`<div style="font-size:9px;color:var(--green-mid);font-family:'DM Mono',monospace;margin-top:2px;">${totalN}枚</div>`:''}
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`;
+  });
+  el.innerHTML=html;
+}
+
+function renderBanAlert(){
+  const t=today(), active=state.bans.filter(b=>b.start<=t&&t<=b.end);
+  const sd=new Date(); sd.setDate(sd.getDate()+7);
+  const upcoming=state.bans.filter(b=>b.start>t&&b.start<=sd.toISOString().slice(0,10));
+  const el=document.getElementById('rpt-ban-alert');
+  if(!el) return;
+  if(!active.length&&!upcoming.length){ el.innerHTML=''; return; }
+  let items='';
+  active.forEach(b=>{items+=`<div class="ban-alert-item">🚫 <strong>${areaIdToName[b.areaId]||b.areaId}</strong>${b.label?' 「'+b.label+'」':''}<span class="ban-active-badge">禁止中</span> ${fmtDate(b.start)}〜${fmtDate(b.end)}</div>`;});
+  upcoming.forEach(b=>{items+=`<div class="ban-alert-item">⏰ <strong>${areaIdToName[b.areaId]||b.areaId}</strong>${b.label?' 「'+b.label+'」':''}<span class="ban-upcoming-badge">もうすぐ</span> ${fmtDate(b.start)}〜${fmtDate(b.end)}</div>`;});
+  el.innerHTML=`<div class="ban-alert"><div class="ban-alert-title">⚠️ ポスティング禁止期間</div>${items}</div>`;
+}
+
+function initForms(){
+  const banSel=document.getElementById('ban-block-sel');
+  AREAS.forEach(b=>{ const o=document.createElement('option'); o.value=b.block; o.textContent=b.block; banSel.appendChild(o); });
+}
+
+function filterAreaSuggest(){
+  const q=document.getElementById('area-search-input').value.trim(), box=document.getElementById('area-suggest');
+  let html='';
+  AREAS.forEach(b=>{
+    const matched=b.areas.filter(a=>!q||a.name.includes(q));
+    if(!matched.length) return;
+    html+=`<div class="suggest-group">${b.block}</div>`;
+    matched.forEach(a=>{
+      const ban=getActiveBan(a.id);
+      html+=`<div class="suggest-item${ban?' banned':''}" onmousedown="selectArea('${a.id}','${a.name.replace(/'/g,"\\'")}',${!!ban})">${a.name}${ban?' 🚫':''}</div>`;
+    });
+  });
+  box.innerHTML=html||'<div style="padding:10px 14px;font-size:12px;color:var(--muted);">見つかりません</div>';
+  box.style.display='block';
+}
+function selectArea(id, name, banned){
+  if(banned){ alert('🚫 禁止期間中のためポスティングできません'); return; }
+  document.getElementById('select-area').value=id;
+  document.getElementById('area-search-input').value=name;
+  document.getElementById('area-suggest').style.display='none';
+}
+function hideSuggest(){
+  document.getElementById('area-suggest').style.display='none';
+  const input=document.getElementById('area-search-input').value.trim();
+  const selVal=document.getElementById('select-area').value;
+  if(selVal){ const a=allAreas().find(a=>a.id===selVal); if(!a||a.name!==input) document.getElementById('select-area').value=''; }
+}
+
+async function submitReport(){
+  const name=document.getElementById('reporter-name').value.trim();
+  const areaId=document.getElementById('select-area').value;
+  const num=document.getElementById('report-comment').value.trim();
+  if(!name){ alert('名前を入力してください'); return; }
+  if(!areaId){ alert('エリアを選択してください'); return; }
+  const ban=getActiveBan(areaId); if(ban){ alert('🚫 禁止期間中'); return; }
+  const area=allAreas().find(a=>a.id===areaId);
+  await addLog(areaId, area.name, name, num?num+'枚':'');
+  document.getElementById('reporter-name').value='';
+  document.getElementById('report-comment').value='';
+  document.getElementById('select-area').value='';
+  document.getElementById('area-search-input').value='';
+  const msg=document.getElementById('success-msg'); msg.style.display='block'; setTimeout(()=>msg.style.display='none',3000);
+}
+
+function updateBanAreaSel(){
+  const bn=document.getElementById('ban-block-sel').value, sel=document.getElementById('ban-area-sel');
+  sel.innerHTML='<option value="">--- エリア選択 ---</option>';
+  if(!bn) return;
+  AREAS.find(b=>b.block===bn)?.areas.forEach(a=>{ const o=document.createElement('option'); o.value=a.id; o.textContent=a.name; sel.appendChild(o); });
+}
+async function addBan(){
+  const areaId=document.getElementById('ban-area-sel').value, start=document.getElementById('ban-start').value, end=document.getElementById('ban-end').value, label=document.getElementById('ban-label').value.trim();
+  if(!areaId||!start||!end){ alert('エリアと日付を入力してください'); return; }
+  if(start>end){ alert('開始日は終了日以前にしてください'); return; }
+  state.bans.push({id:Date.now().toString(), areaId, start, end, label});
+  await saveState(); renderBanList(); renderAll();
+  ['ban-area-sel','ban-block-sel','ban-start','ban-end','ban-label'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
+  alert('✅ 禁止期間を登録しました');
+}
+async function deleteBan(id){
+  if(!confirm('削除しますか？')) return;
+  state.bans=state.bans.filter(b=>b.id!==id);
+  await saveState(); renderBanList(); renderAll();
+}
+function renderBanList(){
+  const el=document.getElementById('ban-list');
+  if(!state.bans.length){ el.innerHTML='<div class="empty">登録なし</div>'; return; }
+  const t=today();
+  el.innerHTML=[...state.bans].sort((a,b)=>a.start.localeCompare(b.start)).map(b=>{
+    const isA=b.start<=t&&t<=b.end, isP=b.end<t;
+    const badge=isA?'<span class="ban-active-badge">禁止中</span>':isP?'<span style="font-size:9px;background:#f0f4f1;color:var(--muted);padding:1px 5px;border-radius:4px;font-weight:700;">終了</span>':'<span class="ban-upcoming-badge">予定</span>';
+    return `<div class="ban-list-item"><div class="ban-list-info"><div class="ban-list-name">${areaIdToName[b.areaId]||b.areaId} ${badge}</div><div class="ban-list-period">${fmtDate(b.start)} 〜 ${fmtDate(b.end)}</div>${b.label?`<div style="font-size:10px;color:var(--amber);margin-top:2px;">${b.label}</div>`:''}</div><button class="btn-del" onclick="deleteBan('${b.id}')">削除</button></div>`;
+  }).join('');
+}
+
+function showTab(t,btn){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+  document.getElementById('sec-'+t).classList.add('active');
+  if(btn) btn.classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function renderAll(){
+  renderBanAlert(); renderSummary(); renderPinned();
+  renderList(document.getElementById('list-search')?.value||'');
+  renderRanking(); renderStamp(); renderBanList();
+}
+
+(async()=>{
+  await loadState();
+  renderAll();
+  initForms();
+  initMyName();
+  document.getElementById('loading-screen').style.display='none';
+})();
+</script>
 </body>
 </html>
