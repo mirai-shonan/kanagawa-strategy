@@ -129,6 +129,7 @@ body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--text
       <button class="tab-btn" onclick="sw('nobiro')">伸びしろ</button>
       <button class="tab-btn" onclick="sw('events')">イベント</button>
       <button class="tab-btn" onclick="sw('posting')">ポスティング</button>
+      <button class="tab-btn" onclick="sw('speech')">演説</button>
     </div>
   </div>
   <div class="tab-group">
@@ -805,7 +806,7 @@ body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--text
   <!-- 散布図 -->
   <div class="card">
     <div class="card-label">配布枚数 × 得票率 散布図</div>
-    <div style="font-size:10px;color:var(--muted);margin-bottom:8px;"><span style="color:#0fa968;">●</span> ポスティングあり　<span style="color:#9ca3af;">●</span> ポスティングなし　※点にタップで詳細表示</div>
+    <div style="font-size:10px;color:var(--muted);margin-bottom:8px;">● ポスティングあり（緑）　● ポスティングなし（グレー）　※点にタップで詳細表示</div>
     <canvas id="scatter-chart" style="width:100%;max-height:280px;"></canvas>
   </div>
 
@@ -830,6 +831,193 @@ body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--text
         <tbody id="posting-tbody"></tbody>
       </table>
     </div>
+  </div>
+</div>
+
+<!-- ===== 演説 ===== -->
+<div class="section" id="sec-speech">
+  <div class="sec-header">街頭演説 実績 × 得票率 分析</div>
+
+  <!-- ステータスバー -->
+  <div id="speech-status-bar" style="background:var(--dark);color:white;border-radius:10px;padding:10px 13px;margin-bottom:11px;display:flex;align-items:center;gap:10px;">
+    <div id="speech-status-dot" style="width:8px;height:8px;border-radius:50%;background:#6b7280;flex-shrink:0;"></div>
+    <div style="flex:1;">
+      <div id="speech-status-text" style="font-size:11px;color:rgba(255,255,255,.8);">データ未読み込み</div>
+      <div id="speech-status-sub" style="font-size:10px;color:rgba(255,255,255,.4);font-family:'DM Mono',monospace;margin-top:1px;"></div>
+    </div>
+    <button onclick="loadSpeechData()" id="speech-reload-btn"
+      style="padding:5px 12px;background:#95e3cd;border:none;border-radius:20px;font-size:11px;font-weight:700;color:#0a3d22;cursor:pointer;font-family:'Noto Sans JP',sans-serif;flex-shrink:0;">
+      読み込む
+    </button>
+  </div>
+
+  <!-- Google Sheets URL設定 -->
+  <div class="card" id="speech-config-card">
+    <div class="card-label">📊 Googleスプレッドシート連携</div>
+    <div style="font-size:11px;color:var(--muted);margin-bottom:8px;line-height:1.6;">
+      スプレッドシートのWebアプリURLを入力してください。<br>
+      <span style="color:var(--green-mid);font-weight:700;">設定は端末に保存されます。</span>
+    </div>
+    <input id="sheets-url-input" type="url"
+      placeholder="https://script.google.com/macros/s/..."
+      style="width:100%;padding:9px 11px;border:1px solid var(--border);border-radius:9px;font-size:11px;font-family:'DM Mono',monospace;background:var(--white);color:var(--text);margin-bottom:8px;">
+    <div style="display:flex;gap:7px;">
+      <button onclick="saveSheetUrl()" style="flex:1;padding:8px;background:var(--green-mid);color:white;border:none;border-radius:9px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Noto Sans JP',sans-serif;">保存して読み込む</button>
+      <button onclick="useSampleData()" style="padding:8px 12px;background:var(--white);border:1px solid var(--border);border-radius:9px;font-size:11px;color:var(--muted);cursor:pointer;font-family:'Noto Sans JP',sans-serif;">サンプルで試す</button>
+    </div>
+    <details style="margin-top:10px;">
+      <summary style="font-size:10px;color:var(--green-mid);cursor:pointer;font-weight:700;">▶ スプレッドシートの設定方法</summary>
+      <div style="font-size:10px;color:var(--muted);line-height:1.8;margin-top:7px;padding:9px;background:#f5faf6;border-radius:8px;">
+        <strong>① スプレッドシートの列構成（1行目がヘッダー）</strong><br>
+        A: 日付　B: 場所名　C: 自治体名　D: 議員参加（Y/空白）　E: 種別　F: 参加人数<br>
+        種別の値: 街頭演説 / 街頭活動 / 街宣車 / 個人演説会 / ももたろう / その他<br><br>
+        <strong>② Google Apps Scriptを設定</strong><br>
+        スプレッドシートのメニュー →「拡張機能」→「Apps Script」→ 以下を貼り付けて保存<br>
+        <code style="display:block;background:#1a1a1a;color:#4ade80;padding:8px;border-radius:6px;margin:6px 0;font-size:10px;white-space:pre-wrap;word-break:break-all;">function doGet() {
+  const sh = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  const rows = sh.getDataRange().getValues();
+  const data = rows.slice(1).filter(r => r[2]).map(r => ({
+    date:  r[0] ? Utilities.formatDate(new Date(r[0]),'JST','yyyy/MM/dd') : '',
+    place: r[1] || '',
+    area:  r[2] || '',
+    vip:   (r[3] || '').toString().toUpperCase() === 'Y',
+    type:  r[4] ? String(r[4]) : 'その他',
+    pax:   r[5] ? Number(r[5]) : null
+  }));
+  return ContentService
+    .createTextOutput(JSON.stringify(data))
+    .setMimeType(ContentService.MimeType.JSON);
+}</code>
+        <strong>③ デプロイ</strong><br>
+        「デプロイ」→「新しいデプロイ」→ 種類:「ウェブアプリ」→ アクセス:「全員」→ デプロイ → URLをコピー<br><br>
+        <strong>④ E列にドロップダウンを設定（推奨）</strong><br>
+        E列選択 →「データ」→「データの入力規則」→「プルダウン」→ 街頭演説・街頭活動（チラシ配り等）・街宣車遊説・個人演説会・ももたろう・その他 を追加
+      </div>
+    </details>
+  </div>
+
+  <!-- 手動入力フォールバック -->
+  <div class="card" id="speech-manual-card" style="display:none;">
+    <div class="card-label">✏️ 手動でデータ入力（連携なしで試す）</div>
+    <div style="font-size:10px;color:var(--muted);margin-bottom:8px;">場所名・自治体・種別・回数・参加人数（任意）を入力してください</div>
+    <div id="speech-entries"></div>
+    <button onclick="addSpeechEntry()" style="margin-top:8px;width:100%;padding:8px;border:1.5px dashed var(--border);background:transparent;border-radius:9px;font-size:12px;color:var(--green-mid);cursor:pointer;font-family:'Noto Sans JP',sans-serif;">＋ 追加</button>
+    <button onclick="analyzeManualSpeech()" style="margin-top:8px;width:100%;padding:10px;background:var(--green-mid);color:white;border:none;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Noto Sans JP',sans-serif;">分析する</button>
+  </div>
+
+  <!-- 結果エリア（読み込み後に表示） -->
+  <div id="speech-results" style="display:none;">
+
+    <!-- 種別フィルター -->
+    <div class="card" style="padding:11px 13px;">
+      <div class="card-label">種別フィルター</div>
+      <div class="sort-btns" id="type-filter-btns">
+        <button class="sort-btn active" onclick="filterByType('all',this)">すべて</button>
+        <button class="sort-btn" onclick="filterByType('街頭演説',this)">街頭演説</button>
+        <button class="sort-btn" onclick="filterByType('街頭活動（チラシ配り等）',this)">街頭活動</button>
+        <button class="sort-btn" onclick="filterByType('街宣車遊説',this)">街宣車遊説</button>
+        <button class="sort-btn" onclick="filterByType('個人演説会',this)">個人演説会</button>
+        <button class="sort-btn" onclick="filterByType('ももたろう',this)">ももたろう</button>
+        <button class="sort-btn" onclick="filterByType('その他',this)">その他</button>
+      </div>
+      <div id="type-filter-note" style="font-size:10px;color:var(--muted);margin-top:6px;"></div>
+    </div>
+
+    <!-- サマリー統計 -->
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-label">活動総回数</div>
+        <div class="stat-value" id="sp-total-count">—</div>
+        <div class="stat-sub" id="sp-total-places">—か所</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">議員・候補者<br>参加あり</div>
+        <div class="stat-value" id="sp-vip-count">—</div>
+        <div class="stat-sub" id="sp-vip-pct">—%</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">延べ参加人数<br>（記録ありのみ）</div>
+        <div class="stat-value" id="sp-pax-total">—</div>
+        <div class="stat-sub" id="sp-pax-avg">平均—人/回</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">活動ありエリア<br>平均得票率</div>
+        <div class="stat-value" id="sp-avg-with">—</div>
+        <div class="stat-sub" id="sp-cnt-with">—エリア</div>
+      </div>
+    </div>
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-label">活動なしエリア<br>平均得票率</div>
+        <div class="stat-value" id="sp-avg-without">—</div>
+        <div class="stat-sub" id="sp-cnt-without">—エリア</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">得票率の差</div>
+        <div class="stat-value" id="sp-diff">—</div>
+        <div class="stat-sub">活動あり − なし</div>
+      </div>
+    </div>
+
+    <!-- 種別内訳 -->
+    <div class="card">
+      <div class="card-label">種別ごとの活動回数</div>
+      <div id="sp-type-breakdown"></div>
+    </div>
+
+    <!-- マップバー -->
+    <div class="card" style="padding:11px;">
+      <div class="card-label">🗺️ エリア別 活動回数 × 得票率</div>
+      <div style="font-size:10px;color:var(--muted);margin-bottom:7px;">
+        🟠 活動あり（濃いほど回数多）　グレー数値＝エリア得票率
+      </div>
+      <div id="sp-map-bars"></div>
+      <a href="https://datawrapper.dwcdn.net/1bJI3/1/" target="_blank"
+        style="display:block;margin-top:10px;text-align:center;padding:8px;background:#f5faf6;border:1px solid var(--border);border-radius:8px;font-size:11px;color:var(--green-mid);text-decoration:none;font-weight:700;">
+        🔗 ポスティング進捗マップを別タブで開く
+      </a>
+    </div>
+
+    <!-- 散布図 -->
+    <div class="card">
+      <div class="card-label">活動回数 × 得票率 散布図</div>
+      <div style="font-size:10px;color:var(--muted);margin-bottom:8px;">🟠 活動あり（⭐議員参加）　⬜ 活動なし　※点タップで詳細</div>
+      <canvas id="speech-scatter" style="width:100%;max-height:280px;"></canvas>
+    </div>
+
+    <!-- 回数帯別棒グラフ -->
+    <div class="card">
+      <div class="card-label">活動回数帯別 平均得票率</div>
+      <canvas id="speech-bar" style="width:100%;max-height:200px;"></canvas>
+    </div>
+
+    <!-- 場所別テーブル -->
+    <div class="card">
+      <div class="card-label">場所別 活動記録</div>
+      <div class="sort-btns" style="margin-bottom:8px;">
+        <button class="sort-btn active" onclick="sortSpeechTable('count',this)">回数↓</button>
+        <button class="sort-btn" onclick="sortSpeechTable('area',this)">エリア順</button>
+        <button class="sort-btn" onclick="sortSpeechTable('vip',this)">議員参加↓</button>
+        <button class="sort-btn" onclick="sortSpeechTable('pax',this)">人数↓</button>
+        <button class="sort-btn" onclick="sortSpeechTable('rate',this)">得票率↓</button>
+      </div>
+      <div class="scroll-wrap">
+        <table class="area-table">
+          <thead>
+            <tr>
+              <th style="text-align:left;padding-left:8px;">場所・種別</th>
+              <th>回数</th>
+              <th>議員<br>参加</th>
+              <th>参加<br>人数</th>
+              <th>得票率</th>
+            </tr>
+          </thead>
+          <tbody id="sp-place-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="insight" id="sp-insight"></div>
   </div>
 </div>
 
@@ -1115,6 +1303,10 @@ function sw(t){
   event.target.classList.add('active');
   window.scrollTo({top:0,behavior:'smooth'});
   if(t==='posting') setTimeout(renderScatter, 50);
+  if(t==='speech') {
+    const d = document.getElementById('speech-scatter')?._data;
+    if (d) setTimeout(()=>{ renderSpeechScatter(d.withSpeech, d.noSpeech); }, 50);
+  }
 }
 
 // 初期化
@@ -1123,6 +1315,400 @@ renderPosting();
 sortTable('チームみらい率', true, null);
 renderDiffLists();
 renderKawai();
+
+// ============================================================
+// 演説セクション - Google Sheets連携版
+// ============================================================
+
+const AREA_RATE_MAP = {};
+DATA.forEach(d => { AREA_RATE_MAP[d['地域']] = d['チームみらい率']; });
+const AREA_NAMES = DATA.map(d => d['地域']).sort();
+
+window.addEventListener('load', () => {
+  const saved = localStorage.getItem('speechSheetUrl');
+  if (saved) document.getElementById('sheets-url-input').value = saved;
+  addSpeechEntry();
+});
+
+function saveSheetUrl() {
+  const url = document.getElementById('sheets-url-input').value.trim();
+  if (!url.startsWith('https://script.google.com')) {
+    alert('Google Apps Script のデプロイURLを入力してください\n（https://script.google.com/macros/s/... の形式）');
+    return;
+  }
+  localStorage.setItem('speechSheetUrl', url);
+  loadSpeechData();
+}
+
+async function loadSpeechData() {
+  const url = localStorage.getItem('speechSheetUrl') ||
+              document.getElementById('sheets-url-input').value.trim();
+  if (!url) { setStatus('gray','URLを入力してください',''); return; }
+  setStatus('yellow','読み込み中...',url.slice(0,48)+'...');
+  document.getElementById('speech-reload-btn').textContent='読込中';
+  try {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    if (!Array.isArray(data)) throw new Error('データ形式が不正です');
+    processSpeechData(data);
+    setStatus('green',`${data.length}件 読み込み完了`,`最終更新: ${new Date().toLocaleTimeString('ja-JP')}`);
+  } catch(e) {
+    setStatus('red','読み込み失敗: '+e.message,'URLとApps Scriptの設定を確認してください');
+  }
+  document.getElementById('speech-reload-btn').textContent='再読込';
+}
+
+function setStatus(color, text, sub) {
+  const colors={green:'#4ade80',yellow:'#fbbf24',red:'#f87171',gray:'#6b7280'};
+  document.getElementById('speech-status-dot').style.background = colors[color]||colors.gray;
+  document.getElementById('speech-status-text').textContent = text;
+  document.getElementById('speech-status-sub').textContent = sub;
+}
+
+function useSampleData() {
+  const sample = [
+    {date:'2025/10/01',place:'武蔵小杉駅前',area:'川崎市中原区',vip:true, type:'街頭演説',pax:80},
+    {date:'2025/10/08',place:'武蔵小杉駅前',area:'川崎市中原区',vip:false,type:'街頭活動（チラシ配り等）',pax:null},
+    {date:'2025/10/15',place:'武蔵小杉駅前',area:'川崎市中原区',vip:true, type:'街頭演説',pax:120},
+    {date:'2025/10/23',place:'武蔵小杉駅前',area:'川崎市中原区',vip:false,type:'街宣車遊説',  pax:null},
+    {date:'2025/10/03',place:'新横浜駅前',  area:'横浜市港北区',vip:true, type:'街頭演説',pax:60},
+    {date:'2025/10/17',place:'新横浜駅前',  area:'横浜市港北区',vip:false,type:'街頭活動（チラシ配り等）',pax:null},
+    {date:'2025/10/31',place:'日吉駅前',    area:'横浜市港北区',vip:false,type:'ももたろう',pax:null},
+    {date:'2025/10/05',place:'たまプラーザ駅前',area:'横浜市青葉区',vip:true, type:'街頭演説',pax:90},
+    {date:'2025/10/19',place:'たまプラーザ駅前',area:'横浜市青葉区',vip:false,type:'街頭活動（チラシ配り等）',pax:null},
+    {date:'2025/10/10',place:'辻堂駅前',    area:'藤沢市',      vip:true, type:'街頭演説',pax:70},
+    {date:'2025/10/24',place:'辻堂駅前',    area:'藤沢市',      vip:false,type:'街頭活動（チラシ配り等）',pax:null},
+    {date:'2025/10/12',place:'茅ヶ崎駅北口',area:'茅ヶ崎市',   vip:true, type:'街頭演説',pax:50},
+    {date:'2025/10/26',place:'茅ヶ崎駅北口',area:'茅ヶ崎市',   vip:false,type:'街宣車遊説',  pax:null},
+    {date:'2025/10/07',place:'溝の口駅前',  area:'川崎市高津区',vip:true, type:'街頭演説',pax:65},
+    {date:'2025/10/21',place:'溝の口駅前',  area:'川崎市高津区',vip:false,type:'ももたろう',pax:null},
+    {date:'2025/10/14',place:'センター北駅前',area:'横浜市都筑区',vip:false,type:'街頭活動（チラシ配り等）',pax:null},
+    {date:'2025/10/09',place:'登戸駅前',    area:'川崎市多摩区',vip:false,type:'街頭活動（チラシ配り等）',pax:null},
+    {date:'2025/11/02',place:'○○ホール',  area:'横須賀市',    vip:true, type:'個人演説会',pax:150},
+    {date:'2025/11/05',place:'平塚駅前',    area:'平塚市',      vip:false,type:'街頭演説',pax:null},
+    {date:'2025/11/08',place:'大和駅前',    area:'大和市',      vip:false,type:'街頭活動（チラシ配り等）',pax:null},
+    {date:'2025/11/09',place:'大和駅前',    area:'大和市',      vip:true, type:'個人演説会',pax:80},
+  ];
+  processSpeechData(sample);
+  setStatus('green',`サンプル ${sample.length}件`,'実際のデータはURLを設定してください');
+}
+
+let _speechPlaces = [];
+let _rawSpeechData = [];
+let _currentTypeFilter = 'all';
+
+// 種別カラー
+const TYPE_COLORS = {
+  '街頭演説':            '#ea580c',
+  '街頭活動（チラシ配り等）': '#f97316',
+  '街宣車遊説':          '#fb923c',
+  '個人演説会':          '#7c3aed',
+  'ももたろう':          '#0891b2',
+  'その他':              '#6b7280',
+};
+
+function filterByType(type, btn) {
+  _currentTypeFilter = type;
+  document.querySelectorAll('#type-filter-btns .sort-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const filtered = type === 'all' ? _rawSpeechData : _rawSpeechData.filter(r=>r.type===type);
+  const note = type === 'all' ? '' : `「${type}」のみ表示中（${filtered.length}件）`;
+  document.getElementById('type-filter-note').textContent = note;
+  buildResults(filtered);
+}
+
+function processSpeechData(rawData) {
+  _rawSpeechData = rawData;
+  _currentTypeFilter = 'all';
+  document.querySelectorAll('#type-filter-btns .sort-btn').forEach((b,i)=>b.classList.toggle('active',i===0));
+  document.getElementById('type-filter-note').textContent = '';
+
+  // 使われている種別だけフィルターボタンを有効化
+  const usedTypes = [...new Set(rawData.map(r=>r.type||'その他'))];
+  document.querySelectorAll('#type-filter-btns .sort-btn').forEach(b=>{
+    const t = b.textContent;
+    if(t==='すべて') return;
+    b.style.opacity = usedTypes.includes(t) ? '1' : '0.35';
+  });
+
+  buildResults(rawData);
+  document.getElementById('speech-results').style.display='block';
+  document.getElementById('speech-results').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function buildResults(data) {
+  // 場所×種別でキーを作って集計
+  const placeMap = {};
+  data.forEach(r => {
+    if (!r.area) return;
+    const type = r.type || 'その他';
+    const key = `${r.place||''}__${r.area}__${type}`;
+    if (!placeMap[key]) placeMap[key] = {place:r.place||'',area:r.area,type,count:0,vipCount:0,paxTotal:0,paxCount:0,dates:[]};
+    placeMap[key].count++;
+    if (r.vip) placeMap[key].vipCount++;
+    if (r.pax!=null) { placeMap[key].paxTotal+=r.pax; placeMap[key].paxCount++; }
+    if (r.date) placeMap[key].dates.push(r.date);
+  });
+  const places = Object.values(placeMap);
+  _speechPlaces = places;
+
+  // エリア集計
+  const areaMap = {};
+  places.forEach(p => {
+    if (!areaMap[p.area]) areaMap[p.area]={area:p.area,count:0,vipCount:0,paxTotal:0,paxCount:0,places:[],types:[]};
+    areaMap[p.area].count+=p.count; areaMap[p.area].vipCount+=p.vipCount;
+    areaMap[p.area].paxTotal+=p.paxTotal; areaMap[p.area].paxCount+=p.paxCount;
+    areaMap[p.area].places.push(p.place);
+    areaMap[p.area].types.push(p.type);
+  });
+  const withSpeech = Object.values(areaMap).map(a=>({...a,rate:AREA_RATE_MAP[a.area]??null})).filter(a=>a.rate!==null);
+  const noSpeech   = DATA.filter(d=>!areaMap[d['地域']]).map(d=>({area:d['地域'],rate:d['チームみらい率'],count:0}));
+
+  // サマリー
+  const totalCount = data.length;
+  const vipCount   = data.filter(r=>r.vip).length;
+  const uniqPlaces = places.length;
+  const paxRows    = data.filter(r=>r.pax!=null);
+  const paxTotal   = paxRows.reduce((s,r)=>s+r.pax,0);
+  const paxAvg     = paxRows.length ? Math.round(paxTotal/paxRows.length) : null;
+
+  document.getElementById('sp-total-count').innerHTML=`${totalCount}<span class="stat-unit">回</span>`;
+  document.getElementById('sp-total-places').textContent=`${uniqPlaces}か所`;
+  document.getElementById('sp-vip-count').innerHTML=`${vipCount}<span class="stat-unit">回</span>`;
+  document.getElementById('sp-vip-pct').textContent=`全体の${Math.round(vipCount/Math.max(totalCount,1)*100)}%`;
+  document.getElementById('sp-pax-total').innerHTML=paxTotal>0?`${paxTotal.toLocaleString()}<span class="stat-unit">人</span>`:'—';
+  document.getElementById('sp-pax-avg').textContent=paxAvg!=null?`平均${paxAvg}人/回（記録あり${paxRows.length}件）`:'記録なし';
+
+  const avgWith    = withSpeech.length?(withSpeech.reduce((s,a)=>s+a.rate,0)/withSpeech.length).toFixed(1):'—';
+  const avgWithout = noSpeech.length?(noSpeech.reduce((s,a)=>s+a.rate,0)/noSpeech.length).toFixed(1):'—';
+  const diff       = (avgWith!=='—'&&avgWithout!=='—')?(parseFloat(avgWith)-parseFloat(avgWithout)).toFixed(1):'—';
+  document.getElementById('sp-avg-with').innerHTML=`${avgWith}<span class="stat-unit">%</span>`;
+  document.getElementById('sp-avg-without').innerHTML=`${avgWithout}<span class="stat-unit">%</span>`;
+  document.getElementById('sp-cnt-with').textContent=`${withSpeech.length}エリア`;
+  document.getElementById('sp-cnt-without').textContent=`${noSpeech.length}エリア`;
+  document.getElementById('sp-diff').innerHTML=diff!=='—'?`<span style="color:${parseFloat(diff)>=0?'var(--green-mid)':'var(--red)'}">${parseFloat(diff)>=0?'+':''}${diff}<span class="stat-unit">pt</span></span>`:'—';
+
+  // 種別内訳
+  const typeCounts = {};
+  data.forEach(r=>{ const t=r.type||'その他'; typeCounts[t]=(typeCounts[t]||0)+1; });
+  const maxTypeCount = Math.max(...Object.values(typeCounts),1);
+  document.getElementById('sp-type-breakdown').innerHTML = Object.entries(typeCounts)
+    .sort((a,b)=>b[1]-a[1])
+    .map(([t,c])=>`
+      <div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid #f0f4f1;">
+        <div style="width:8px;height:8px;border-radius:50%;background:${TYPE_COLORS[t]||'#6b7280'};flex-shrink:0;"></div>
+        <div style="flex:1;font-size:12px;font-weight:700;">${t}</div>
+        <div style="width:80px;height:5px;background:#f0f4f1;border-radius:3px;overflow:hidden;">
+          <div style="height:100%;width:${Math.round(c/maxTypeCount*100)}%;background:${TYPE_COLORS[t]||'#6b7280'};border-radius:3px;"></div>
+        </div>
+        <div style="font-size:12px;font-weight:900;color:${TYPE_COLORS[t]||'#6b7280'};font-family:'DM Mono',monospace;width:32px;text-align:right;">${c}回</div>
+      </div>`).join('');
+
+  // マップバー
+  const maxCount = Math.max(...withSpeech.map(a=>a.count),1);
+  const sortedAreas = [...withSpeech].sort((a,b)=>b.count-a.count);
+  document.getElementById('sp-map-bars').innerHTML=sortedAreas.map(a=>`
+    <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid #f0f4f1;">
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:11px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${a.area}</div>
+        <div style="font-size:10px;color:var(--muted);">${[...new Set(a.places)].filter(Boolean).join('・')||'—'}</div>
+      </div>
+      <div style="width:70px;height:6px;background:#fef3c7;border-radius:3px;overflow:hidden;flex-shrink:0;">
+        <div style="height:100%;width:${Math.round(a.count/maxCount*100)}%;background:#ea580c;border-radius:3px;"></div>
+      </div>
+      <div style="font-size:11px;font-weight:900;color:#ea580c;font-family:'DM Mono',monospace;width:28px;text-align:right;">${a.count}回</div>
+      <div style="font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;width:38px;text-align:right;">${a.rate}%</div>
+    </div>`).join('');
+
+  renderSpeechPlaceTable('count');
+  setTimeout(()=>{ drawSpeechScatter(withSpeech,noSpeech); drawSpeechBar(withSpeech,noSpeech); },60);
+
+  // インサイト
+  if (withSpeech.length>0&&diff!=='—') {
+    const sign=parseFloat(diff)>=0?'+':'';
+    const topArea=sortedAreas[0];
+    const topType=Object.entries(typeCounts).sort((a,b)=>b[1]-a[1])[0];
+    const mostVip=[...withSpeech].sort((a,b)=>b.vipCount-a.vipCount)[0];
+    document.getElementById('sp-insight').innerHTML=`
+      <strong>分析：</strong>活動実施エリアの平均得票率は<strong>${avgWith}%</strong>で未実施（${avgWithout}%）より<strong>${sign}${diff}pt</strong>。
+      最多活動エリアは<strong>${topArea?.area}（${topArea?.count}回）</strong>、最多種別は<strong>${topType?.[0]}（${topType?.[1]}回）</strong>。
+      ${paxTotal>0?`延べ参加人数は<strong>${paxTotal.toLocaleString()}人</strong>（記録ありの${paxRows.length}件のみ）。`:''}
+      <br>※もともと活動しやすいエリアへの集中バイアスがある点に注意が必要です。`;
+  }
+}
+
+function renderSpeechPlaceTable(sortKey) {
+  let sorted=[..._speechPlaces];
+  if(sortKey==='count') sorted.sort((a,b)=>b.count-a.count);
+  else if(sortKey==='area') sorted.sort((a,b)=>a.area.localeCompare(b.area,'ja'));
+  else if(sortKey==='vip') sorted.sort((a,b)=>b.vipCount-a.vipCount);
+  else if(sortKey==='pax') sorted.sort((a,b)=>(b.paxTotal||0)-(a.paxTotal||0));
+  else if(sortKey==='rate') sorted.sort((a,b)=>(AREA_RATE_MAP[b.area]||0)-(AREA_RATE_MAP[a.area]||0));
+  document.getElementById('sp-place-tbody').innerHTML=sorted.map(p=>{
+    const rate=AREA_RATE_MAP[p.area];
+    const rateClass=rate>=12?'high':rate<=7?'low':'';
+    const lastDate=p.dates.length?[...p.dates].sort().reverse()[0]:'';
+    const paxStr=p.paxTotal>0?`${p.paxTotal}人`:'—';
+    const color=TYPE_COLORS[p.type]||'#6b7280';
+    return `<tr>
+      <td style="text-align:left;padding-left:8px;">
+        <div style="font-weight:700;font-size:11px;">${p.place||'（場所名なし）'}</div>
+        <div style="font-size:10px;color:var(--muted);">${p.area}</div>
+        <div style="display:flex;align-items:center;gap:4px;margin-top:2px;">
+          <span style="width:6px;height:6px;border-radius:50%;background:${color};display:inline-block;"></span>
+          <span style="font-size:9px;color:${color};font-weight:700;">${p.type}</span>
+          ${lastDate?`<span style="font-size:9px;color:var(--muted);font-family:'DM Mono',monospace;">　${lastDate}</span>`:''}
+        </div>
+      </td>
+      <td style="color:#ea580c;font-weight:700;">${p.count}回</td>
+      <td style="color:${p.vipCount>0?'#7c3aed':'var(--muted)'};">${p.vipCount>0?`⭐${p.vipCount}`:'—'}</td>
+      <td style="font-family:'DM Mono',monospace;font-size:11px;">${paxStr}</td>
+      <td class="${rateClass}">${rate!=null?rate+'%':'—'}</td>
+    </tr>`;
+  }).join('');
+}
+
+function sortSpeechTable(key,btn) {
+  renderSpeechPlaceTable(key);
+  document.querySelectorAll('#sec-speech .sort-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+// 手動入力フォールバック
+const SPEECH_TYPES = ['街頭演説','街頭活動（チラシ配り等）','街宣車遊説','個人演説会','ももたろう','その他'];
+let _manualEntries=[];
+function addSpeechEntry(){
+  const id=Date.now()+Math.random(); _manualEntries.push({id}); renderManualEntries();
+}
+function removeManualEntry(id){
+  _manualEntries=_manualEntries.filter(e=>e.id!==id); renderManualEntries();
+}
+function renderManualEntries(){
+  document.getElementById('speech-entries').innerHTML=_manualEntries.map(e=>`
+    <div data-id="${e.id}" style="margin-bottom:10px;padding:9px;background:#f9fafb;border-radius:9px;border:1px solid var(--border);">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:5px;">
+        <input class="sp-place" type="text" placeholder="場所名（例：武蔵小杉駅前）"
+          style="padding:7px 8px;border:1px solid var(--border);border-radius:8px;font-size:11px;font-family:'Noto Sans JP',sans-serif;background:var(--white);color:var(--text);">
+        <input class="sp-area" type="text" placeholder="自治体名" list="dl-${e.id}"
+          style="padding:7px 8px;border:1px solid var(--border);border-radius:8px;font-size:11px;font-family:'Noto Sans JP',sans-serif;background:var(--white);color:var(--text);">
+        <datalist id="dl-${e.id}">${AREA_NAMES.map(a=>`<option value="${a}">`).join('')}</datalist>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 60px 70px 26px;gap:5px;align-items:center;">
+        <select class="sp-type"
+          style="padding:7px 8px;border:1px solid var(--border);border-radius:8px;font-size:11px;font-family:'Noto Sans JP',sans-serif;background:var(--white);color:var(--text);">
+          ${SPEECH_TYPES.map(t=>`<option value="${t}">${t}</option>`).join('')}
+        </select>
+        <input class="sp-count" type="number" placeholder="回数" min="1"
+          style="padding:7px 5px;border:1px solid var(--border);border-radius:8px;font-size:11px;text-align:center;font-family:'DM Mono',monospace;background:var(--white);color:var(--text);">
+        <input class="sp-pax" type="number" placeholder="人数(任意)" min="0"
+          style="padding:7px 5px;border:1px solid var(--border);border-radius:8px;font-size:11px;text-align:center;font-family:'DM Mono',monospace;background:var(--white);color:var(--text);">
+        <button onclick="removeManualEntry(${e.id})"
+          style="width:26px;height:26px;border-radius:50%;border:1px solid #fca5a5;background:#fee2e2;color:#dc2626;font-size:14px;cursor:pointer;flex-shrink:0;">×</button>
+      </div>
+    </div>`).join('');
+}
+function analyzeManualSpeech(){
+  const rows=document.querySelectorAll('#speech-entries [data-id]');
+  const rawData=[];
+  rows.forEach(row=>{
+    const place = row.querySelector('.sp-place').value.trim();
+    const area  = row.querySelector('.sp-area').value.trim();
+    const type  = row.querySelector('.sp-type').value || 'その他';
+    const count = parseInt(row.querySelector('.sp-count').value)||0;
+    const paxVal= parseInt(row.querySelector('.sp-pax').value);
+    const pax   = isNaN(paxVal) ? null : paxVal;
+    if(!area||count<=0) return;
+    for(let i=0;i<count;i++) rawData.push({place,area,type,vip:false,pax:i===0?pax:null,date:''});
+  });
+  if(rawData.length===0){alert('自治体名と回数を入力してください');return;}
+  processSpeechData(rawData);
+  setStatus('green',`手動入力 ${rawData.length}件`,'');
+}
+
+// 散布図
+function drawSpeechScatter(withSpeech, noSpeech) {
+  const canvas=document.getElementById('speech-scatter'); if(!canvas) return;
+  const dpr=window.devicePixelRatio||1;
+  const W=Math.max(canvas.parentElement.offsetWidth-26,300),H=280;
+  canvas.width=W*dpr;canvas.height=H*dpr;canvas.style.width=W+'px';canvas.style.height=H+'px';
+  const ctx=canvas.getContext('2d');ctx.scale(dpr,dpr);
+  const pad={l:40,r:20,t:20,b:44},pw=W-pad.l-pad.r,ph=H-pad.t-pad.b;
+  const maxX=Math.max(...withSpeech.map(d=>d.count),1)+1,maxY=16;
+  ctx.clearRect(0,0,W,H);ctx.fillStyle='#f9fafb';ctx.fillRect(pad.l,pad.t,pw,ph);
+  ctx.strokeStyle='#e5e7eb';ctx.lineWidth=1;ctx.font='9px DM Mono,monospace';
+  ctx.fillStyle='#9ca3af';ctx.textAlign='right';
+  [0,4,8,12,16].forEach(y=>{const cy=pad.t+ph-(y/maxY*ph);ctx.beginPath();ctx.moveTo(pad.l,cy);ctx.lineTo(pad.l+pw,cy);ctx.stroke();ctx.fillText(y+'%',pad.l-6,cy+3);});
+  ctx.textAlign='center';
+  for(let x=0;x<=maxX;x+=Math.max(1,Math.round(maxX/6))){
+    const cx=pad.l+(x/maxX*pw);ctx.beginPath();ctx.strokeStyle='#e5e7eb';ctx.moveTo(cx,pad.t);ctx.lineTo(cx,pad.t+ph);ctx.stroke();
+    ctx.fillStyle='#9ca3af';ctx.fillText(x,cx,pad.t+ph+14);
+  }
+  ctx.strokeStyle='#d1d5db';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(pad.l,pad.t);ctx.lineTo(pad.l,pad.t+ph);ctx.lineTo(pad.l+pw,pad.t+ph);ctx.stroke();
+  ctx.fillStyle='#6b7b6e';ctx.font="10px 'Noto Sans JP',sans-serif";ctx.textAlign='center';
+  ctx.fillText('演説回数（回）',pad.l+pw/2,H-4);
+  ctx.save();ctx.translate(12,pad.t+ph/2);ctx.rotate(-Math.PI/2);ctx.fillText('得票率',0,0);ctx.restore();
+  if(withSpeech.length>1){
+    const n=withSpeech.length,sx=withSpeech.reduce((s,d)=>s+d.count,0),sy=withSpeech.reduce((s,d)=>s+d.rate,0);
+    const sxy=withSpeech.reduce((s,d)=>s+d.count*d.rate,0),sx2=withSpeech.reduce((s,d)=>s+d.count**2,0);
+    const den=n*sx2-sx**2;
+    if(den!==0){const sl=(n*sxy-sx*sy)/den,ic=(sy-sl*sx)/n;ctx.beginPath();ctx.strokeStyle='rgba(234,88,12,0.35)';ctx.lineWidth=1.5;ctx.setLineDash([5,4]);ctx.moveTo(pad.l,pad.t+ph-Math.min(Math.max(ic/maxY*ph,0),ph));ctx.lineTo(pad.l+pw,pad.t+ph-Math.min(Math.max((sl*maxX+ic)/maxY*ph,0),ph));ctx.stroke();ctx.setLineDash([]);}
+  }
+  noSpeech.forEach(d=>{const cx=pad.l+(Math.random()-0.5)*10+5,cy=pad.t+ph-(d.rate/maxY*ph);ctx.beginPath();ctx.arc(cx,cy,4,0,Math.PI*2);ctx.fillStyle='rgba(156,163,175,0.3)';ctx.fill();});
+  withSpeech.forEach(d=>{
+    const cx=pad.l+(d.count/maxX*pw),cy=pad.t+ph-(d.rate/maxY*ph);
+    ctx.beginPath();ctx.arc(cx,cy,d.vipCount>0?7:5,0,Math.PI*2);
+    ctx.fillStyle=d.vipCount>0?'#7c3aed':'#ea580c';ctx.fill();ctx.strokeStyle='white';ctx.lineWidth=1.5;ctx.stroke();
+    if(d.vipCount>0){ctx.font='8px serif';ctx.fillStyle='white';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('★',cx,cy);}
+  });
+  ctx.textBaseline='alphabetic';
+  canvas._scatter={withSpeech,noSpeech,pad,pw,ph,maxX,maxY};
+}
+document.addEventListener('click',e=>{
+  const canvas=document.getElementById('speech-scatter');
+  if(!canvas||e.target!==canvas||!canvas._scatter) return;
+  const {withSpeech,pad,pw,ph,maxX,maxY}=canvas._scatter;
+  const rect=canvas.getBoundingClientRect(),mx=e.clientX-rect.left,my=e.clientY-rect.top;
+  let nearest=null,minDist=28;
+  withSpeech.forEach(d=>{const cx=pad.l+(d.count/maxX*pw),cy=pad.t+ph-(d.rate/maxY*ph);const dist=Math.hypot(cx-mx,cy-my);if(dist<minDist){minDist=dist;nearest=d;}});
+  if(nearest) alert(`${nearest.area}\n演説: ${nearest.count}回（議員参加 ${nearest.vipCount}回）\n場所: ${[...new Set(nearest.places||[])].join('、')||'—'}\n得票率: ${nearest.rate}%`);
+});
+
+// 棒グラフ
+function drawSpeechBar(withSpeech, noSpeech) {
+  const canvas=document.getElementById('speech-bar');if(!canvas) return;
+  const dpr=window.devicePixelRatio||1,W=Math.max(canvas.parentElement.offsetWidth-26,300),H=200;
+  canvas.width=W*dpr;canvas.height=H*dpr;canvas.style.width=W+'px';canvas.style.height=H+'px';
+  const ctx=canvas.getContext('2d');ctx.scale(dpr,dpr);
+  const pad={l:40,r:20,t:20,b:44},pw=W-pad.l-pad.r,ph=H-pad.t-pad.b,maxY=16;
+  ctx.clearRect(0,0,W,H);ctx.fillStyle='#f9fafb';ctx.fillRect(pad.l,pad.t,pw,ph);
+  const buckets=[
+    {label:'未実施',data:noSpeech,color:'rgba(156,163,175,0.6)'},
+    {label:'1〜2回',data:withSpeech.filter(d=>d.count<=2),color:'#fdba74'},
+    {label:'3〜5回',data:withSpeech.filter(d=>d.count>=3&&d.count<=5),color:'#f97316'},
+    {label:'6回以上',data:withSpeech.filter(d=>d.count>=6),color:'#ea580c'},
+  ].filter(b=>b.data.length>0);
+  ctx.strokeStyle='#e5e7eb';ctx.lineWidth=1;ctx.font='9px DM Mono,monospace';ctx.fillStyle='#9ca3af';ctx.textAlign='right';
+  [0,4,8,12,16].forEach(y=>{const cy=pad.t+ph-(y/maxY*ph);ctx.beginPath();ctx.moveTo(pad.l,cy);ctx.lineTo(pad.l+pw,cy);ctx.stroke();ctx.fillText(y+'%',pad.l-6,cy+3);});
+  ctx.strokeStyle='#d1d5db';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(pad.l,pad.t);ctx.lineTo(pad.l,pad.t+ph);ctx.lineTo(pad.l+pw,pad.t+ph);ctx.stroke();
+  const bw=(pw/buckets.length)*0.6,gap=pw/buckets.length;
+  buckets.forEach((b,i)=>{
+    const avg=b.data.reduce((s,d)=>s+d.rate,0)/b.data.length,cx=pad.l+gap*i+gap/2,bh=(avg/maxY)*ph;
+    ctx.fillStyle=b.color;ctx.fillRect(cx-bw/2,pad.t+ph-bh,bw,bh);
+    ctx.fillStyle='#374151';ctx.font="10px 'Noto Sans JP',sans-serif";ctx.textAlign='center';ctx.fillText(b.label,cx,pad.t+ph+14);
+    ctx.fillStyle='#1a1a1a';ctx.font="bold 10px 'DM Mono',monospace";ctx.fillText(avg.toFixed(1)+'%',cx,pad.t+ph-bh-5);
+    ctx.fillStyle='#6b7b6e';ctx.font="9px 'Noto Sans JP',sans-serif";ctx.fillText(`n=${b.data.length}`,cx,pad.t+ph+26);
+  });
+}
+
+window.addEventListener('resize',()=>{
+  if(document.getElementById('sec-speech')?.classList.contains('active')){
+    const c=document.getElementById('speech-scatter');
+    if(c?._scatter) drawSpeechScatter(c._scatter.withSpeech,c._scatter.noSpeech);
+  }
+});
+
+
 </script>
 </body>
 </html>
