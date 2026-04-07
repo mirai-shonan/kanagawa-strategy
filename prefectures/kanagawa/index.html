@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>チームみらい 神奈川 活動戦略</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../shared/style.css">
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div class="logo-mark">み</div>
+    <div>
+      <div class="header-title"></div>
+      <div class="header-sub"></div>
+    </div>
+  </div>
+  <div class="tab-group">
+    <div class="tab-group-label">データ</div>
+    <div class="tabs">
+      <button class="tab-btn active" onclick="sw('overview')">概況</button>
+      <button class="tab-btn" onclick="sw('all')">全自治体</button>
+      <button class="tab-btn" onclick="sw('compare')">衆参比較</button>
+      <button class="tab-btn" onclick="sw('kawai')">当選議員</button>
+    </div>
+  </div>
+  <div class="tab-group">
+    <div class="tab-group-label">戦略</div>
+    <div class="tabs">
+      <button class="tab-btn" onclick="sw('cost')">コスパ</button>
+      <button class="tab-btn" onclick="sw('nobiro')">伸びしろ</button>
+      <button class="tab-btn" onclick="sw('events')">イベント</button>
+      <button class="tab-btn" onclick="sw('posting')">ポスティング</button>
+      <button class="tab-btn" onclick="sw('speech')">演説</button>
+    </div>
+  </div>
+  <div class="tab-group">
+    <div class="tab-group-label">ターゲット別</div>
+    <div class="tabs">
+      <button class="tab-btn" onclick="sw('gakujutsu')">学術・若者</button>
+      <button class="tab-btn" onclick="sw('kosodate')">子育て</button>
+      <button class="tab-btn" onclick="sw('senior')">祖父母世代</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 概況 ===== -->
+<div class="section active" id="sec-overview">
+  <div id="overview-stats"></div>
+
+  <div class="card">
+    <div class="card-label" id="party-bars-label"></div>
+    <div id="party-bars"></div>
+    <div class="insight" id="overview-insight"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">チームみらい得票率 上位10エリア（衆院比例）</div>
+    <div id="top10-list"></div>
+  </div>
+</div>
+
+<!-- ===== 全自治体 ===== -->
+<div class="section" id="sec-all">
+  <input class="search-box" id="search-input" type="text" placeholder="🔍 市区町村を検索..." oninput="filterTable()">
+  <div class="sort-btns">
+    <button class="sort-btn active" onclick="sortTable('チームみらい率',true,this)">衆院得票率↓</button>
+    <button class="sort-btn" onclick="sortTable('チームみらい率_参',true,this)">参院得票率↓</button>
+    <button class="sort-btn" onclick="sortTable('チームみらい',true,this)">衆院票数↓</button>
+    <button class="sort-btn" onclick="sortTable('チームみらい_参票数',true,this)">参院票数↓</button>
+    <button class="sort-btn" onclick="sortTable('衆参差',true,this)">衆参差↓</button>
+  </div>
+  <div class="scroll-wrap">
+    <table class="area-table" id="all-table">
+      <thead>
+        <tr>
+          <th>地域</th>
+          <th>衆院<br>得票率</th>
+          <th>参院<br>得票率</th>
+          <th>衆院<br>票数</th>
+          <th>参院<br>票数</th>
+          <th>衆参<br>差</th>
+        </tr>
+      </thead>
+      <tbody id="all-tbody"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ===== 衆参比較 ===== -->
+<div class="section" id="sec-compare">
+  <div class="card" style="background:#fffbe6;border-color:#f5d87a;">
+    <div style="font-size:12px;color:#7a5c00;line-height:1.7;">
+      <strong>参院選R7.7（比例）→ 衆院選R8.2（比例）の変化。</strong>差が大きいエリアほど「衆院で新たに票を獲得できた」ことを示す。逆に差が小さいエリアは元からの固定支持層が多い可能性。
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">衆参差ランキング TOP10（伸びたエリア）</div>
+    <div id="diff-up-list"></div>
+    <div class="insight">
+      <strong>傾向：</strong>都市部・IT職場集積エリアで衆院時の伸びが大きい。横浜市青葉区（+7.4pt）・川崎市中原区（+7.2pt）・横浜市西区（+7.1pt）がトップ3。<strong>「衆院選でチームみらいを初めて知った層」が多いことを示す。</strong>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">伸びが鈍かったエリア</div>
+    <div id="diff-down-list"></div>
+    <div class="insight">
+      <strong>なぜ伸びが鈍かったのか：</strong><br>
+      横須賀・三浦・内陸部（綾瀬・相模原緑区・足柄上郡など）は自民党得票率が高く、<strong>保守地盤が強固</strong>。チームみらいの「テクノロジー・改革」路線より、安定・防衛・地元利益重視の有権者が多い。また農業・漁業従事者、自衛隊関係者世帯が多いエリアでは政策親和性が低い可能性がある。<br><br>
+      <strong>逆に訴求すべきポイント：</strong>「地域インフラのデジタル化」「医療DX」「安全保障の現実路線」など、保守層にも刺さる切り口が有効。
+    </div>
+  </div>
+</div>
+
+<!-- ===== 当選議員 ===== -->
+<div class="section" id="sec-kawai">
+  <div class="sec-header">R8.2 衆院選 チーム神奈川 当選議員</div>
+
+  <div style="background:linear-gradient(135deg,#6eddc4,#95e3cd);border-radius:13px;padding:14px;margin-bottom:11px;color:#0a3d22;">
+    <div style="font-size:11px;color:rgba(10,61,34,.6);font-family:'DM Mono',monospace;margin-bottom:10px;">南関東ブロック 比例代表 2名当選🎉　＋　比例代表（他ブロック）1名</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
+      <div style="background:rgba(255,255,255,.45);border-radius:10px;padding:12px;">
+        <div style="font-size:16px;font-weight:900;margin-bottom:2px;color:#0a3d22;">河合 みちお</div>
+        <div style="font-size:10px;color:rgba(10,61,34,.55);font-family:'DM Mono',monospace;margin-bottom:8px;">KAWAI MICHIO</div>
+        <div style="font-size:10px;color:rgba(10,61,34,.8);line-height:1.6;">R7.7 参院神奈川選挙区 落選<br>R8.2 衆院南関東ブロック <span style="color:#0a6e3f;font-weight:700;">当選</span></div>
+      </div>
+      <div style="background:rgba(255,255,255,.45);border-radius:10px;padding:12px;">
+        <div style="font-size:16px;font-weight:900;margin-bottom:2px;color:#0a3d22;">山田 えり</div>
+        <div style="font-size:10px;color:rgba(10,61,34,.55);font-family:'DM Mono',monospace;margin-bottom:8px;">YAMADA ERI</div>
+        <div style="font-size:10px;color:rgba(10,61,34,.8);line-height:1.6;">衆院選のみ出馬<br>R8.2 衆院南関東ブロック <span style="color:#0a6e3f;font-weight:700;">当選</span></div>
+      </div>
+    </div>
+    <div style="background:rgba(255,255,255,.25);border-radius:10px;padding:12px;">
+      <div style="font-size:16px;font-weight:900;margin-bottom:2px;color:#0a3d22;">小林 しゅうへい</div>
+      <div style="font-size:10px;color:rgba(10,61,34,.55);font-family:'DM Mono',monospace;margin-bottom:8px;">KOBAYASHI SHUHEI</div>
+      <div style="font-size:10px;color:rgba(10,61,34,.8);line-height:1.6;">R8.2 衆院比例代表 <span style="color:#0a6e3f;font-weight:700;">当選</span>　／　<span style="color:rgba(10,61,34,.6);">※神奈川での活動なし</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">河合みちお 参院選（R7.7）市区別得票率</div>
+    <div style="font-size:11px;color:var(--muted);margin-bottom:8px;">※山田えりさんは参院選への出馬なし</div>
+    <div id="kawai-list"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">参院落選から衆院2名当選へ</div>
+    <div class="insight" style="margin-top:0;">
+      河合みちおはR7.7参院神奈川選挙区では約3〜5%台にとどまり落選。しかし<strong>R8.2衆院選では河合みちお・山田えりの2名が南関東ブロックで比例当選</strong>を果たした。衆院比例10%という政党の伸びが2議席を生んだ形で、チーム神奈川として大きな前進。<br><br>
+      今後の参院選に向けては、参院での得票が高かった<strong>川崎市中原区（5.35%）・横浜市港北区（4.73%）・横浜市西区（4.5%）</strong>でのさらなる認知度向上が鍵。
+    </div>
+  </div>
+</div>
+
+<!-- ===== イベント ===== -->
+<div class="section" id="sec-events">
+  <div class="sec-header">神奈川 チームみらい親和性イベント</div>
+
+  <div class="card" style="background:#eef4ff;border-color:#a8c4f0;">
+    <div style="font-size:12px;color:#1a3a6b;line-height:1.7;">
+      AI・ロボット・モビリティ・テクノロジー系のイベントはチームみらいの政策と直結する参加者が集まる場所。<strong>展示会周辺での街頭活動・ポスティング</strong>は通常より高い関心層にリーチできる。
+    </div>
+  </div>
+
+  <div class="strategy-card">
+    <div class="strategy-header" style="background:#1a3a6b;">🚗 モビリティ・自動運転</div>
+    <div class="strategy-body">
+      <div class="priority-row">
+        <div class="priority-num" style="background:#1a3a6b;">1</div>
+        <div class="priority-content">
+          <div class="priority-name">人とくるまのテクノロジー展 2026 YOKOHAMA</div>
+          <div class="priority-desc">
+            自動車・自動運転・EV・次世代モビリティの国内最大の技術展。毎年数万人が来場。<br>
+            <strong>📅 2026年5月27日（水）〜29日（金）／パシフィコ横浜</strong><br>
+            <a href="https://aee.expo-info.jsae.or.jp/ja/yokohama/" style="color:#1a3a6b;font-size:10px;">🔗 公式サイト</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="strategy-card">
+    <div class="strategy-header" style="background:#1a3a6b;">🤖 AI・エッジテック・ロボット</div>
+    <div class="strategy-body">
+      <div class="priority-row">
+        <div class="priority-num" style="background:#1a3a6b;">1</div>
+        <div class="priority-content">
+          <div class="priority-name">EdgeTech+ 2026（エッジテクノロジー・生成AI・産業DX）</div>
+          <div class="priority-desc">
+            生成AI・IoT・セキュリティ・組込みシステムの国内最大級の展示会。エンジニア・IT専門職が多数来場。チームみらいの政策と最も親和性が高いイベント。<br>
+            <strong>📅 2026年11月18日（水）〜20日（金）／パシフィコ横浜</strong><br>
+            <a href="https://www.jasa.or.jp/expo/" style="color:#1a3a6b;font-size:10px;">🔗 公式サイト</a>
+          </div>
+        </div>
+      </div>
+      <div class="priority-row">
+        <div class="priority-num" style="background:#1a3a6b;">2</div>
+        <div class="priority-content">
+          <div class="priority-name">国際画像機器展 2026（AI・ロボティクス・スマートシティ）</div>
+          <div class="priority-desc">
+            画像処理・AI・ロボティクス・自動運転・医療診断AIの技術展。年々テクノロジー色が強まっている。<br>
+            <strong>📅 2026年12月2日（水）〜4日（金）／パシフィコ横浜</strong><br>
+            <a href="https://www.adcom-media.co.jp/ite/" style="color:#1a3a6b;font-size:10px;">🔗 公式サイト</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="strategy-card">
+    <div class="strategy-header" style="background:#1a3a6b;">🔬 バイオ・ヘルステック</div>
+    <div class="strategy-body">
+      <div class="priority-row">
+        <div class="priority-num" style="background:#1a3a6b;">1</div>
+        <div class="priority-content">
+          <div class="priority-name">BioJapan・healthTECH JAPAN（バイオ・医療テクノロジー）</div>
+          <div class="priority-desc">
+            世界最大級のバイオ・ヘルスケアDXイベント。デジタルヘルス・AI診断・再生医療が集結。医療DX・高額療養費制度などの訴求と親和性が高い。<br>
+            <strong>📅 例年10月／パシフィコ横浜（2026年日程は公式確認）</strong><br>
+            <a href="https://jcd-expo.jp/jp/" style="color:#1a3a6b;font-size:10px;">🔗 公式サイト</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="strategy-card">
+    <div class="strategy-header" style="background:#2d6a4f;">🏭 ロボット産業特区関連</div>
+    <div class="strategy-body">
+      <div class="priority-row">
+        <div class="priority-num" style="background:#2d6a4f;">1</div>
+        <div class="priority-content">
+          <div class="priority-name">さがみロボット産業特区 関連イベント</div>
+          <div class="priority-desc">
+            神奈川県主催のロボット展示・実証実験イベント。厚木・相模原・藤沢など特区12市町で随時開催。地域住民も来場するため、チームみらいのローカルな訴求に最適。<br>
+            <a href="https://sagamirobot.pref.kanagawa.jp/" style="color:#2d6a4f;font-size:10px;">🔗 さがみロボット産業特区 公式サイト（最新イベント情報）</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">イベント活用の考え方</div>
+    <div class="insight" style="margin-top:0;">
+      展示会への<strong>直接出展は難しくても</strong>、会場周辺（パシフィコ横浜前・みなとみらい駅周辺）での街頭活動は来場者層に直接リーチできる。また展示会後の懇親会・アフターイベントが近隣で開催されることも多く、そうした時間帯を狙った活動も効果的。<strong>SNSでイベントのハッシュタグに合わせた発信</strong>も来場者への認知を広げる手段として有効。
+    </div>
+  </div>
+</div>
+
+<!-- ===== コスパ ===== -->
+<div class="section" id="sec-cost">
+  <div class="sec-header">コスパ優先 ポスティング・街頭戦略</div>
+  <div class="card" style="background:#fffbe6;border-color:#f5d87a;">
+    <div style="font-size:12px;color:#7a5c00;line-height:1.7;">
+      <strong>コスパ＝</strong>「すでにチームみらい支持者が多い × 人口規模が大きい × 移動コストが低い」エリア優先。
+    </div>
+  </div>
+  <div class="strategy-card">
+    <div class="strategy-header">🥇 最優先（S級）― 大票田×高得票率</div>
+    <div class="strategy-body">
+      <div class="priority-row">
+        <div class="priority-num">1</div>
+        <div class="priority-content">
+          <div class="priority-name">川崎市中原区（武蔵小杉〜元住吉）<span class="tag tag-s">14.3%</span></div>
+          <div class="priority-desc">県内最高得票率。都心のIT企業に通うワーカーが多く住む居住地エリア。既存支持者が厚く、仲間づくりと新規獲得の両方が狙える。武蔵小杉駅は乗降客数も多く朝夕の街頭が効果的。</div>
+        </div>
+      </div>
+      <div class="priority-row">
+        <div class="priority-num">2</div>
+        <div class="priority-content">
+          <div class="priority-name">横浜市港北区（新横浜・日吉）<span class="tag tag-s">13.4%</span></div>
+          <div class="priority-desc">23,939票と横浜市内最大票数。IT企業集積。新横浜駅は複数路線で活動効率が高い。</div>
+        </div>
+      </div>
+      <div class="priority-row">
+        <div class="priority-num">3</div>
+        <div class="priority-content">
+          <div class="priority-name">横浜市青葉区（たまプラーザ〜青葉台）<span class="tag tag-s">12.9%</span></div>
+          <div class="priority-desc">20,327票。高所得ファミリー・教育熱心層。週末商業施設前が最適。衆参差+7.4ptと伸び代大。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="strategy-card">
+    <div class="strategy-header">🥈 準優先（A級）― 大票田×伸びしろ</div>
+    <div class="strategy-body">
+      <div class="priority-row">
+        <div class="priority-num">4</div>
+        <div class="priority-content">
+          <div class="priority-name">横浜市全域（戸塚・鶴見・保土ケ谷等）<span class="tag tag-a">約19万票</span></div>
+          <div class="priority-desc">各区10〜11%台で均一な支持。どこから活動しても安定した効果が期待できる。</div>
+        </div>
+      </div>
+      <div class="priority-row">
+        <div class="priority-num">5</div>
+        <div class="priority-content">
+          <div class="priority-name">藤沢市・鎌倉市・茅ヶ崎市<span class="tag tag-a">約4.3万票</span></div>
+          <div class="priority-desc">各10〜11%。東海道線沿線で3市まとめて活動可能。辻堂・大船が主要スポット。茅ヶ崎は<strong>北口が人流多くメインの街頭スポット</strong>。南口は転入・転出が多い居住エリアでポスティングによる未接触の新規有権者への訴求に有効。</div>
+        </div>
+      </div>
+      <div class="priority-row">
+        <div class="priority-num">6</div>
+        <div class="priority-content">
+          <div class="priority-name">川崎市全域（高津・多摩・宮前区等）<span class="tag tag-a">約8.5万票</span></div>
+          <div class="priority-desc">中原区に次ぐ高得票率エリアが揃う。溝の口・登戸・向ヶ丘遊園など拠点駅多数。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="strategy-card">
+    <div class="strategy-header">🥉 中長期投資（B級）― 低得票率×大票田</div>
+    <div class="strategy-body">
+      <div class="priority-row">
+        <div class="priority-num">7</div>
+        <div class="priority-content">
+          <div class="priority-name">相模原市（南区・中央区）<span class="tag tag-b">8〜9%台</span></div>
+          <div class="priority-desc">26,159票あるが得票率が低く認知度不足。今から活動で次回大幅増が見込める。</div>
+        </div>
+      </div>
+      <div class="priority-row">
+        <div class="priority-num">8</div>
+        <div class="priority-content">
+          <div class="priority-name">横須賀市・平塚市・厚木市<span class="tag tag-b">6〜8%台</span></div>
+          <div class="priority-desc">得票率低く自民地盤が強い。保守層向けの「デジタル地域振興」メッセージで切り込む。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 学術・若者 ===== -->
+<div class="section" id="sec-gakujutsu">
+  <div class="sec-header">学術都市・若者向け 街頭活動版</div>
+  <div class="card" style="background:#eef4ff;border-color:#a8c4f0;">
+    <div style="font-size:12px;color:#1a3a6b;line-height:1.7;">
+      <strong>狙いたい層：</strong>大学生・若手研究者・IT専門職。テクノロジー政策・教育・スタートアップ支援と最も親和性が高い。
+    </div>
+  </div>
+  <div class="strategy-card">
+    <div class="strategy-header" style="background:#1a3a6b;">🎓 大学・研究機関周辺（政策・IT親和性が高い）</div>
+    <div class="strategy-body">
+      <div class="priority-row"><div class="priority-num" style="background:#1a3a6b;">1</div><div class="priority-content"><div class="priority-name">慶應義塾大学SFC（湘南台駅）<span class="tag tag-s">最優先</span></div><div class="priority-desc">政策・IT・社会起業に関心が高い学生多数。湘南台駅改札前が最適。<br><strong>⏰ 平日（学期中）11〜13時</strong>／土日は学生がほぼいないため不向き。</div></div></div>
+      <div class="priority-row"><div class="priority-num" style="background:#1a3a6b;">2</div><div class="priority-content"><div class="priority-name">慶應義塾大学日吉キャンパス（日吉駅）</div><div class="priority-desc">日吉駅直結で活動しやすい。1・2年生が多く政治関心層の掘り起こしに有効。SFCとセットで慶應を両方カバー。<br><strong>⏰ 平日（学期中）昼12〜13時・夕方16時以降</strong></div></div></div>
+      <div class="priority-row"><div class="priority-num" style="background:#1a3a6b;">3</div><div class="priority-content"><div class="priority-name">横浜国立大学（羽沢横浜国大駅）</div><div class="priority-desc">理工・経済系。デジタル経済政策との相性が高い。駅から徒歩約15分。<br><strong>⏰ 平日（学期中）9〜10時・12〜13時</strong></div></div></div>
+      <div class="priority-row"><div class="priority-num" style="background:#1a3a6b;">4</div><div class="priority-content"><div class="priority-name">神奈川大学 情報学部（白楽・六角橋駅）</div><div class="priority-desc">2023年開設の情報学部・工学部。六角橋商店街も若者が多く視認性◎。横浜市神奈川区（12.4%）内。<br><strong>⏰ 平日（学期中）昼〜17時・週末は商店街で通行人向けに</strong></div></div></div>
+      <div class="priority-row"><div class="priority-num" style="background:#1a3a6b;">5</div><div class="priority-content"><div class="priority-name">横浜市立大学 データサイエンス学部（金沢八景駅）</div><div class="priority-desc">データサイエンス・AI系の専門学部。チームみらいの政策と直結。横浜市金沢区（9.4%）。<br><strong>⏰ 平日（学期中）昼12〜13時</strong></div></div></div>
+      <div class="priority-row"><div class="priority-num" style="background:#1a3a6b;">6</div><div class="priority-content"><div class="priority-name">青山学院大学 相模原キャンパス（矢部駅）</div><div class="priority-desc">社会情報学部・理工学部。相模原市の得票率8%台と低く、学生票開拓で伸びしろ大。<br><strong>⏰ 平日（学期中）昼12〜13時</strong></div></div></div>
+      <div class="priority-row"><div class="priority-num" style="background:#1a3a6b;">7</div><div class="priority-content"><div class="priority-name">東京科学大学 すずかけ台キャンパス（すずかけ台駅）<span class="tag tag-s">最注目</span></div><div class="priority-desc">旧・東京工業大学。情報工学系・数理計算科学系・生命理工学院が集まる国立理工系大学。青葉台の隣駅で田園都市線沿線。横浜市緑区（10.0%）内。<br><strong>⏰ 平日（学期中）昼12〜13時・夕方16時以降</strong></div></div></div>
+      <div class="priority-row"><div class="priority-num" style="background:#1a3a6b;">8</div><div class="priority-content"><div class="priority-name">湘南工科大学 情報学部（辻堂駅）</div><div class="priority-desc">辻堂駅から近く、テラスモール湘南の子育て訴求と同日活動が可能。<br><strong>⏰ 平日（学期中）昼12〜13時</strong></div></div></div>
+      <div class="priority-row"><div class="priority-num" style="background:#1a3a6b;">9</div><div class="priority-content"><div class="priority-name">神奈川工科大学 情報学部（愛甲石田駅）</div><div class="priority-desc">厚木市に位置する理工系専門大学。厚木市の得票率7.8%と低く開拓余地あり。<br><strong>⏰ 平日（学期中）昼12〜13時</strong></div></div></div>
+    </div>
+  </div>
+  <div class="strategy-card">
+    <div class="strategy-header" style="background:#1a3a6b;">💻 IT・テック／ロボティクス／モビリティ集積エリア</div>
+    <div class="strategy-body">
+      <div class="priority-row"><div class="priority-num" style="background:#1a3a6b;">1</div><div class="priority-content"><div class="priority-name">みなとみらい（横浜市西区）<span class="tag tag-s">13.6%</span></div><div class="priority-desc">日産自動車本社・ロボット系スタートアップが集積。<strong>2025年度に自動運転モビリティサービスの実証実験をみなとみらい〜関内エリアで実施中。</strong>政策と現場が直結するエリア。<br><strong>⏰ 平日 朝7:30〜9時・夕方17:30〜19時</strong></div></div></div>
+      <div class="priority-row"><div class="priority-num" style="background:#1a3a6b;">2</div><div class="priority-content"><div class="priority-name">新横浜（横浜市港北区）<span class="tag tag-s">13.4%</span></div><div class="priority-desc">IT企業・テクノロジー系オフィスが集中。<br><strong>⏰ 平日 朝7:30〜9時（通勤）／夕方17:30〜19時（退勤）</strong></div></div></div>
+      <div class="priority-row"><div class="priority-num" style="background:#1a3a6b;">3</div><div class="priority-content"><div class="priority-name">センター北・南（横浜市都筑区）<span class="tag tag-a">11.9%</span></div><div class="priority-desc">IT・研究系企業が集積するオフィスエリア。共働き・専門職世帯が多い。<br><strong>⏰ 平日 朝7:30〜9時・夕方17:30〜19時</strong></div></div></div>
+      <div class="priority-row"><div class="priority-num" style="background:#1a3a6b;">4</div><div class="priority-content"><div class="priority-name">さがみロボット産業特区エリア<span class="tag tag-b">注目</span></div><div class="priority-desc">国指定の特区。<strong>相模原・平塚・藤沢・茅ヶ崎・厚木・大和・伊勢原・海老名・座間・綾瀬・寒川・愛川</strong>の12市町でロボット開発・実証が進行中。チームみらいの政策と直結するエリアが広範囲に。街頭・ポスティングで「神奈川がロボット特区である」ことを訴求できる。<br><a href="https://sagamirobot.pref.kanagawa.jp/" style="color:#1a3a6b;font-size:10px;">🔗 さがみロボット産業特区 公式サイト</a><br><strong>⏰ 各市の主要駅・商業施設前</strong></div></div></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-label">学術・若者向け メッセージ</div>
+    <div class="chip-wrap">
+      <span class="chip">AI・テクノロジー政策</span><span class="chip">自動運転・モビリティ革命</span>
+      <span class="chip">ロボット産業支援</span><span class="chip">スタートアップ支援</span>
+      <span class="chip">奨学金改革</span><span class="chip">社会保険料引き下げ</span>
+      <span class="chip">プッシュ型行政（申請不要の給付）</span>
+      <span class="chip">科学技術予算増</span><span class="chip">若者の政治参加</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 子育て ===== -->
+<div class="section" id="sec-kosodate">
+  <div class="sec-header">子育て世代向け 街頭・ポスティング版</div>
+  <div class="card" style="background:#f0fdf4;border-color:#86efac;">
+    <div style="font-size:12px;color:#14532d;line-height:1.7;">
+      <strong>狙いたい層：</strong>30〜40代ファミリー・共働き世帯。保育・教育費・子育て支援への関心が高く無党派が多い。
+    </div>
+  </div>
+  <div class="strategy-card">
+    <div class="strategy-header" style="background:#166534;">👨‍👩‍👧 子育て世帯集積スポット</div>
+    <div class="strategy-body">
+      <div class="priority-row"><div class="priority-num" style="background:#166534;">1</div><div class="priority-content"><div class="priority-name">辻堂駅〜テラスモール湘南（藤沢市）<span class="tag tag-s">最優先</span></div><div class="priority-desc">近年ファミリー向けマンションが急増し若い世帯が集積。テラスモール湘南は湘南最大のファミリー商業施設で土日10〜14時が最大人流。<br>辻堂駅からアクセスできる<strong>湘南T-SITE</strong>（蔦屋書店・スタバ等）はライフスタイル意識の高い層が集まる。<br>さらに隣接する<strong>Fujisawa SST（サスティナブル・スマートタウン）</strong>はパナソニックホームズなどが手掛けるスマートシティの先進事例。エネルギー・AI・モビリティを実装した街に住む居住者はチームみらいの政策と親和性が極めて高い。<br>また辻堂には<strong>松下政経塾</strong>があり、チームみらいの宇佐美さんも塾生として学んだ地。地元との縁をアピールできる。<br><strong>⏰ 土日10〜14時（テラスモール）／平日夕方（T-SITE・駅周辺）</strong></div></div></div>
+      <div class="priority-row"><div class="priority-num" style="background:#166534;">2</div><div class="priority-content"><div class="priority-name">たまプラーザ〜青葉台（横浜市青葉区）<span class="tag tag-s">12.9%</span></div><div class="priority-desc">
+      <strong>神奈川県内で世帯年収トップクラス</strong>の高所得ファミリーエリア。私立中学受験率が横浜市内で最も高く、教育熱心な家庭が集中。渋谷まで直通20分・大手町まで直通36分と都心アクセスが抜群で、大企業・官公庁勤めのファミリーが多く住む。<br>
+      たまプラーザ駅直結の<strong>たまプラーザテラス</strong>（約57,000㎡の大型商業施設）は週末の人流が最大。また<strong>たまプラーザ団地の建て替え計画</strong>が進行中で、住宅政策・まちづくりに関心が高い住民層も多い。<br>
+      <strong>⏰ 土日10〜15時（たまプラーザテラス前）／平日夕方17〜19時（通勤帰宅層）</strong>
+      </div></div></div>
+      <div class="priority-row"><div class="priority-num" style="background:#166534;">3</div><div class="priority-content"><div class="priority-name">湘南台駅周辺（藤沢市）</div><div class="priority-desc">近年ファミリー向けマンションが急増し若い世帯が流入中。小田急・相鉄・横浜市営地下鉄の3路線が乗り入れるアクセスの良さが人気の理由。<br>一方で<strong>駅前に大きな商業施設がなく</strong>、買い物環境の充実を求める声が多い。住民の「もっと便利なまちに」という声が街頭での共感を生みやすい。<br>藤沢市は<strong>「健康と文化の森」整備事業</strong>として湘南台駅周辺の再開発構想を進めており、駅前に商業・業務系機能を集約する計画が進行中。AI・テクノロジー・スマートシティへの関心が高いチームみらいの支持者層と、再開発に期待を持つ住民層が重なりやすい。<br><a href="https://sites.google.com/view/infofjkenbunkumiai/" style="color:#166534;font-size:10px;">🔗 健康と文化の森 整備事業 詳細</a><br><strong>⏰ 平日（学期中）はSFCとセットで昼活動／週末は住民向けに駅前で</strong></div></div></div>
+      <div class="priority-row"><div class="priority-num" style="background:#166534;">4</div><div class="priority-content"><div class="priority-name">茅ヶ崎駅（茅ヶ崎市）</div><div class="priority-desc">
+      総務省「住民基本台帳人口移動報告（2023年）」によると、茅ヶ崎市の<strong>転入超過数は全国の一般市で1位</strong>。特に30〜44歳・0〜14歳の区分では特別区・政令市を含めても<strong>全国3位</strong>で、子育て世代に選ばれるまちとなっている。コロナ禍以降「湘南のライフスタイルに共感して移住してくる」ファミリーが急増中。<br>出典：<a href="https://www.city.chigasaki.kanagawa.jp/recruit/1060786/1061688.html" style="color:#166534;font-size:10px;">🔗 総務省 住民基本台帳人口移動報告（茅ヶ崎市）</a><br>
+      常に新しい住民が流入しているため、<strong>まだチームみらいを知らない有権者が継続的に生まれているエリア</strong>。認知度向上のアプローチが効きやすい。<br>
+      <strong>北口は人流が多く街頭活動のメインスポット</strong>。商業施設と住宅地が隣接し若いファミリー層の通行が多い。<strong>南口は転入・転出が多い居住エリア</strong>でポスティングによる新規有権者へのリーチに有効。両口の特性を使い分けたい。<br>
+      <strong>⏰ 北口：土日10〜14時（街頭）／南口エリア：週末午前中ポスティング</strong>
+      </div></div></div>
+      <div class="priority-row"><div class="priority-num" style="background:#166534;">5</div><div class="priority-content"><div class="priority-name">川崎市宮前区・多摩区（11〜12%台）</div><div class="priority-desc">
+      <strong>宮前区</strong>は「多摩田園都市」として計画的に開発されたベッドタウン。<strong>1世帯あたりの家族数が川崎市7区で最多（平均2.24人）</strong>で、15歳以下の子どもの割合が高く、65歳以上が低いという典型的なファミリーエリア。渋谷まで田園都市線で最短17分と都心アクセス抜群。鷺沼駅周辺では東急との大規模再開発も進行中。<br>
+      <strong>多摩区</strong>は登戸・向ヶ丘遊園エリアに専修大学・明治大学生田キャンパスがあり、学生層と子育てファミリーが混在。多摩川沿いの自然環境が豊かで、移住・定住への満足度が高い。<br>
+      両区とも<strong>共働き世帯の割合が高く</strong>、保育所・学童保育・子育て減税の訴求が最も直接的に響くエリア。<br>
+      <strong>⏰ 宮前区：鷺沼・宮前平駅前 平日夕方17〜19時／多摩区：登戸・向ヶ丘遊園駅前 土日昼〜夕方</strong>
+      </div></div></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-label">子育て世代向け メッセージ</div>
+    <div class="chip-wrap">
+      <span class="chip">子育て減税</span><span class="chip">社会保険料引き下げ</span>
+      <span class="chip">保育所・待機児童ゼロ</span><span class="chip">教育無償化</span>
+      <span class="chip">学童保育の充実</span><span class="chip">給食費無償</span>
+      <span class="chip">プッシュ型行政（申請不要の給付）</span>
+      <span class="chip">産後ケア</span><span class="chip">共働き支援</span>
+    </div>
+    <div class="insight" style="margin-top:10px;">
+    </div>
+  </div>
+</div>
+
+<!-- ===== シニア層 ===== -->
+<div class="section" id="sec-senior">
+  <div class="sec-header">祖父母世代向け 街頭・ポスティング版</div>
+  <div class="card" style="background:#f0f4ff;border-color:#a8b8f0;">
+    <div style="font-size:12px;color:#1a2a6b;line-height:1.7;">
+      <strong>狙いたい層：</strong>60〜70代以上のシニア・高齢者世帯。年金・医療・介護への関心が高く、神奈川県では横須賀・三浦・内陸部など高齢化率の高いエリアに集中。チームみらいの政策を「未来世代だけのもの」と思わせない訴求が鍵。
+    </div>
+  </div>
+
+  <div class="strategy-card">
+    <div class="strategy-header" style="background:#2a3a7a;">👴👵 シニア層が集まるエリア・スポット</div>
+    <div class="strategy-body">
+      <div class="priority-row"><div class="priority-num" style="background:#2a3a7a;">1</div><div class="priority-content"><div class="priority-name">横須賀市（追浜・久里浜・衣笠エリア）<span class="tag tag-b">注力エリア</span></div><div class="priority-desc">
+      <strong>高齢化率32.7%</strong>（令和6年3月現在）で3.1人に1人が65歳以上。全国平均（28.7%）を4ポイント上回り、神奈川県内でも高い水準。このまま進むと2050年には約10人に4人が高齢者になると推計されている。<br>
+      チームみらいの得票率は6.7%とまだ低く<strong>伸びしろが大きい</strong>。年金・高額療養費制度・医療DXのメッセージが直接刺さるエリア。商店街・スーパー前・公民館周辺の街頭が効果的。<br>
+      <strong>⏰ 平日午前中10〜12時（シニア層の買い物時間帯）</strong>
+      </div></div></div>
+      <div class="priority-row"><div class="priority-num" style="background:#2a3a7a;">2</div><div class="priority-content"><div class="priority-name">小田原市（商店街・小田原駅周辺）</div><div class="priority-desc">
+      高齢化率<strong>31.0%</strong>（2025年1月現在）で3.3人に1人が65歳以上。城下町としての歴史と地域コミュニティが根強く残り、自治会・老人会との接点がつくりやすい。小田原駅周辺の商店街は午前中のシニア層の買い物動線が集中。東海道線・小田急線・新幹線が通るターミナル駅で広域からの人の流れもある。<br>
+      <strong>⏰ 平日午前中10〜12時（シニアの買い物時間帯）／土日昼前後</strong>
+      </div></div></div>
+      <div class="priority-row"><div class="priority-num" style="background:#2a3a7a;">3</div><div class="priority-content"><div class="priority-name">横浜市旭区（二俣川・鶴ヶ峰エリア）</div><div class="priority-desc">
+      横浜市内で<strong>高齢化率30.4%（3位）</strong>（令和7年1月現在）。旧来からの住宅地で定住歴が長いシニア層が多く、地域への愛着が強い。二俣川駅は相鉄線の主要駅でシニア層の利用が多い。神奈川運転免許センターがあり行政サービスとの接点も多いエリア。<br>
+      <strong>⏰ 平日午前中（二俣川・鶴ヶ峰駅前）</strong>
+      </div></div></div>
+      <div class="priority-row"><div class="priority-num" style="background:#2a3a7a;">4</div><div class="priority-content"><div class="priority-name">三浦市・葉山町・逗子市（地域コミュニティ）</div><div class="priority-desc">
+      三浦半島〜葉山エリアは小規模自治体で口コミが広がりやすく、1回の活動で地域全体に認知が広がりやすい。三浦市は漁業従事者・高齢者が多く自衛隊関係の家庭も多いが、医療・介護アクセスへの不満が強い。逗子・葉山は文化的関心の高いアクティブシニアも多く、政策の「質」が評価されやすい。<br>
+      <strong>⏰ 土日午前中（地域の朝市・商店街）／自治会・老人会への挨拶まわりが特に有効</strong>
+      </div></div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">シニア層向け メッセージのポイント</div>
+    <div class="chip-wrap">
+      <span class="chip">高額療養費制度の維持</span>
+      <span class="chip">医療DX・オンライン診療</span>
+      <span class="chip">社会保険料引き下げ</span>
+      <span class="chip">介護の負担軽減</span>
+      <span class="chip">年金制度の安定</span>
+      <span class="chip">プッシュ型行政（申請不要の給付）</span>
+      <span class="chip">孫世代への投資</span>
+      <span class="chip">地域の安全・防災</span>
+    </div>
+    <div class="insight" style="margin-top:10px;">
+      <strong>シニア層への訴求の核心：</strong>「テクノロジーは難しい」というイメージを払拭することが最初のハードル。<strong>「孫・子どもの世代のために」「あなたの生活を楽にする」</strong>という視点で語ると受け入れられやすい。街頭では丁寧に立ち止まって話す姿勢が信頼につながる。
+    </div>
+  </div>
+</div>
+
+<!-- ===== 伸びしろ戦略 ===== -->
+<div class="section" id="sec-nobiro">
+  <div class="sec-header">次の統一地方選に向けた 伸びしろエリア戦略</div>
+
+  <div class="card" style="background:#f0fdf4;border-color:#86efac;">
+    <div style="font-size:12px;color:#14532d;line-height:1.7;">
+      <strong>考え方：</strong>得票率が低いエリアは「チームみらいが知られていない」ことが最大の原因。次の統一地方選まで時間がある今こそ、<strong>認知度を積み上げる中長期活動</strong>が有効。一度の街頭・ポスティングではなく「継続的な露出」がカギ。
+    </div>
+  </div>
+
+  <div class="strategy-card">
+    <div class="strategy-header" style="background:#2d6a4f;">📍 優先度S — 大票田なのに低得票率（最大の伸びしろ）</div>
+    <div class="strategy-body">
+      <div class="priority-row">
+        <div class="priority-num" style="background:#2d6a4f;">1</div>
+        <div class="priority-content">
+          <div class="priority-name">横須賀市 <span class="tag tag-s">6.7% / 11,604票</span></div>
+          <div class="priority-desc">
+            神奈川県内で横浜・川崎・相模原に次ぐ大票田（約17万票）なのに得票率6.7%と低迷。高齢化率32.7%の保守地盤だが、<strong>医療・介護・交通インフラへの不満が潜在的に高い</strong>エリア。<br>
+            <strong>やること：</strong>自衛隊・米軍関係者家庭が多いため「安全保障の現実路線」「地域インフラのデジタル化」を前面に。久里浜・追浜・衣笠の各駅前で<strong>月1回以上の定期街頭</strong>を継続することで認知を積み上げる。地元の医療・交通問題を取り上げたSNS発信も有効。
+          </div>
+        </div>
+      </div>
+      <div class="priority-row">
+        <div class="priority-num" style="background:#2d6a4f;">2</div>
+        <div class="priority-content">
+          <div class="priority-name">平塚市 <span class="tag tag-s">8.1% / 8,616票</span></div>
+          <div class="priority-desc">
+            約10万票の大票田で衆参差+5.4ptと伸び代あり。工業都市で製造業・工場勤務層が多く、「ロボット・AI産業支援」「さがみロボット産業特区」との接点がある。<br>
+            <strong>やること：</strong>平塚駅前で定期街頭。製造業・工場勤務層への「産業政策・雇用」訴求。平塚七夕まつり（7月）など大型イベントへの参加で一気に露出を増やす。
+          </div>
+        </div>
+      </div>
+      <div class="priority-row">
+        <div class="priority-num" style="background:#2d6a4f;">3</div>
+        <div class="priority-content">
+          <div class="priority-name">大和市 <span class="tag tag-s">8.4% / 9,311票</span></div>
+          <div class="priority-desc">
+            約11万票の大票田。相鉄・小田急・東急が集まる交通の要衝で昼間人口も多い。米軍厚木基地があり基地周辺の騒音・生活問題が長年の課題。<br>
+            <strong>やること：</strong>大和駅・鶴間駅前で定期街頭。基地問題と絡めた「生活環境改善・デジタル行政」でニッチな層を取り込む。相鉄線沿線は横浜市との往来が多く横浜での支持を大和へ波及させやすい。
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="strategy-card">
+    <div class="strategy-header" style="background:#2d6a4f;">📍 優先度A — 中規模だが継続活動で確実に伸びるエリア</div>
+    <div class="strategy-body">
+      <div class="priority-row">
+        <div class="priority-num" style="background:#2d6a4f;">4</div>
+        <div class="priority-content">
+          <div class="priority-name">厚木市 <span class="tag tag-a">7.8% / 7,188票</span></div>
+          <div class="priority-desc">
+            さがみロボット産業特区の中核エリア。ソニー・富士フイルムなど大手企業の研究所・工場が集積。衆参差+5.1ptで伸びしろあり。<br>
+            <strong>やること：</strong>本厚木駅前（相鉄・小田急）で定期街頭。「さがみロボット産業特区」「AI・製造業支援」という地域に根ざした訴求で差別化。理系・エンジニア層にリーチしやすい。
+          </div>
+        </div>
+      </div>
+      <div class="priority-row">
+        <div class="priority-num" style="background:#2d6a4f;">5</div>
+        <div class="priority-content">
+          <div class="priority-name">相模原市中央区 <span class="tag tag-a">7.7% / 8,916票</span></div>
+          <div class="priority-desc">
+            相模原市の行政・商業中心地。淵野辺には宇宙航空研究開発機構（JAXA）相模原キャンパスがあり、宇宙・AI・先端研究者が多く在住。<br>
+            <strong>やること：</strong>相模原駅・橋本駅前で定期街頭。JAXA・宇宙開発という話題は若い研究者層・理系ファミリー層の関心を引きやすく、チームみらいのテクノロジー訴求と直結。
+          </div>
+        </div>
+      </div>
+      <div class="priority-row">
+        <div class="priority-num" style="background:#2d6a4f;">6</div>
+        <div class="priority-content">
+          <div class="priority-name">秦野市・伊勢原市 <span class="tag tag-a">7.6% / 各3〜5千票</span></div>
+          <div class="priority-desc">
+            東海大学・神奈川工科大学のある学術エリアだが、得票率はまだ低い。農業・観光・自然環境との共存が地域課題。<br>
+            <strong>やること：</strong>秦野駅・伊勢原駅前で定期街頭。東海大学の学生票開拓と合わせて活動すると効率的。「地域農業のスマート化」「観光DX」など地域に刺さる切り口を用意する。
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="strategy-card">
+    <div class="strategy-header" style="background:#2d6a4f;">🗓️ 統一地方選まで　共通アクション</div>
+    <div class="strategy-body">
+      <div class="priority-row">
+        <div class="priority-num" style="background:#2d6a4f;">①</div>
+        <div class="priority-content">
+          <div class="priority-name">月1回以上の定期街頭を継続</div>
+          <div class="priority-desc">1回の活動より「また見た」という繰り返しの露出が認知と信頼を生む。同じ駅前に定期的に立つことで「あの党はここで活動している」という認識が根付く。</div>
+        </div>
+      </div>
+      <div class="priority-row">
+        <div class="priority-num" style="background:#2d6a4f;">②</div>
+        <div class="priority-content">
+          <div class="priority-name">地域課題をSNSで発信</div>
+          <div class="priority-desc">各エリア固有の課題（横須賀の高齢化・大和の基地問題・相模原のJAXA等）をSNSで取り上げることで、地元住民からの認知が広がりやすい。街頭とSNSの相乗効果を狙う。</div>
+        </div>
+      </div>
+      <div class="priority-row">
+        <div class="priority-num" style="background:#2d6a4f;">③</div>
+        <div class="priority-content">
+          <div class="priority-name">地域イベントへの参加・協力</div>
+          <div class="priority-desc">平塚七夕まつり・厚木鮎まつりなど大型地域イベントは一度に多数の住民と接触できる貴重な機会。政治活動としてではなく地域の一員として参加することで親近感が生まれる。</div>
+        </div>
+      </div>
+      <div class="priority-row">
+        <div class="priority-num" style="background:#2d6a4f;">④</div>
+        <div class="priority-content">
+          <div class="priority-name">支持者の「口コミ」を育てる</div>
+          <div class="priority-desc">得票率が低いエリアでも既存支持者は必ずいる。その人たちが周囲に話してくれる環境をつくることが最大のコスパ。勉強会・懇談会など小規模なつながりの場を地道に作っていく。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">得票率別 中長期目標の目安</div>
+    <div class="area-list">
+      <div class="area-row" style="padding:9px 0;">
+        <div style="flex:1;font-size:12px;font-weight:700;">現在6〜7%台のエリア</div>
+        <div style="font-size:11px;color:var(--muted);">→ 次回10%台を目標</div>
+      </div>
+      <div class="area-row" style="padding:9px 0;">
+        <div style="flex:1;font-size:12px;font-weight:700;">現在8〜9%台のエリア</div>
+        <div style="font-size:11px;color:var(--muted);">→ 次回12%台を目標</div>
+      </div>
+      <div class="area-row" style="padding:9px 0;">
+        <div style="flex:1;font-size:12px;font-weight:700;">現在10〜11%台のエリア</div>
+        <div style="font-size:11px;color:var(--muted);">→ 次回14〜15%台を目標</div>
+      </div>
+    </div>
+    <div class="insight">
+      参院選（4.3%）→ 衆院選（10%）で<strong>倍以上に伸びた実績</strong>がある。同じ勢いが続けば、今6〜7%のエリアでも継続的な活動で次回12〜14%は十分射程内。
+    </div>
+  </div>
+<!-- ===== ポスティング ===== -->
+<div class="section" id="sec-posting">
+  <div class="sec-header">ポスティング × 得票率 分析（衆院選R8.2）</div>
+
+  <div class="card" style="background:#fffbe6;border-color:#f5d87a;">
+    <div style="font-size:12px;color:#7a5c00;line-height:1.7;">
+      衆院選挙期間中〜2026/03/23のポスティング実績と比例得票率の相関分析。<strong>神奈川全体で45,259枚</strong>で活動。<br>データ提供：なるみ_愛知豊田さん
+    </div>
+  </div>
+
+  <!-- サマリー -->
+  <div class="stat-grid">
+    <div class="stat-card">
+      <div class="stat-label">ポスティングあり<br>平均得票率</div>
+      <div class="stat-value">10.7<span class="stat-unit">%</span></div>
+      <div class="stat-sub">27エリア</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">ポスティングなし<br>平均得票率</div>
+      <div class="stat-value">7.7<span class="stat-unit">%</span></div>
+      <div class="stat-sub">31エリア</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">合計配布枚数</div>
+      <div class="stat-value" style="font-size:16px;">45,259<span class="stat-unit">枚</span></div>
+      <div class="stat-sub">衆院選期間中〜2026/03/23</div>
+    </div>
+
+  </div>
+
+  <!-- 地図 -->
+  <div class="card" style="padding:11px;">
+    <div class="card-label">神奈川ポスティング進捗マップ 2026</div>
+    <a href="https://datawrapper.dwcdn.net/1bJI3/1/" target="_blank" style="display:block;text-decoration:none;margin-top:6px;border-radius:10px;overflow:hidden;position:relative;">
+      <div style="position:absolute;top:8px;right:8px;background:rgba(15,45,26,0.82);color:#4ade80;font-size:10px;font-weight:700;padding:4px 10px;border-radius:20px;display:flex;align-items:center;gap:4px;z-index:1;">🔗 タップして最新地図を開く</div>
+      <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAJXAtoDASIAAhEBAxEB/8QAHAABAAEFAQEAAAAAAAAAAAAAAAQBAwUGBwII/8QAThAAAQQCAAQDBgMFBQUFBgUFAQACAwQFEQYSITETQVEHFCIyYXEVgZEjQlKhsRYzcsHRCCRDYoJTkqLh8BclY2Sy8TQ1c5PCRFVl0tP/xAAaAQEAAwEBAQAAAAAAAAAAAAAAAQIDBAUG/8QANREBAAICAQMCAwUIAgIDAAAAAAECAxEEEiExBRMiQVEUFTJhoQZxgZGx0eHwJFJC8SMzwf/aAAwDAQACEQMRAD8A+y0REBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEXiWRkYBe7QKNmid2kb+qjcI29oiKUiIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAhIAJJ0B3RRMi9wY1oHwnuf8lFp1G0TOoRbMplkLvIdgraIuSZ33YKtc5vyuI+xUmlO/wAYMe8kHtv1UVGktcHDuDsKa2mJTE6ZlF5jcHsa8diNr0utuIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgLxNGJYyw+fZe0SY2MO9pa4td0IVFevHdl300FZXHManTCfIiIoQv1rLovhPxM9PRS324WtBB5ifILGorxkmI0tFphfmtSydAeQegXmGxJF0B230KtIo6p3tG5ZOCwyXoNh3oVeWLqO5bLD9dLKLox26o7tazuBERXWEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBFijlnCZ37Nro99OujpSoMhWl6F/IfR3T+apGSs/NSMlZ+aWiAgjYIIRXXEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREGImdzSvd6kryr9quYnbHVh/krC47RMT3YSIiKECIiAiIgq08rg4eR2swOo2sMshRm8RnI75m/zC2xTqdL0n5JKIi3aiIiAiIgIiICIiAiIgIiICIiAiIgIiICIjiGgucQAOpJ8kBFjKuaqz3nVhto3qN5PR5/y+iyaiLRbwrW9beJERc/vcSZetBnpWWWuNbianQh5o26ZBIaoe3t1/vX9T16/RSs6AoeXmMdYsbvmf0+w81zzjLjLJY2vxq2vZDzUlhhqaAHgh9ZrnEEaO+Ykje+q5vxRx7x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seslANQs+y0xeVqeXtERbtBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQFR7uVhd6BVVq1zGLTQTs9dKJnUEoezve1UlztAklU89KvyjQ7+a5WR8I6aJ/NPh9D+qoiCugR03tUQdD0VyOIyHY6DzUxG/CXhrS46aNlSoYA34ndXf0VyONsY00fmvS2rj15WioiItFhERAREQEREBERAREQEREBERAREQEREBERAREQEREFixDv42Dr5hRT0OisivEkbZB1HX1Wdse+8KzVBRXJYvDdouH0XjYHbqVjMaVNa6u/RUJ39vRalxjxZNhI8zaquw9+DGVWSWIBcDLMEjnAAPaTy8jmkkOc5muXzB2MNwV7TIOIMzepSfh1atUxz7klw3askcXK5rfjMFiUBuiSeZze3TfUi3TJp0ZFoGR46y2Ns1KlyDgts1pjHQF3EUzRM17uVjmgVHABx7dT6bKt3PaDl63CVPMz4DFQT2MhaqOjflJXQxR12TOfIXtr85/uHaaGHuOvko6JNOhqoIPRw2P6LleI9pXE93LQ0rHCFWhHYtMr1rFo5OKOwXNDgWufQDR5gB5bstPlomXkfaTkK2emx1fB42y2O26sxgynLPJqy2D5DHygku5tF2teanok06Q5g8nfqvJY4eW/stf4S4ku5vJZOjb4dtYsY6UQyyS2YpAZCxjw0Bjifle077LYyC0qsxpEwtLKMGmAfRQN77gH7qdG4PYHBaYlqvSIi2XEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQeJmgscdDYHQqCsise8cri30Kxyx81LKIiLJVVjS5waO5U9jQxoaPJRaZAkIPcjopa2xx22vUREWqwiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiII10fKfuo6lXB+zB9Coq58n4lLeXPPafi+IuIZbtDHQ2K1OKCKET142ts2JXkkmOV3SNjBy7cQ4fG/TS5oWA9mmJz2K4rbZv2OIb0ENOxK9lrFiJrgGxtjLSIm/G93jER8xIby8wDl2LZ9U2fUp1o25lb4VvvxIzWbydrGQSQ13WsTisSLDmCOy+ZkQbGxzzy84aSxuzpx8+kCXE5HKcJYaj/Z7KWY5LOVtvhdGaz+SZ00UYcZADGXCzzacNhrXHlJGl1zZ9U2fUp1m3GeFuELbMv8AiTMZYtx4bJV/ChdjYqDpNQtEj4nOgjdI1sjna2QHNB0e28ofZ9kpOLpc1LjcFExuSfZFjZfacwW2zhwAjPxFreQDm7H8l1IknuUTrNtU9nsxu3eKMm2pkK1a5lmyV/faU1V8jRVgYXckrWv1zNcNkeS2wHpo9v6KhJPcoqzO5AjR0r9N5DizyKsnq37dFdqf3v5Ka/igjyloiLpaCIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiIPMj2xxukcdNaCT030C02fj7hQyEi7c6/8A+Ms//wDNbddtVqNSW5dsQ1q0LC+WaZ4YxjR3LnHoAPUrl1njCjJYkfF7a+DGRlxLGFtYlo30G/H6qt4iYRLb7nEWLqY2rlJjaGOsgn3v3Z/hwj+KXY5o29/icA0a6kdN63/7XeAHZ9mHg4gpWHukijE8NqF8XNJzcoGn8x6jR0065hvQ6q9xRnMXYr4nJYbLy5K1ZE8VZ+NyB8CRjY3GWR7WkscGaB33DuVoI5uvG+FK/FdPiyrkJ72abzzYX3mR9i1+0ZK8jTy6/ICDs9HMeDs6DFnFYV07XmfahwDhHH3rivEPmjssryQRXYjIxzpAwlzS4aDSdu9AD6LZ+HeKuGeIpJo8BxBi8q+AAytp2mSlgPYnlJ1vRXLuP8flcm/NT285m6lavxJjK9SCFzGReGX1SXN2wkkPe8733H00ty9lty1M7PMmyWVyFGK81lGxkYix7meDGXAbYzYDy8b16q9NQtDd0QEHsdorpEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERB4nYXxlo7qP7s/XdqloqzSJ8omNoLopG92n8l4WRVHNa75mg/cKk4vojpY9FLdXjPbbfsrbqzh8rgVScdoR0ysIvZhkB1yFVEMv8AB/NV6ZRpbXoRvI2GkhXY67uYc40PupSvXHvymKoLY5N6LHaPTsvVd4jkPMD6fZTFRzGu+ZoKv7evCelUEEbB2EVtsXIdxuI+h7K4N66jSvG/msIiKQREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREFm1Jyt5QepUXnd6r1OXGQlw0V4XNe0zLOZeJYYJX+JNBDI/kdHzPYCeV2uZu/Q6Gx56UGXBYKW3Xty4PFvs1iw15nVGF8RYCGcrtbbygkDXbayKKNyhbswQWoxFagisRh7ZA2VgcA5rg5rtHzBAIPkQCrhJPcoijY91/75v3U5Q6g3MPoFMW+LwvXwIiLRYREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREFHNa75gD9wqeHH/A39F6RRoefDj/gb+ieHH/A39F6RNQPPIz+Bv6JyM/gb+i9ImoFA1oOw0D7BVRFIIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIg//Z" style="width:100%;display:block;border-radius:10px;" alt="神奈川ポスティング進捗マップ2026">
+    </a>
+    <div style="font-size:10px;color:var(--muted);margin-top:7px;line-height:1.6;">
+      ※ 各市区町村の詳細はマップを拡大（＋）すると見られます
+    </div>
+  </div>
+
+  <div class="insight">
+    <strong>ポスティングの効果：</strong>ポスティングを実施したエリアの平均得票率は<strong>10.7%</strong>で、未実施エリア（7.7%）より<strong>+3.0pt高い</strong>。因果関係の断定は難しいが、もともと活動しやすいエリアに集中している可能性もある。今後の参院選データとの比較でより精度の高い分析が可能になる。
+  </div>
+
+  <!-- 散布図 -->
+  <div class="card">
+    <div class="card-label">配布枚数 × 得票率 散布図</div>
+    <div style="font-size:10px;color:var(--muted);margin-bottom:8px;">● ポスティングあり（緑）　● ポスティングなし（グレー）　※点にタップで詳細表示</div>
+    <canvas id="scatter-chart" style="width:100%;max-height:280px;"></canvas>
+  </div>
+
+  <!-- ランキング -->
+  <div class="card">
+    <div class="card-label">配布枚数ランキング（上位15エリア）</div>
+    <div id="posting-ranking"></div>
+  </div>
+
+  <!-- エリア別一覧 -->
+  <div class="card">
+    <div class="card-label">全エリア一覧（配布枚数順）</div>
+    <div class="scroll-wrap">
+      <table class="area-table" id="posting-table">
+        <thead>
+          <tr>
+            <th>地域</th>
+            <th>配布<br>枚数</th>
+            <th>得票率</th>
+          </tr>
+        </thead>
+        <tbody id="posting-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 演説 ===== -->
+<div class="section" id="sec-speech">
+  <div class="sec-header">街頭演説 実績 × 得票率 分析</div>
+
+  <!-- ステータスバー -->
+  <div id="speech-status-bar" style="background:var(--dark);color:white;border-radius:10px;padding:10px 13px;margin-bottom:11px;display:flex;align-items:center;gap:10px;">
+    <div id="speech-status-dot" style="width:8px;height:8px;border-radius:50%;background:#6b7280;flex-shrink:0;"></div>
+    <div style="flex:1;">
+      <div id="speech-status-text" style="font-size:11px;color:rgba(255,255,255,.8);">データ未読み込み</div>
+      <div id="speech-status-sub" style="font-size:10px;color:rgba(255,255,255,.4);font-family:'DM Mono',monospace;margin-top:1px;"></div>
+    </div>
+    <button onclick="loadSpeechData()" id="speech-reload-btn"
+      style="padding:5px 12px;background:#95e3cd;border:none;border-radius:20px;font-size:11px;font-weight:700;color:#0a3d22;cursor:pointer;font-family:'Noto Sans JP',sans-serif;flex-shrink:0;">
+      読み込む
+    </button>
+  </div>
+
+  <!-- Google Sheets URL設定 -->
+  <div class="card" id="speech-config-card">
+    <div class="card-label">📊 Googleスプレッドシート連携</div>
+    <div style="font-size:11px;color:var(--muted);margin-bottom:8px;line-height:1.6;">
+      スプレッドシートのWebアプリURLを入力してください。<br>
+      <span style="color:var(--green-mid);font-weight:700;">設定は端末に保存されます。</span>
+    </div>
+    <input id="sheets-url-input" type="url"
+      placeholder="https://script.google.com/macros/s/..."
+      style="width:100%;padding:9px 11px;border:1px solid var(--border);border-radius:9px;font-size:11px;font-family:'DM Mono',monospace;background:var(--white);color:var(--text);margin-bottom:8px;">
+    <div style="display:flex;gap:7px;">
+      <button onclick="saveSheetUrl()" style="flex:1;padding:8px;background:var(--green-mid);color:white;border:none;border-radius:9px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Noto Sans JP',sans-serif;">保存して読み込む</button>
+      <button onclick="useSampleData()" style="padding:8px 12px;background:var(--white);border:1px solid var(--border);border-radius:9px;font-size:11px;color:var(--muted);cursor:pointer;font-family:'Noto Sans JP',sans-serif;">サンプルで試す</button>
+    </div>
+    <details style="margin-top:10px;">
+      <summary style="font-size:10px;color:var(--green-mid);cursor:pointer;font-weight:700;">▶ スプレッドシートの設定方法</summary>
+      <div style="font-size:10px;color:var(--muted);line-height:1.8;margin-top:7px;padding:9px;background:#f5faf6;border-radius:8px;">
+        <strong>① スプレッドシートの列構成（1行目がヘッダー）</strong><br>
+        A: 日付　B: 場所名　C: 自治体名　D: 議員参加（Y/空白）　E: 種別　F: 参加人数<br>
+        種別の値: 街頭演説 / 街頭活動 / 街宣車 / 個人演説会 / ももたろう / その他<br><br>
+        <strong>② Google Apps Scriptを設定</strong><br>
+        スプレッドシートのメニュー →「拡張機能」→「Apps Script」→ 以下を貼り付けて保存<br>
+        <code style="display:block;background:#1a1a1a;color:#4ade80;padding:8px;border-radius:6px;margin:6px 0;font-size:10px;white-space:pre-wrap;word-break:break-all;">function doGet() {
+  const sh = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  const rows = sh.getDataRange().getValues();
+  const data = rows.slice(1).filter(r => r[2]).map(r => ({
+    date:  r[0] ? Utilities.formatDate(new Date(r[0]),'JST','yyyy/MM/dd') : '',
+    place: r[1] || '',
+    area:  r[2] || '',
+    vip:   (r[3] || '').toString().toUpperCase() === 'Y',
+    type:  r[4] ? String(r[4]) : 'その他',
+    pax:   r[5] ? Number(r[5]) : null
+  }));
+  return ContentService
+    .createTextOutput(JSON.stringify(data))
+    .setMimeType(ContentService.MimeType.JSON);
+}</code>
+        <strong>③ デプロイ</strong><br>
+        「デプロイ」→「新しいデプロイ」→ 種類:「ウェブアプリ」→ アクセス:「全員」→ デプロイ → URLをコピー<br><br>
+        <strong>④ E列にドロップダウンを設定（推奨）</strong><br>
+        E列選択 →「データ」→「データの入力規則」→「プルダウン」→ 街頭演説・街頭活動（チラシ配り等）・街宣車遊説・個人演説会・ももたろう・その他 を追加
+      </div>
+    </details>
+  </div>
+
+  <!-- 手動入力フォールバック -->
+  <div class="card" id="speech-manual-card" style="display:none;">
+    <div class="card-label">✏️ 手動でデータ入力（連携なしで試す）</div>
+    <div style="font-size:10px;color:var(--muted);margin-bottom:8px;">場所名・自治体・種別・回数・参加人数（任意）を入力してください</div>
+    <div id="speech-entries"></div>
+    <button onclick="addSpeechEntry()" style="margin-top:8px;width:100%;padding:8px;border:1.5px dashed var(--border);background:transparent;border-radius:9px;font-size:12px;color:var(--green-mid);cursor:pointer;font-family:'Noto Sans JP',sans-serif;">＋ 追加</button>
+    <button onclick="analyzeManualSpeech()" style="margin-top:8px;width:100%;padding:10px;background:var(--green-mid);color:white;border:none;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Noto Sans JP',sans-serif;">分析する</button>
+  </div>
+
+  <!-- 結果エリア（読み込み後に表示） -->
+  <div id="speech-results" style="display:none;">
+
+    <!-- 種別フィルター -->
+    <div class="card" style="padding:11px 13px;">
+      <div class="card-label">種別フィルター</div>
+      <div class="sort-btns" id="type-filter-btns">
+        <button class="sort-btn active" onclick="filterByType('all',this)">すべて</button>
+        <button class="sort-btn" onclick="filterByType('街頭演説',this)">街頭演説</button>
+        <button class="sort-btn" onclick="filterByType('街頭活動（チラシ配り等）',this)">街頭活動</button>
+        <button class="sort-btn" onclick="filterByType('街宣車遊説',this)">街宣車遊説</button>
+        <button class="sort-btn" onclick="filterByType('個人演説会',this)">個人演説会</button>
+        <button class="sort-btn" onclick="filterByType('ももたろう',this)">ももたろう</button>
+        <button class="sort-btn" onclick="filterByType('その他',this)">その他</button>
+      </div>
+      <div id="type-filter-note" style="font-size:10px;color:var(--muted);margin-top:6px;"></div>
+    </div>
+
+    <!-- サマリー統計 -->
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-label">活動総回数</div>
+        <div class="stat-value" id="sp-total-count">—</div>
+        <div class="stat-sub" id="sp-total-places">—か所</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">議員・候補者<br>参加あり</div>
+        <div class="stat-value" id="sp-vip-count">—</div>
+        <div class="stat-sub" id="sp-vip-pct">—%</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">延べ参加人数<br>（記録ありのみ）</div>
+        <div class="stat-value" id="sp-pax-total">—</div>
+        <div class="stat-sub" id="sp-pax-avg">平均—人/回</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">活動ありエリア<br>平均得票率</div>
+        <div class="stat-value" id="sp-avg-with">—</div>
+        <div class="stat-sub" id="sp-cnt-with">—エリア</div>
+      </div>
+    </div>
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-label">活動なしエリア<br>平均得票率</div>
+        <div class="stat-value" id="sp-avg-without">—</div>
+        <div class="stat-sub" id="sp-cnt-without">—エリア</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">得票率の差</div>
+        <div class="stat-value" id="sp-diff">—</div>
+        <div class="stat-sub">活動あり − なし</div>
+      </div>
+    </div>
+
+    <!-- 種別内訳 -->
+    <div class="card">
+      <div class="card-label">種別ごとの活動回数</div>
+      <div id="sp-type-breakdown"></div>
+    </div>
+
+    <!-- マップバー -->
+    <div class="card" style="padding:11px;">
+      <div class="card-label">🗺️ エリア別 活動回数 × 得票率</div>
+      <div style="font-size:10px;color:var(--muted);margin-bottom:7px;">
+        🟠 活動あり（濃いほど回数多）　グレー数値＝エリア得票率
+      </div>
+      <div id="sp-map-bars"></div>
+      <a href="https://datawrapper.dwcdn.net/1bJI3/1/" target="_blank"
+        style="display:block;margin-top:10px;text-align:center;padding:8px;background:#f5faf6;border:1px solid var(--border);border-radius:8px;font-size:11px;color:var(--green-mid);text-decoration:none;font-weight:700;">
+        🔗 ポスティング進捗マップを別タブで開く
+      </a>
+    </div>
+
+    <!-- 散布図 -->
+    <div class="card">
+      <div class="card-label">活動回数 × 得票率 散布図</div>
+      <div style="font-size:10px;color:var(--muted);margin-bottom:8px;">🟠 活動あり（⭐議員参加）　⬜ 活動なし　※点タップで詳細</div>
+      <canvas id="speech-scatter" style="width:100%;max-height:280px;"></canvas>
+    </div>
+
+    <!-- 回数帯別棒グラフ -->
+    <div class="card">
+      <div class="card-label">活動回数帯別 平均得票率</div>
+      <canvas id="speech-bar" style="width:100%;max-height:200px;"></canvas>
+    </div>
+
+    <!-- 場所別テーブル -->
+    <div class="card">
+      <div class="card-label">場所別 活動記録</div>
+      <div class="sort-btns" style="margin-bottom:8px;">
+        <button class="sort-btn active" onclick="sortSpeechTable('count',this)">回数↓</button>
+        <button class="sort-btn" onclick="sortSpeechTable('area',this)">エリア順</button>
+        <button class="sort-btn" onclick="sortSpeechTable('vip',this)">議員参加↓</button>
+        <button class="sort-btn" onclick="sortSpeechTable('pax',this)">人数↓</button>
+        <button class="sort-btn" onclick="sortSpeechTable('rate',this)">得票率↓</button>
+      </div>
+      <div class="scroll-wrap">
+        <table class="area-table">
+          <thead>
+            <tr>
+              <th style="text-align:left;padding-left:8px;">場所・種別</th>
+              <th>回数</th>
+              <th>議員<br>参加</th>
+              <th>参加<br>人数</th>
+              <th>得票率</th>
+            </tr>
+          </thead>
+          <tbody id="sp-place-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="insight" id="sp-insight"></div>
+  </div>
+</div>
+
+<div class="footer" id="app-footer"></div>
+
+<script src="data.js"></script>
+<script src="../../shared/app.js"></script>
+</body>
+</html>
