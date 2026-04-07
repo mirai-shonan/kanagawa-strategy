@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>チームみらい 活動戦略</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../shared/style.css">
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div class="logo-mark">み</div>
+    <div>
+      <div class="header-title"></div>
+      <div class="header-sub"></div>
+    </div>
+  </div>
+  <div class="tab-group">
+    <div class="tab-group-label">データ</div>
+    <div class="tabs">
+      <button class="tab-btn active" onclick="sw('overview')">概況</button>
+      <button class="tab-btn" onclick="sw('all')">全自治体</button>
+      <button class="tab-btn" onclick="sw('compare')">衆参比較</button>
+      <button class="tab-btn" onclick="sw('kawai')">当選議員</button>
+    </div>
+  </div>
+  <div class="tab-group">
+    <div class="tab-group-label">戦略</div>
+    <div class="tabs">
+      <button class="tab-btn" onclick="sw('cost')">コスパ</button>
+      <button class="tab-btn" onclick="sw('nobiro')">伸びしろ</button>
+      <button class="tab-btn" onclick="sw('events')">イベント</button>
+      <button class="tab-btn" onclick="sw('posting')">ポスティング</button>
+      <button class="tab-btn" onclick="sw('speech')">演説</button>
+    </div>
+  </div>
+  <div class="tab-group">
+    <div class="tab-group-label">ターゲット別</div>
+    <div class="tabs">
+      <button class="tab-btn" onclick="sw('gakujutsu')">学術・若者</button>
+      <button class="tab-btn" onclick="sw('kosodate')">子育て</button>
+      <button class="tab-btn" onclick="sw('senior')">祖父母世代</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 概況 ===== -->
+<div class="section active" id="sec-overview">
+  <div id="overview-stats"></div>
+
+  <div class="card">
+    <div class="card-label" id="party-bars-label"></div>
+    <div id="party-bars"></div>
+    <div class="insight" id="overview-insight"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">チームみらい得票率 上位10エリア（衆院比例）</div>
+    <div id="top10-list"></div>
+  </div>
+</div>
+
+<!-- ===== 全自治体 ===== -->
+<div class="section" id="sec-all">
+  <input class="search-box" id="search-input" type="text" placeholder="🔍 市区町村を検索..." oninput="filterTable()">
+  <div class="sort-btns">
+    <button class="sort-btn active" onclick="sortTable('チームみらい率',true,this)">衆院得票率↓</button>
+    <button class="sort-btn" onclick="sortTable('チームみらい率_参',true,this)">参院得票率↓</button>
+    <button class="sort-btn" onclick="sortTable('チームみらい',true,this)">衆院票数↓</button>
+    <button class="sort-btn" onclick="sortTable('チームみらい_参票数',true,this)">参院票数↓</button>
+    <button class="sort-btn" onclick="sortTable('衆参差',true,this)">衆参差↓</button>
+  </div>
+  <div class="scroll-wrap">
+    <table class="area-table" id="all-table">
+      <thead>
+        <tr>
+          <th>地域</th>
+          <th>衆院<br>得票率</th>
+          <th>参院<br>得票率</th>
+          <th>衆院<br>票数</th>
+          <th>参院<br>票数</th>
+          <th>衆参<br>差</th>
+        </tr>
+      </thead>
+      <tbody id="all-tbody"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ===== 衆参比較 ===== -->
+<div class="section" id="sec-compare">
+  <div class="card" style="background:#fffbe6;border-color:#f5d87a;">
+    <div style="font-size:12px;color:#7a5c00;line-height:1.7;">
+      <strong>参院選（比例）→ 衆院選（比例）の変化。</strong>差が大きいエリアほど「衆院で新たに票を獲得できた」ことを示す。逆に差が小さいエリアは元からの固定支持層が多い可能性。
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">衆参差ランキング TOP10（伸びたエリア）</div>
+    <div id="diff-up-list"></div>
+    <div class="insight">
+      <!--
+        ここに都道府県固有の分析コメントを記述してください。
+        神奈川版（prefectures/kanagawa/index.html）を参考にしてください。
+      -->
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">伸びが鈍かったエリア</div>
+    <div id="diff-down-list"></div>
+    <div class="insight">
+      <!--
+        ここに都道府県固有の分析コメントを記述してください。
+        神奈川版（prefectures/kanagawa/index.html）を参考にしてください。
+      -->
+    </div>
+  </div>
+</div>
+
+<!-- ===== 当選議員 ===== -->
+<div class="section" id="sec-kawai">
+  <div class="sec-header">当選議員</div>
+  <!--
+    ここに都道府県固有のコンテンツを記述してください。
+    神奈川版（prefectures/kanagawa/index.html）を参考にしてください。
+    当選者のプロフィールカード、得票率一覧などを配置します。
+  -->
+
+  <div class="card">
+    <div class="card-label">候補者別 市区町村別得票率</div>
+    <div id="kawai-list"></div>
+  </div>
+</div>
+
+<!-- ===== イベント ===== -->
+<div class="section" id="sec-events">
+  <div class="sec-header">チームみらい親和性イベント</div>
+  <!--
+    ここに都道府県固有のコンテンツを記述してください。
+    神奈川版（prefectures/kanagawa/index.html）を参考にしてください。
+    地域のイベント情報、出展戦略などを配置します。
+  -->
+</div>
+
+<!-- ===== コスパ ===== -->
+<div class="section" id="sec-cost">
+  <div class="sec-header">コスパ優先 ポスティング・街頭戦略</div>
+  <!--
+    ここに都道府県固有のコンテンツを記述してください。
+    神奈川版（prefectures/kanagawa/index.html）を参考にしてください。
+    費用対効果の高いエリア分析、優先順位リストなどを配置します。
+  -->
+</div>
+
+<!-- ===== 学術・若者 ===== -->
+<div class="section" id="sec-gakujutsu">
+  <div class="sec-header">学術都市・若者向け 街頭活動版</div>
+  <!--
+    ここに都道府県固有のコンテンツを記述してください。
+    神奈川版（prefectures/kanagawa/index.html）を参考にしてください。
+    大学・研究機関周辺エリア、若者向け訴求ポイントなどを配置します。
+  -->
+</div>
+
+<!-- ===== 子育て ===== -->
+<div class="section" id="sec-kosodate">
+  <div class="sec-header">子育て世代向け 街頭・ポスティング版</div>
+  <!--
+    ここに都道府県固有のコンテンツを記述してください。
+    神奈川版（prefectures/kanagawa/index.html）を参考にしてください。
+    子育て世代が多いエリア、訴求ポイントなどを配置します。
+  -->
+</div>
+
+<!-- ===== 祖父母世代 ===== -->
+<div class="section" id="sec-senior">
+  <div class="sec-header">祖父母世代向け 街頭・ポスティング版</div>
+  <!--
+    ここに都道府県固有のコンテンツを記述してください。
+    神奈川版（prefectures/kanagawa/index.html）を参考にしてください。
+    高齢者が多いエリア、訴求ポイントなどを配置します。
+  -->
+</div>
+
+<!-- ===== 伸びしろ ===== -->
+<div class="section" id="sec-nobiro">
+  <div class="sec-header">次の選挙に向けた 伸びしろエリア戦略</div>
+  <!--
+    ここに都道府県固有のコンテンツを記述してください。
+    神奈川版（prefectures/kanagawa/index.html）を参考にしてください。
+    成長ポテンシャルの高いエリア分析、戦略提案などを配置します。
+  -->
+</div>
+
+<!-- ===== ポスティング ===== -->
+<div class="section" id="sec-posting">
+  <div class="sec-header">ポスティング × 得票率 分析</div>
+
+  <div id="posting-status" style="background:var(--green-light);border-radius:10px;padding:10px 13px;margin-bottom:11px;">
+    <div style="font-size:11px;color:var(--green-mid);font-weight:700;" id="posting-status-text"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">配布実績マップ</div>
+    <div class="sort-btns">
+      <button class="sort-btn active" onclick="sortPostingTable('配布枚数',true,this)">配布枚数↓</button>
+      <button class="sort-btn" onclick="sortPostingTable('得票率',true,this)">得票率↓</button>
+      <button class="sort-btn" onclick="sortPostingTable('得票数',true,this)">得票数↓</button>
+    </div>
+    <div class="scroll-wrap">
+      <table class="area-table" id="posting-table">
+        <thead>
+          <tr>
+            <th>地域</th>
+            <th>配布<br>枚数</th>
+            <th>エリア<br>数</th>
+            <th>得票率</th>
+            <th>得票数</th>
+          </tr>
+        </thead>
+        <tbody id="posting-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">ポスティング効果分析</div>
+    <div id="posting-chart"></div>
+    <div class="insight" id="posting-insight"></div>
+  </div>
+</div>
+
+<!-- ===== 演説 ===== -->
+<div class="section" id="sec-speech">
+  <div class="sec-header">街頭演説 実績 × 得票率 分析</div>
+
+  <!-- ステータスバー -->
+  <div id="speech-status-bar" style="background:var(--dark);color:white;border-radius:10px;padding:10px 13px;margin-bottom:11px;display:flex;align-items:center;gap:10px;">
+    <div id="speech-status-dot" style="width:8px;height:8px;border-radius:50%;background:#6b7280;flex-shrink:0;"></div>
+    <div style="flex:1;">
+      <div id="speech-status-text" style="font-size:11px;color:rgba(255,255,255,.8);">データ未読み込み</div>
+      <div id="speech-status-sub" style="font-size:10px;color:rgba(255,255,255,.4);font-family:'DM Mono',monospace;margin-top:1px;"></div>
+    </div>
+    <button onclick="loadSpeechData()" id="speech-reload-btn"
+      style="padding:5px 12px;background:#95e3cd;border:none;border-radius:20px;font-size:11px;font-weight:700;color:#0a3d22;cursor:pointer;font-family:'Noto Sans JP',sans-serif;flex-shrink:0;">
+      読み込む
+    </button>
+  </div>
+
+  <!-- Google Sheets URL設定 -->
+  <div class="card" id="speech-config-card">
+    <div class="card-label">Googleスプレッドシート連携</div>
+    <div style="font-size:11px;color:var(--muted);margin-bottom:8px;line-height:1.6;">
+      スプレッドシートのWebアプリURLを入力してください。<br>
+      <span style="color:var(--green-mid);font-weight:700;">設定は端末に保存されます。</span>
+    </div>
+    <input id="sheets-url-input" type="url"
+      placeholder="https://script.google.com/macros/s/..."
+      style="width:100%;padding:9px 11px;border:1px solid var(--border);border-radius:9px;font-size:11px;font-family:'DM Mono',monospace;background:var(--white);color:var(--text);margin-bottom:8px;">
+    <div style="display:flex;gap:7px;">
+      <button onclick="saveSheetUrl()" style="flex:1;padding:8px;background:var(--green-mid);color:white;border:none;border-radius:9px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Noto Sans JP',sans-serif;">保存して読み込む</button>
+      <button onclick="useSampleData()" style="padding:8px 12px;background:var(--white);border:1px solid var(--border);border-radius:9px;font-size:11px;color:var(--muted);cursor:pointer;font-family:'Noto Sans JP',sans-serif;">サンプルで試す</button>
+    </div>
+    <details style="margin-top:10px;">
+      <summary style="font-size:10px;color:var(--green-mid);cursor:pointer;font-weight:700;">スプレッドシートの設定方法</summary>
+      <div style="font-size:10px;color:var(--muted);line-height:1.8;margin-top:7px;padding:9px;background:#f5faf6;border-radius:8px;">
+        <strong>1. スプレッドシートの列構成（1行目がヘッダー）</strong><br>
+        A: 日付 B: 場所名 C: 自治体名 D: 議員参加（Y/空白） E: 種別 F: 参加人数<br>
+        種別の値: 街頭演説 / 街頭活動 / 街宣車 / 個人演説会 / ももたろう / その他<br><br>
+        <strong>2. Google Apps Scriptを設定</strong><br>
+        スプレッドシートのメニュー →「拡張機能」→「Apps Script」→ スクリプトを貼り付けて保存<br><br>
+        <strong>3. デプロイ</strong><br>
+        「デプロイ」→「新しいデプロイ」→「ウェブアプリ」→ アクセス:「全員」→ デプロイ → URLをコピー
+      </div>
+    </details>
+  </div>
+
+  <!-- 演説データ表示エリア（JSで生成） -->
+  <div id="speech-content" style="display:none;">
+    <div class="card">
+      <div class="card-label">活動サマリー</div>
+      <div id="sp-summary"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">自治体別 活動回数 × 得票率</div>
+      <div class="sort-btns">
+        <button class="sort-btn active" onclick="sortSpeechTable('count',true,this)">回数↓</button>
+        <button class="sort-btn" onclick="sortSpeechTable('rate',true,this)">得票率↓</button>
+      </div>
+      <div class="scroll-wrap">
+        <table class="area-table" id="sp-area-table">
+          <thead>
+            <tr>
+              <th>地域</th>
+              <th>回数</th>
+              <th>議員<br>参加</th>
+              <th>得票率</th>
+            </tr>
+          </thead>
+          <tbody id="sp-area-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">場所別 活動一覧</div>
+      <div class="scroll-wrap">
+        <table class="area-table" id="sp-place-table">
+          <thead>
+            <tr>
+              <th>場所</th>
+              <th>地域</th>
+              <th>回数</th>
+              <th>議員<br>参加</th>
+              <th>参加<br>人数</th>
+              <th>得票率</th>
+            </tr>
+          </thead>
+          <tbody id="sp-place-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="insight" id="sp-insight"></div>
+  </div>
+</div>
+
+<div class="footer" id="app-footer"></div>
+
+<script src="data.js"></script>
+<script src="../../shared/app.js"></script>
+</body>
+</html>
