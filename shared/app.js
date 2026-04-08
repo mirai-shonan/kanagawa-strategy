@@ -326,9 +326,16 @@ function sw(t){
 // 演説セクション - Google Sheets連携版
 // ============================================================
 
+// These are populated by initApp() after CSV data is loaded
 const AREA_RATE_MAP = {};
-DATA.forEach(d => { AREA_RATE_MAP[d['地域']] = d['チームみらい率']; });
-const AREA_NAMES = DATA.map(d => d['地域']).sort();
+let AREA_NAMES = [];
+
+function buildAreaMaps() {
+  // Clear and rebuild
+  Object.keys(AREA_RATE_MAP).forEach(k => delete AREA_RATE_MAP[k]);
+  DATA.forEach(d => { AREA_RATE_MAP[d['地域']] = d['チームみらい率']; });
+  AREA_NAMES = DATA.map(d => d['地域']).sort();
+}
 
 window.addEventListener('load', () => {
   const saved = localStorage.getItem('speechSheetUrl');
@@ -720,12 +727,19 @@ window.addEventListener('resize',()=>{
 // ============================================================
 // 初期化
 // ============================================================
-initHeader();
-renderOverview();
-renderPartyBars();
-renderFooter();
-renderTop10();
-renderPosting();
-sortTable('チームみらい率', true, null);
-renderDiffLists();
-renderKawai();
+async function initApp() {
+  if (typeof loadCSVData === 'function') {
+    await loadCSVData();
+  }
+  buildAreaMaps();
+  initHeader();
+  renderOverview();
+  renderPartyBars();
+  renderFooter();
+  renderTop10();
+  renderPosting();
+  sortTable('チームみらい率', true, null);
+  renderDiffLists();
+  renderKawai();
+}
+initApp();
