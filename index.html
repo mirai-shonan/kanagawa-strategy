@@ -841,9 +841,9 @@ body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--text
 
   <!-- ステータスバー -->
   <div id="speech-status-bar" style="background:var(--dark);color:white;border-radius:10px;padding:10px 13px;margin-bottom:11px;display:flex;align-items:center;gap:10px;">
-    <div id="speech-status-dot" style="width:8px;height:8px;border-radius:50%;background:#fbbf24;flex-shrink:0;animation:pulse 1.5s infinite;"></div>
+    <div id="speech-status-dot" style="width:8px;height:8px;border-radius:50%;background:#6b7280;flex-shrink:0;"></div>
     <div style="flex:1;">
-      <div id="speech-status-text" style="font-size:11px;color:rgba(255,255,255,.8);">読み込み中...</div>
+      <div id="speech-status-text" style="font-size:11px;color:rgba(255,255,255,.8);">ボタンを押して最新データを取得してください</div>
       <div id="speech-status-sub" style="font-size:10px;color:rgba(255,255,255,.4);font-family:'DM Mono',monospace;margin-top:1px;"></div>
     </div>
     <button onclick="loadSpeechData()" id="speech-reload-btn"
@@ -1272,7 +1272,7 @@ DATA.forEach(d => { AREA_RATE_MAP[d['地域']] = d['チームみらい率']; });
 
 const SPEECH_API_URL = 'https://script.google.com/macros/s/AKfycbz_zvHjY8VJBCoKI_7JFx-VifiGUr2bzUbqxTkHThJTPV3emYYYwmP-cAFXIoavLl5SIA/exec';
 
-window.addEventListener('load', () => { loadSpeechData(); });
+// 自動読み込みなし：ボタンを押すまで待機
 
 async function loadSpeechData() {
   setStatus('yellow','読み込み中...','スプレッドシートからデータ取得中');
