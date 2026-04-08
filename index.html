@@ -844,11 +844,11 @@ body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--text
     <div id="speech-status-dot" style="width:8px;height:8px;border-radius:50%;background:#fbbf24;flex-shrink:0;animation:pulse 1.5s infinite;"></div>
     <div style="flex:1;">
       <div id="speech-status-text" style="font-size:11px;color:rgba(255,255,255,.8);">読み込み中...</div>
-      <div id="speech-status-sub" style="font-size:10px;color:rgba(255,255,255,.4);font-family:'DM Mono',monospace;margin-top:1px;">スプレッドシートからデータ取得中</div>
+      <div id="speech-status-sub" style="font-size:10px;color:rgba(255,255,255,.4);font-family:'DM Mono',monospace;margin-top:1px;"></div>
     </div>
     <button onclick="loadSpeechData()" id="speech-reload-btn"
-      style="padding:5px 12px;background:#95e3cd;border:none;border-radius:20px;font-size:11px;font-weight:700;color:#0a3d22;cursor:pointer;font-family:'Noto Sans JP',sans-serif;flex-shrink:0;">
-      再読込
+      style="padding:6px 13px;background:#95e3cd;border:none;border-radius:20px;font-size:11px;font-weight:700;color:#0a3d22;cursor:pointer;font-family:'Noto Sans JP',sans-serif;flex-shrink:0;white-space:nowrap;">
+      最新データを読み込む
     </button>
   </div>
 
@@ -1277,7 +1277,7 @@ window.addEventListener('load', () => { loadSpeechData(); });
 async function loadSpeechData() {
   setStatus('yellow','読み込み中...','スプレッドシートからデータ取得中');
   const btn = document.getElementById('speech-reload-btn');
-  btn.textContent = '読込中'; btn.disabled = true;
+  btn.textContent = '読み込み中...'; btn.disabled = true;
   try {
     const res = await fetch(SPEECH_API_URL);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -1292,7 +1292,7 @@ async function loadSpeechData() {
   } catch(e) {
     setStatus('red','読み込み失敗: '+e.message,'再読込ボタンをお試しください');
   }
-  btn.textContent = '再読込'; btn.disabled = false;
+  btn.textContent = '最新データを読み込む'; btn.disabled = false;
 }
 
 function setStatus(color, text, sub) {
