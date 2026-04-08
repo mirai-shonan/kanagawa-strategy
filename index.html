@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>チームみらい 神奈川 活動戦略 v2</title>
+<title>チームみらい 神奈川 活動戦略 v9</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -101,6 +101,7 @@ body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--text
 .sort-btns{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px;}
 .sort-btn{padding:4px 10px;border-radius:15px;border:1px solid var(--border);background:var(--white);font-size:11px;cursor:pointer;color:var(--muted);font-family:'Noto Sans JP',sans-serif;}
 .sort-btn.active{background:#95e3cd;color:white;border-color:var(--green);}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
 </style>
 </head>
 <body>
@@ -840,69 +841,15 @@ body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--text
 
   <!-- ステータスバー -->
   <div id="speech-status-bar" style="background:var(--dark);color:white;border-radius:10px;padding:10px 13px;margin-bottom:11px;display:flex;align-items:center;gap:10px;">
-    <div id="speech-status-dot" style="width:8px;height:8px;border-radius:50%;background:#6b7280;flex-shrink:0;"></div>
+    <div id="speech-status-dot" style="width:8px;height:8px;border-radius:50%;background:#fbbf24;flex-shrink:0;animation:pulse 1.5s infinite;"></div>
     <div style="flex:1;">
-      <div id="speech-status-text" style="font-size:11px;color:rgba(255,255,255,.8);">データ未読み込み</div>
-      <div id="speech-status-sub" style="font-size:10px;color:rgba(255,255,255,.4);font-family:'DM Mono',monospace;margin-top:1px;"></div>
+      <div id="speech-status-text" style="font-size:11px;color:rgba(255,255,255,.8);">読み込み中...</div>
+      <div id="speech-status-sub" style="font-size:10px;color:rgba(255,255,255,.4);font-family:'DM Mono',monospace;margin-top:1px;">スプレッドシートからデータ取得中</div>
     </div>
     <button onclick="loadSpeechData()" id="speech-reload-btn"
       style="padding:5px 12px;background:#95e3cd;border:none;border-radius:20px;font-size:11px;font-weight:700;color:#0a3d22;cursor:pointer;font-family:'Noto Sans JP',sans-serif;flex-shrink:0;">
-      読み込む
+      再読込
     </button>
-  </div>
-
-  <!-- Google Sheets URL設定 -->
-  <div class="card" id="speech-config-card">
-    <div class="card-label">📊 Googleスプレッドシート連携</div>
-    <div style="font-size:11px;color:var(--muted);margin-bottom:8px;line-height:1.6;">
-      スプレッドシートのWebアプリURLを入力してください。<br>
-      <span style="color:var(--green-mid);font-weight:700;">設定は端末に保存されます。</span>
-    </div>
-    <input id="sheets-url-input" type="url"
-      placeholder="https://script.google.com/macros/s/..."
-      style="width:100%;padding:9px 11px;border:1px solid var(--border);border-radius:9px;font-size:11px;font-family:'DM Mono',monospace;background:var(--white);color:var(--text);margin-bottom:8px;">
-    <div style="display:flex;gap:7px;">
-      <button onclick="saveSheetUrl()" style="flex:1;padding:8px;background:var(--green-mid);color:white;border:none;border-radius:9px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Noto Sans JP',sans-serif;">保存して読み込む</button>
-      <button onclick="useSampleData()" style="padding:8px 12px;background:var(--white);border:1px solid var(--border);border-radius:9px;font-size:11px;color:var(--muted);cursor:pointer;font-family:'Noto Sans JP',sans-serif;">サンプルで試す</button>
-    </div>
-    <details style="margin-top:10px;">
-      <summary style="font-size:10px;color:var(--green-mid);cursor:pointer;font-weight:700;">▶ スプレッドシートの設定方法</summary>
-      <div style="font-size:10px;color:var(--muted);line-height:1.8;margin-top:7px;padding:9px;background:#f5faf6;border-radius:8px;">
-        <strong>① スプレッドシートの列構成（1行目がヘッダー）</strong><br>
-        A: 日付　B: 場所名　C: 自治体名　D: 議員参加（Y/空白）　E: 種別　F: 参加人数<br>
-        種別の値: 街頭演説 / 街頭活動 / 街宣車 / 個人演説会 / ももたろう / その他<br><br>
-        <strong>② Google Apps Scriptを設定</strong><br>
-        スプレッドシートのメニュー →「拡張機能」→「Apps Script」→ 以下を貼り付けて保存<br>
-        <code style="display:block;background:#1a1a1a;color:#4ade80;padding:8px;border-radius:6px;margin:6px 0;font-size:10px;white-space:pre-wrap;word-break:break-all;">function doGet() {
-  const sh = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-  const rows = sh.getDataRange().getValues();
-  const data = rows.slice(1).filter(r => r[2]).map(r => ({
-    date:  r[0] ? Utilities.formatDate(new Date(r[0]),'JST','yyyy/MM/dd') : '',
-    place: r[1] || '',
-    area:  r[2] || '',
-    vip:   (r[3] || '').toString().toUpperCase() === 'Y',
-    type:  r[4] ? String(r[4]) : 'その他',
-    pax:   r[5] ? Number(r[5]) : null
-  }));
-  return ContentService
-    .createTextOutput(JSON.stringify(data))
-    .setMimeType(ContentService.MimeType.JSON);
-}</code>
-        <strong>③ デプロイ</strong><br>
-        「デプロイ」→「新しいデプロイ」→ 種類:「ウェブアプリ」→ アクセス:「全員」→ デプロイ → URLをコピー<br><br>
-        <strong>④ E列にドロップダウンを設定（推奨）</strong><br>
-        E列選択 →「データ」→「データの入力規則」→「プルダウン」→ 街頭演説・街頭活動（チラシ配り等）・街宣車遊説・個人演説会・ももたろう・その他 を追加
-      </div>
-    </details>
-  </div>
-
-  <!-- 手動入力フォールバック -->
-  <div class="card" id="speech-manual-card" style="display:none;">
-    <div class="card-label">✏️ 手動でデータ入力（連携なしで試す）</div>
-    <div style="font-size:10px;color:var(--muted);margin-bottom:8px;">場所名・自治体・種別・回数・参加人数（任意）を入力してください</div>
-    <div id="speech-entries"></div>
-    <button onclick="addSpeechEntry()" style="margin-top:8px;width:100%;padding:8px;border:1.5px dashed var(--border);background:transparent;border-radius:9px;font-size:12px;color:var(--green-mid);cursor:pointer;font-family:'Noto Sans JP',sans-serif;">＋ 追加</button>
-    <button onclick="analyzeManualSpeech()" style="margin-top:8px;width:100%;padding:10px;background:var(--green-mid);color:white;border:none;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Noto Sans JP',sans-serif;">分析する</button>
   </div>
 
   <!-- 結果エリア（読み込み後に表示） -->
@@ -1317,81 +1264,44 @@ renderDiffLists();
 renderKawai();
 
 // ============================================================
-// 演説セクション - Google Sheets連携版
+// 演説セクション - Apps Script固定URL版（GitHub Pages対応）
 // ============================================================
 
 const AREA_RATE_MAP = {};
 DATA.forEach(d => { AREA_RATE_MAP[d['地域']] = d['チームみらい率']; });
-const AREA_NAMES = DATA.map(d => d['地域']).sort();
 
-window.addEventListener('load', () => {
-  const saved = localStorage.getItem('speechSheetUrl');
-  if (saved) document.getElementById('sheets-url-input').value = saved;
-  addSpeechEntry();
-});
+const SPEECH_API_URL = 'https://script.google.com/macros/s/AKfycbz_zvHjY8VJBCoKI_7JFx-VifiGUr2bzUbqxTkHThJTPV3emYYYwmP-cAFXIoavLl5SIA/exec';
 
-function saveSheetUrl() {
-  const url = document.getElementById('sheets-url-input').value.trim();
-  if (!url.startsWith('https://script.google.com')) {
-    alert('Google Apps Script のデプロイURLを入力してください\n（https://script.google.com/macros/s/... の形式）');
-    return;
-  }
-  localStorage.setItem('speechSheetUrl', url);
-  loadSpeechData();
-}
+window.addEventListener('load', () => { loadSpeechData(); });
 
 async function loadSpeechData() {
-  const url = localStorage.getItem('speechSheetUrl') ||
-              document.getElementById('sheets-url-input').value.trim();
-  if (!url) { setStatus('gray','URLを入力してください',''); return; }
-  setStatus('yellow','読み込み中...',url.slice(0,48)+'...');
-  document.getElementById('speech-reload-btn').textContent='読込中';
+  setStatus('yellow','読み込み中...','スプレッドシートからデータ取得中');
+  const btn = document.getElementById('speech-reload-btn');
+  btn.textContent = '読込中'; btn.disabled = true;
   try {
-    const res = await fetch(url);
+    const res = await fetch(SPEECH_API_URL);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
-    if (!Array.isArray(data)) throw new Error('データ形式が不正です');
-    processSpeechData(data);
-    setStatus('green',`${data.length}件 読み込み完了`,`最終更新: ${new Date().toLocaleTimeString('ja-JP')}`);
+    if (!Array.isArray(data)) throw new Error('データ形式が不正');
+    if (data.length === 0) {
+      setStatus('gray','データが0件です','スプレッドシートにデータを追加してください');
+    } else {
+      processSpeechData(data);
+      setStatus('green',`${data.length}件 読み込み完了`,`最終更新: ${new Date().toLocaleTimeString('ja-JP')}`);
+    }
   } catch(e) {
-    setStatus('red','読み込み失敗: '+e.message,'URLとApps Scriptの設定を確認してください');
+    setStatus('red','読み込み失敗: '+e.message,'再読込ボタンをお試しください');
   }
-  document.getElementById('speech-reload-btn').textContent='再読込';
+  btn.textContent = '再読込'; btn.disabled = false;
 }
 
 function setStatus(color, text, sub) {
   const colors={green:'#4ade80',yellow:'#fbbf24',red:'#f87171',gray:'#6b7280'};
-  document.getElementById('speech-status-dot').style.background = colors[color]||colors.gray;
+  const dot = document.getElementById('speech-status-dot');
+  dot.style.background = colors[color]||colors.gray;
+  dot.style.animation = color==='yellow' ? 'pulse 1.5s infinite' : 'none';
   document.getElementById('speech-status-text').textContent = text;
   document.getElementById('speech-status-sub').textContent = sub;
-}
-
-function useSampleData() {
-  const sample = [
-    {date:'2025/10/01',place:'武蔵小杉駅前',area:'川崎市中原区',vip:true, type:'街頭演説',pax:80},
-    {date:'2025/10/08',place:'武蔵小杉駅前',area:'川崎市中原区',vip:false,type:'街頭活動（チラシ配り等）',pax:null},
-    {date:'2025/10/15',place:'武蔵小杉駅前',area:'川崎市中原区',vip:true, type:'街頭演説',pax:120},
-    {date:'2025/10/23',place:'武蔵小杉駅前',area:'川崎市中原区',vip:false,type:'街宣車遊説',  pax:null},
-    {date:'2025/10/03',place:'新横浜駅前',  area:'横浜市港北区',vip:true, type:'街頭演説',pax:60},
-    {date:'2025/10/17',place:'新横浜駅前',  area:'横浜市港北区',vip:false,type:'街頭活動（チラシ配り等）',pax:null},
-    {date:'2025/10/31',place:'日吉駅前',    area:'横浜市港北区',vip:false,type:'ももたろう',pax:null},
-    {date:'2025/10/05',place:'たまプラーザ駅前',area:'横浜市青葉区',vip:true, type:'街頭演説',pax:90},
-    {date:'2025/10/19',place:'たまプラーザ駅前',area:'横浜市青葉区',vip:false,type:'街頭活動（チラシ配り等）',pax:null},
-    {date:'2025/10/10',place:'辻堂駅前',    area:'藤沢市',      vip:true, type:'街頭演説',pax:70},
-    {date:'2025/10/24',place:'辻堂駅前',    area:'藤沢市',      vip:false,type:'街頭活動（チラシ配り等）',pax:null},
-    {date:'2025/10/12',place:'茅ヶ崎駅北口',area:'茅ヶ崎市',   vip:true, type:'街頭演説',pax:50},
-    {date:'2025/10/26',place:'茅ヶ崎駅北口',area:'茅ヶ崎市',   vip:false,type:'街宣車遊説',  pax:null},
-    {date:'2025/10/07',place:'溝の口駅前',  area:'川崎市高津区',vip:true, type:'街頭演説',pax:65},
-    {date:'2025/10/21',place:'溝の口駅前',  area:'川崎市高津区',vip:false,type:'ももたろう',pax:null},
-    {date:'2025/10/14',place:'センター北駅前',area:'横浜市都筑区',vip:false,type:'街頭活動（チラシ配り等）',pax:null},
-    {date:'2025/10/09',place:'登戸駅前',    area:'川崎市多摩区',vip:false,type:'街頭活動（チラシ配り等）',pax:null},
-    {date:'2025/11/02',place:'○○ホール',  area:'横須賀市',    vip:true, type:'個人演説会',pax:150},
-    {date:'2025/11/05',place:'平塚駅前',    area:'平塚市',      vip:false,type:'街頭演説',pax:null},
-    {date:'2025/11/08',place:'大和駅前',    area:'大和市',      vip:false,type:'街頭活動（チラシ配り等）',pax:null},
-    {date:'2025/11/09',place:'大和駅前',    area:'大和市',      vip:true, type:'個人演説会',pax:80},
-  ];
-  processSpeechData(sample);
-  setStatus('green',`サンプル ${sample.length}件`,'実際のデータはURLを設定してください');
 }
 
 let _speechPlaces = [];
@@ -1575,56 +1485,6 @@ function sortSpeechTable(key,btn) {
   btn.classList.add('active');
 }
 
-// 手動入力フォールバック
-const SPEECH_TYPES = ['街頭演説','街頭活動（チラシ配り等）','街宣車遊説','個人演説会','ももたろう','その他'];
-let _manualEntries=[];
-function addSpeechEntry(){
-  const id=Date.now()+Math.random(); _manualEntries.push({id}); renderManualEntries();
-}
-function removeManualEntry(id){
-  _manualEntries=_manualEntries.filter(e=>e.id!==id); renderManualEntries();
-}
-function renderManualEntries(){
-  document.getElementById('speech-entries').innerHTML=_manualEntries.map(e=>`
-    <div data-id="${e.id}" style="margin-bottom:10px;padding:9px;background:#f9fafb;border-radius:9px;border:1px solid var(--border);">
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:5px;">
-        <input class="sp-place" type="text" placeholder="場所名（例：武蔵小杉駅前）"
-          style="padding:7px 8px;border:1px solid var(--border);border-radius:8px;font-size:11px;font-family:'Noto Sans JP',sans-serif;background:var(--white);color:var(--text);">
-        <input class="sp-area" type="text" placeholder="自治体名" list="dl-${e.id}"
-          style="padding:7px 8px;border:1px solid var(--border);border-radius:8px;font-size:11px;font-family:'Noto Sans JP',sans-serif;background:var(--white);color:var(--text);">
-        <datalist id="dl-${e.id}">${AREA_NAMES.map(a=>`<option value="${a}">`).join('')}</datalist>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 60px 70px 26px;gap:5px;align-items:center;">
-        <select class="sp-type"
-          style="padding:7px 8px;border:1px solid var(--border);border-radius:8px;font-size:11px;font-family:'Noto Sans JP',sans-serif;background:var(--white);color:var(--text);">
-          ${SPEECH_TYPES.map(t=>`<option value="${t}">${t}</option>`).join('')}
-        </select>
-        <input class="sp-count" type="number" placeholder="回数" min="1"
-          style="padding:7px 5px;border:1px solid var(--border);border-radius:8px;font-size:11px;text-align:center;font-family:'DM Mono',monospace;background:var(--white);color:var(--text);">
-        <input class="sp-pax" type="number" placeholder="人数(任意)" min="0"
-          style="padding:7px 5px;border:1px solid var(--border);border-radius:8px;font-size:11px;text-align:center;font-family:'DM Mono',monospace;background:var(--white);color:var(--text);">
-        <button onclick="removeManualEntry(${e.id})"
-          style="width:26px;height:26px;border-radius:50%;border:1px solid #fca5a5;background:#fee2e2;color:#dc2626;font-size:14px;cursor:pointer;flex-shrink:0;">×</button>
-      </div>
-    </div>`).join('');
-}
-function analyzeManualSpeech(){
-  const rows=document.querySelectorAll('#speech-entries [data-id]');
-  const rawData=[];
-  rows.forEach(row=>{
-    const place = row.querySelector('.sp-place').value.trim();
-    const area  = row.querySelector('.sp-area').value.trim();
-    const type  = row.querySelector('.sp-type').value || 'その他';
-    const count = parseInt(row.querySelector('.sp-count').value)||0;
-    const paxVal= parseInt(row.querySelector('.sp-pax').value);
-    const pax   = isNaN(paxVal) ? null : paxVal;
-    if(!area||count<=0) return;
-    for(let i=0;i<count;i++) rawData.push({place,area,type,vip:false,pax:i===0?pax:null,date:''});
-  });
-  if(rawData.length===0){alert('自治体名と回数を入力してください');return;}
-  processSpeechData(rawData);
-  setStatus('green',`手動入力 ${rawData.length}件`,'');
-}
 
 // 散布図
 function drawSpeechScatter(withSpeech, noSpeech) {
