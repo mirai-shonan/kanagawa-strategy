@@ -30,9 +30,12 @@
 
 1. `prefectures/_template/` を `prefectures/xxx/` にコピー
 2. 選管Excelを `prefectures/xxx/raw/` に配置（ファイル名にキーワードを含める）
-   - `*sangi*senkyoku*.xlsx` — 参院選挙区（候補者別開票区別）
-   - `*sangi*hirei*district*.xlsx` — 参院比例（党派別開票区別）
-   - `*shugi*hirei*district*.xlsx` — 衆院比例（党派別開票区別、公開がある場合）
+   - `*sangi*senkyoku*.xlsx` — 参院選挙区（候補者別開票区別）→ candidate.csv
+   - `*sangi*hirei*district*.xlsx` — 参院比例（党派別開票区別）→ senate.csv
+   - `*shugi*hirei*.xlsx` — 衆院比例（開票調シート）→ house.csv
+
+   ※神奈川県選管の場合、令和8年2月衆院選はExcel未公開のためR8.2のhouse.csvは
+   　手動管理が必要です（公開され次第、上記スクリプトで自動生成可能）。
 3. 変換スクリプトでCSVを生成:
    ```bash
    python3 tools/convert_excel.py prefectures/xxx

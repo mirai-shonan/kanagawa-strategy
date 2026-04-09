@@ -243,6 +243,125 @@ def parse_senate_proportional(filepath):
 
 
 # ============================================================
+# 衆院比例（開票調シート）パーサー — r6hirei.xlsx形式
+# ============================================================
+
+def normalize_name(s):
+    """全角空白・半角空白・no-break-space を全て除去"""
+    if not s:
+        return ''
+    return str(s).replace(' ', '').replace('\u3000', '').replace('\xa0', '').strip()
+
+
+_TOTAL_ROW_NAMES = {'県計', '指定市計', '一般市計', '市部計', '郡部計', '合計', '開票区名', '届出番号', '党派名'}
+
+
+def extract_house_area(raw_name, parent_state):
+    """
+    衆院比例「開票調」シート用の地域名抽出。
+    parent_state は [parent_city] という1要素リスト（状態保持）。
+    """
+    name = normalize_name(raw_name)
+    if not name or name in _TOTAL_ROW_NAMES:
+        return None
+
+    # 政令指定都市の親行
+    if name in DESIGNATED_CITIES:
+        parent_state[0] = name
+        return None
+
+    # 区のみ（政令指定都市の区）
+    if name.endswith('区') and parent_state[0]:
+        return parent_state[0] + name
+
+    # 「三浦郡葉山町」のように1セルに郡＋町
+    m = re.match(r'^([^\s]+郡)(.+[町村])$', name)
+    if m:
+        return m.group(2)
+
+    # 郡のみ
+    if name.endswith('郡'):
+        return None
+
+    # 町村単独
+    if name.endswith('町') or name.endswith('村'):
+        return name
+
+    # 一般市（区を含まない市）
+    if name.endswith('市'):
+        parent_state[0] = None  # 一般市が来たら親市リセット
+        return name
+
+    return None
+
+
+def parse_house_proportional(filepath):
+    """
+    衆院比例の党派別開票区別データを「開票調」シートから抽出する。
+    R6 (令和6年) のExcel形式に対応。R8 が同じフォーマットなら自動的に動作する。
+
+    想定フォーマット:
+    - Sheet: '開票調'
+    - Row 6: 政党名（col 5〜）
+    - Row 8 以降: 開票区別データ（2行ペア: 得票数 + 得票率）
+      - col 1: 開票率
+      - col 2: 開票区名
+      - col 5〜14: 各党の得票数
+      - col 15: 合計
+    """
+    wb = openpyxl.load_workbook(filepath, data_only=True)
+    if '開票調' not in wb.sheetnames:
+        return None
+    ws = wb['開票調']
+
+    # チームみらい列を探す（row 6）
+    team_col = None
+    for col in range(5, ws.max_column + 1):
+        v = ws.cell(row=6, column=col).value
+        if v and 'チームみらい' in str(v):
+            team_col = col
+            break
+    if team_col is None:
+        # R6 など過去選挙にはチームみらいがない → 警告
+        print(f"  Warning: チームみらい列が見つかりません: {filepath}", file=sys.stderr)
+        print(f"           （この選挙にチームみらい候補がいないか、R8.2 が公開されていない可能性）", file=sys.stderr)
+        return None
+
+    total_col = None
+    for col in range(5, ws.max_column + 1):
+        v = ws.cell(row=6, column=col).value
+        if v and '合計' in str(v):
+            total_col = col
+            break
+
+    results = []
+    parent_state = [None]
+
+    for row in range(8, ws.max_row + 1):
+        raw_name = ws.cell(row=row, column=2).value
+        area = extract_house_area(raw_name, parent_state)
+        if not area:
+            continue
+
+        team_votes = parse_number(ws.cell(row=row, column=team_col).value)
+        if team_votes is None:
+            continue
+        team_votes = round(team_votes)
+
+        total = parse_number(ws.cell(row=row, column=total_col).value) if total_col else None
+        rate = round(team_votes / total * 100, 1) if total and total > 0 else 0
+
+        results.append({
+            '地域': area,
+            '得票数': team_votes,
+            '得票率': rate,
+            '合計': round(total) if total else 0,
+        })
+
+    return results
+
+
+# ============================================================
 # CSV出力 + ファイル探索
 # ============================================================
 
@@ -304,22 +423,15 @@ def convert_prefecture(prefecture_dir):
         else:
             print(f"  Warning: パース失敗", file=sys.stderr)
 
-    # 衆院比例（党派別開票区別） → house.csv
-    files = find_excel_files(raw_dir, 'shugi', 'hirei', 'district')
+    # 衆院比例（開票調シート） → house.csv
+    files = find_excel_files(raw_dir, 'shugi', 'hirei')
     for f in files:
-        print(f"衆院比例（党派別開票区別）: {os.path.basename(f)}", file=sys.stderr)
-        # 構造は参院比例と同様と想定（要検証）
-        results = parse_senate_proportional(f)
+        print(f"衆院比例: {os.path.basename(f)}", file=sys.stderr)
+        results = parse_house_proportional(f)
         if results:
             write_csv(results, os.path.join(data_dir, 'house.csv'),
-                      ['地域', '得票数', '得票率'])
+                      ['地域', '得票数', '得票率', '合計'])
             converted += 1
-        else:
-            print(f"  Warning: パース失敗", file=sys.stderr)
-
-    if not find_excel_files(raw_dir, 'shugi', 'hirei', 'district'):
-        print("Note: 衆院比例（党派別開票区別）のExcelが見つかりません。", file=sys.stderr)
-        print("      多くの自治体ではPDFのみ公開のため、house.csv は手作業で作成してください。", file=sys.stderr)
 
     if converted == 0:
         print("\nWarning: 変換可能なExcelファイルが見つかりませんでした。", file=sys.stderr)
