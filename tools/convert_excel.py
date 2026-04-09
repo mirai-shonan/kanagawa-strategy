@@ -8,11 +8,14 @@ prefectures/<県名>/data/ にCSVを出力します。
 使い方:
   python3 tools/convert_excel.py prefectures/kanagawa
 
-raw/ ディレクトリの命名規則:
-  - *sangi*senkyoku*.xlsx → 参院選挙区（候補者別開票区別得票数）
-                            → senate.csv を生成
-  - *sangi*hirei*.xlsx    → 参院比例（党派別名簿登載者別得票数）※未対応
-  - *shugi*hirei*.xlsx    → 衆院比例 ※未対応
+raw/ ディレクトリの命名規則（ファイル名にこれらのキーワードを含める）:
+  - sangi + senkyoku                → 参院選挙区（候補者別開票区別）→ candidate.csv
+  - sangi + hirei + district        → 参院比例（党派別開票区別）   → senate.csv
+  - shugi + hirei + district        → 衆院比例（党派別開票区別）   → house.csv ※選管公開なしの可能性あり
+
+注意:
+  - 衆院比例の「党派別開票区別」データは多くの自治体で公開されておらず、
+    PDFのみの場合があります。その場合は手作業で house.csv を作成してください。
 
 必要パッケージ:
   pip install openpyxl
@@ -22,6 +25,7 @@ import argparse
 import csv
 import glob
 import os
+import re
 import sys
 
 try:
@@ -31,119 +35,216 @@ except ImportError:
     sys.exit(1)
 
 
-def find_team_mirai_col(ws):
-    """党名行・候補者名行から「チームみらい」の列インデックスを探す"""
-    for check_row in [5, 7]:
+# ============================================================
+# 共通ヘルパー
+# ============================================================
+
+# 政令指定都市（合計行はスキップし、区を子として採用）
+DESIGNATED_CITIES = {
+    '札幌市', '仙台市', 'さいたま市', '千葉市', '川崎市', '横浜市', '相模原市',
+    '新潟市', '静岡市', '浜松市', '名古屋市', '京都市', '大阪市', '堺市',
+    '神戸市', '岡山市', '広島市', '北九州市', '福岡市', '熊本市',
+}
+
+# 郡名パターン（神奈川県以外も含む一般的なパターン）
+GUN_RE = re.compile(r'^[^\s]+郡')
+
+
+def is_total_row(name):
+    """合計行かどうかを判定"""
+    s = str(name).strip()
+    return s.endswith('計') or s in ('合計', '指定都市計', 'その他の市計', '町村計', '県計')
+
+
+def is_gun(name):
+    """郡名のみの行か（〜郡で終わる）"""
+    s = str(name).strip()
+    return bool(GUN_RE.match(s)) and not any(c in s for c in '町村市区')
+
+
+def strip_gun_prefix(name):
+    """町村名から郡名を除去する（例: 「足柄下郡箱根町」→「箱根町」）"""
+    return GUN_RE.sub('', name)
+
+
+def parse_number(val):
+    """セル値を数値に変換する。文字列の場合はカンマ・空白を除去して変換。"""
+    if val is None:
+        return None
+    if isinstance(val, (int, float)):
+        return val
+    if isinstance(val, str):
+        try:
+            return float(val.strip().replace(',', '').replace(' ', '').replace('\u3000', ''))
+        except ValueError:
+            return None
+    return None
+
+
+def find_col_by_keyword(ws, keyword, rows=(5, 7, 11)):
+    """指定された行から、キーワードを含む列インデックスを探す"""
+    for row in rows:
         for col in range(1, ws.max_column + 1):
-            val = ws.cell(row=check_row, column=col).value
-            if val and 'チームみらい' in str(val):
+            val = ws.cell(row=row, column=col).value
+            if val and keyword in str(val):
                 return col
+    return None
+
+
+def find_total_col(ws, rows=(5, 7, 8, 11)):
+    """合計列を探す"""
+    for row in rows:
+        for col in range(1, ws.max_column + 1):
+            val = ws.cell(row=row, column=col).value
+            if val:
+                s = str(val).strip()
+                if '得票数計' in s or '合計' in s or s == '計':
+                    return col
+    return None
+
+
+# ============================================================
+# 参院選挙区（候補者別開票区別）パーサー — g.xlsx形式
+# ============================================================
+
+def extract_area_name(col_a, col_b):
+    """
+    col_a と col_b から市区町村名を抽出する。
+    返り値: 採用すべき地域名（政令指定都市の親行や郡の親行・合計行はNone）
+    """
+    a = str(col_a).strip() if col_a else ''
+    b = str(col_b).strip() if col_b else ''
+
+    # 合計行はスキップ
+    if a and is_total_row(a):
+        return None
+    if b and is_total_row(b):
+        return None
+
+    # 政令指定都市の親行はスキップ（区が子として後続）
+    if a and a in DESIGNATED_CITIES:
+        return None
+
+    # 郡名のみの親行はスキップ（町村が子として後続）
+    if a and is_gun(a):
+        return None
+
+    # col_b に値がある場合（政令指定都市の区 or 郡の町村）
+    if b:
+        return strip_gun_prefix(b)
+
+    # col_a に値があり、政令指定都市・郡・合計でない → 一般市
+    if a:
+        return strip_gun_prefix(a)
+
     return None
 
 
 def parse_senate_district(filepath):
     """
     参院選挙区の候補者別開票区別Excel (g.xlsx形式) をパースする。
-
-    想定フォーマット:
-    - Row 5: 候補者名
-    - Row 7: 党名
-    - Row 9+: データ行
-      - Col A (1): 親市区名（政令指定都市名など。区がある場合のみ）
-      - Col B (2): 市区町村名
-      - 各列: 候補者別得票数
-      - Col S (19) あたり: 合計
     """
     wb = openpyxl.load_workbook(filepath, data_only=True)
     ws = wb.active
 
-    team_col = find_team_mirai_col(ws)
+    team_col = find_col_by_keyword(ws, 'チームみらい', rows=(5, 7))
     if team_col is None:
-        print(f"  Warning: 「チームみらい」列が見つかりませんでした: {filepath}", file=sys.stderr)
-        return []
-
-    # 合計列を探す（「合計」「計」「得票数計」などのヘッダー）
-    total_col = None
-    for col in range(1, ws.max_column + 1):
-        for check_row in [5, 7, 8]:
-            val = ws.cell(row=check_row, column=col).value
-            if val and ('合計' in str(val) or '得票数計' in str(val) or str(val).strip() == '計'):
-                total_col = col
-                break
-        if total_col:
-            break
-
-    print(f"  チームみらい列: {team_col}, 合計列: {total_col or '未検出'}", file=sys.stderr)
+        return None
+    total_col = find_total_col(ws, rows=(5, 7, 8))
 
     results = []
-    parent_city = None
-    data_start_row = 9
-
-    for row in range(data_start_row, ws.max_row + 1):
-        col_a = ws.cell(row=row, column=1).value
-        col_b = ws.cell(row=row, column=2).value
-
-        # 親市区名の更新（政令指定都市名）
-        # col_a に値がある行は政令指定都市の合計行 → スキップしつつ親市名を記録
-        if col_a and str(col_a).strip():
-            val = str(col_a).strip()
-            if val.endswith('計') or val == '合計':
-                parent_city = None
-                continue
-            parent_city = val
-            continue  # 親市の合計行はデータとしては使わない
-
-        # 地域名の取得
-        area = None
-        if col_b and str(col_b).strip():
-            val = str(col_b).strip()
-            if val.endswith('計') or val == '合計':
-                continue
-            # 既に親市名が含まれていればそのまま、なければ親市名を前置
-            if parent_city and not val.startswith(parent_city):
-                area = parent_city + val
-            else:
-                area = val
-
+    for row in range(9, ws.max_row + 1):
+        area = extract_area_name(
+            ws.cell(row=row, column=1).value,
+            ws.cell(row=row, column=2).value,
+        )
         if not area:
             continue
 
-        # 得票数を取得
-        team_votes = ws.cell(row=row, column=team_col).value
+        team_votes = parse_number(ws.cell(row=row, column=team_col).value)
         if team_votes is None:
             continue
-        # 文字列の場合は数値変換
-        if isinstance(team_votes, str):
-            try:
-                team_votes = int(team_votes.strip().replace(',', '').replace(' ', ''))
-            except ValueError:
-                continue
-        if not isinstance(team_votes, (int, float)):
+        team_votes = round(team_votes)
+
+        total = parse_number(ws.cell(row=row, column=total_col).value) if total_col else None
+        rate = round(team_votes / total * 100, 1) if total and total > 0 else 0
+
+        results.append({
+            '地域': area,
+            '得票': team_votes,
+            '率': rate,
+        })
+
+    return results
+
+
+# ============================================================
+# 参院比例（党派別開票区別）パーサー — m.xlsx形式
+# ============================================================
+
+def parse_senate_proportional(filepath):
+    """
+    参院比例の党派別開票区別Excel (m.xlsx形式) をパースする。
+
+    想定フォーマット:
+    - Sheet: '開票区別'
+    - Row 7: 党派名（各党3列ずつ: 得票総数, 政党等の得票総数, 名簿登載者を除く得票総数）
+    - Row 12+: データ行
+      - Col A: 親市区名（政令指定都市の合計行）
+      - Col B: 市区町村名（フルネーム）
+      - 各党の最初の列: 得票総数
+    """
+    wb = openpyxl.load_workbook(filepath, data_only=True)
+    ws = wb['開票区別'] if '開票区別' in wb.sheetnames else wb.active
+
+    # チームみらいの列を探す（row 7）
+    team_col = find_col_by_keyword(ws, 'チームみらい', rows=(7,))
+    if team_col is None:
+        return None
+
+    # 全政党の「得票総数」列を集めて自治体別合計を算出する
+    # row 7 で値があるセルが「政党の先頭列」
+    party_cols = []
+    for col in range(3, ws.max_column + 1):
+        val = ws.cell(row=7, column=col).value
+        if val and str(val).strip() and str(val).strip() not in ('党派名',):
+            party_cols.append(col)
+
+    results = []
+    for row in range(12, ws.max_row + 1):
+        area = extract_area_name(
+            ws.cell(row=row, column=1).value,
+            ws.cell(row=row, column=2).value,
+        )
+        if not area:
             continue
-        team_votes = int(team_votes)
 
-        total_votes = None
-        if total_col:
-            tv = ws.cell(row=row, column=total_col).value
-            if isinstance(tv, str):
-                try:
-                    tv = int(tv.strip().replace(',', '').replace(' ', ''))
-                except ValueError:
-                    tv = None
-            if tv and isinstance(tv, (int, float)):
-                total_votes = int(tv)
+        team_votes = parse_number(ws.cell(row=row, column=team_col).value)
+        if team_votes is None:
+            continue
+        team_votes = round(team_votes)
 
-        rate = round(team_votes / total_votes * 100, 1) if total_votes and total_votes > 0 else 0
+        # 全政党の得票総数を合計
+        total = 0
+        for pc in party_cols:
+            v = parse_number(ws.cell(row=row, column=pc).value)
+            if v is not None:
+                total += v
+
+        rate = round(team_votes / total * 100, 1) if total > 0 else 0
 
         results.append({
             '地域': area,
             '得票数': team_votes,
             '得票率': rate,
-            '合計': total_votes,
         })
 
     return results
 
+
+# ============================================================
+# CSV出力 + ファイル探索
+# ============================================================
 
 def write_csv(rows, filepath, fieldnames):
     os.makedirs(os.path.dirname(filepath) or '.', exist_ok=True)
@@ -155,24 +256,23 @@ def write_csv(rows, filepath, fieldnames):
     print(f"  → {filepath} ({len(rows)} rows)", file=sys.stderr)
 
 
-def find_excel_files(raw_dir, *keywords):
-    """raw_dir 内で全てのキーワードを含むExcelファイルを探す"""
+def find_excel_files(raw_dir, *required_keywords, exclude_keywords=()):
+    """raw_dir 内で全ての必須キーワードを含み、除外キーワードを含まないExcelファイルを探す"""
     matches = []
-    for path in glob.glob(os.path.join(raw_dir, '*.xlsx')) + glob.glob(os.path.join(raw_dir, '*.xls')):
+    for path in sorted(glob.glob(os.path.join(raw_dir, '*.xlsx')) + glob.glob(os.path.join(raw_dir, '*.xls'))):
         name = os.path.basename(path).lower()
-        if all(kw.lower() in name for kw in keywords):
-            matches.append(path)
+        if all(kw.lower() in name for kw in required_keywords):
+            if not any(ex.lower() in name for ex in exclude_keywords):
+                matches.append(path)
     return matches
 
 
 def convert_prefecture(prefecture_dir):
-    """prefectures/<県名>/ ディレクトリを処理する"""
     raw_dir = os.path.join(prefecture_dir, 'raw')
     data_dir = os.path.join(prefecture_dir, 'data')
 
     if not os.path.isdir(raw_dir):
         print(f"Error: raw/ ディレクトリが見つかりません: {raw_dir}", file=sys.stderr)
-        print(f"選管Excelを {raw_dir}/ に配置してください。", file=sys.stderr)
         sys.exit(1)
 
     print(f"Processing: {prefecture_dir}", file=sys.stderr)
@@ -182,31 +282,47 @@ def convert_prefecture(prefecture_dir):
 
     converted = 0
 
-    # 参院選挙区
-    senate_files = find_excel_files(raw_dir, 'sangi', 'senkyoku')
-    if senate_files:
-        for f in senate_files:
-            print(f"参院選挙区: {os.path.basename(f)}", file=sys.stderr)
-            results = parse_senate_district(f)
-            if results:
-                write_csv(results, os.path.join(data_dir, 'senate.csv'),
-                          ['地域', '得票数', '得票率'])
-                converted += 1
+    # 参院選挙区（候補者別） → candidate.csv
+    files = find_excel_files(raw_dir, 'sangi', 'senkyoku')
+    for f in files:
+        print(f"参院選挙区: {os.path.basename(f)}", file=sys.stderr)
+        results = parse_senate_district(f)
+        if results:
+            write_csv(results, os.path.join(data_dir, 'candidate.csv'), ['地域', '得票', '率'])
+            converted += 1
+        else:
+            print(f"  Warning: パース失敗（チームみらい列が見つかりません）", file=sys.stderr)
 
-    # 参院比例（未対応）
-    sangi_hirei = find_excel_files(raw_dir, 'sangi', 'hirei')
-    if sangi_hirei:
-        print(f"参院比例: {len(sangi_hirei)}件検出（パーサー未対応のためスキップ）", file=sys.stderr)
+    # 参院比例（党派別開票区別） → senate.csv
+    files = find_excel_files(raw_dir, 'sangi', 'hirei', 'district')
+    for f in files:
+        print(f"参院比例（党派別開票区別）: {os.path.basename(f)}", file=sys.stderr)
+        results = parse_senate_proportional(f)
+        if results:
+            write_csv(results, os.path.join(data_dir, 'senate.csv'), ['地域', '得票数', '得票率'])
+            converted += 1
+        else:
+            print(f"  Warning: パース失敗", file=sys.stderr)
 
-    # 衆院比例（未対応）
-    shugi_hirei = find_excel_files(raw_dir, 'shugi', 'hirei')
-    if shugi_hirei:
-        print(f"衆院比例: {len(shugi_hirei)}件検出（パーサー未対応のためスキップ）", file=sys.stderr)
+    # 衆院比例（党派別開票区別） → house.csv
+    files = find_excel_files(raw_dir, 'shugi', 'hirei', 'district')
+    for f in files:
+        print(f"衆院比例（党派別開票区別）: {os.path.basename(f)}", file=sys.stderr)
+        # 構造は参院比例と同様と想定（要検証）
+        results = parse_senate_proportional(f)
+        if results:
+            write_csv(results, os.path.join(data_dir, 'house.csv'),
+                      ['地域', '得票数', '得票率'])
+            converted += 1
+        else:
+            print(f"  Warning: パース失敗", file=sys.stderr)
+
+    if not find_excel_files(raw_dir, 'shugi', 'hirei', 'district'):
+        print("Note: 衆院比例（党派別開票区別）のExcelが見つかりません。", file=sys.stderr)
+        print("      多くの自治体ではPDFのみ公開のため、house.csv は手作業で作成してください。", file=sys.stderr)
 
     if converted == 0:
         print("\nWarning: 変換可能なExcelファイルが見つかりませんでした。", file=sys.stderr)
-        print("ファイル名に以下のキーワードを含めてください:", file=sys.stderr)
-        print("  - 参院選挙区: sangi + senkyoku  (例: R7.7_sangi_senkyoku.xlsx)", file=sys.stderr)
         sys.exit(1)
 
     print(f"\nDone! {converted} file(s) converted.", file=sys.stderr)
@@ -222,18 +338,19 @@ def main():
 
 ディレクトリ構造:
   prefectures/kanagawa/
-  ├── raw/                          ← 選管Excelをここに配置
-  │   ├── R7.7_sangi_senkyoku.xlsx  ← 参院選挙区（候補者別開票区別得票数）
-  │   ├── R7.7_sangi_hirei.xlsx     ← 参院比例（未対応）
-  │   └── R8.2_shugi_hirei.xlsx     ← 衆院比例（未対応）
-  └── data/                         ← CSVがここに自動生成される
-      └── senate.csv
+  ├── raw/                                       ← 選管Excelをここに配置
+  │   ├── R7.7_sangi_senkyoku.xlsx               → candidate.csv
+  │   ├── R7.7_sangi_hirei_district.xlsx         → senate.csv
+  │   └── R8.2_shugi_hirei_district.xlsx         → house.csv（公開あれば）
+  └── data/                                      ← CSV自動生成
+      ├── candidate.csv
+      ├── senate.csv
+      └── house.csv（手動 or 自動）
 
-ファイル命名規則:
-  ファイル名に以下のキーワードを含めてください（順不同・大文字小文字無視）:
-  - sangi + senkyoku → 参院選挙区
-  - sangi + hirei    → 参院比例
-  - shugi + hirei    → 衆院比例
+ファイル命名規則（ファイル名にキーワードを含める）:
+  - sangi + senkyoku           → 参院選挙区候補者別      → candidate.csv
+  - sangi + hirei + district   → 参院比例党派別開票区別  → senate.csv
+  - shugi + hirei + district   → 衆院比例党派別開票区別  → house.csv
         """,
     )
     parser.add_argument(

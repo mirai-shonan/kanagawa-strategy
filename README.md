@@ -24,8 +24,28 @@
 
 ## 🔄 他の都道府県への展開
 
-このリポジトリをForkして、各都道府県のデータに差し替えることで
-同様の活動戦略ページを作成できます。
+`prefectures/<県名>/` ディレクトリを作成することで、1リポジトリで複数都道府県を管理できます。
+
+### 新規都道府県の追加手順
+
+1. `prefectures/_template/` を `prefectures/xxx/` にコピー
+2. 選管Excelを `prefectures/xxx/raw/` に配置（ファイル名にキーワードを含める）
+   - `*sangi*senkyoku*.xlsx` — 参院選挙区（候補者別開票区別）
+   - `*sangi*hirei*district*.xlsx` — 参院比例（党派別開票区別）
+   - `*shugi*hirei*district*.xlsx` — 衆院比例（党派別開票区別、公開がある場合）
+3. 変換スクリプトでCSVを生成:
+   ```bash
+   python3 tools/convert_excel.py prefectures/xxx
+   ```
+4. `data/posting.csv` は手作業で作成（ポスティングデータは選管にないため）
+5. `index.html` の戦略コンテンツセクションを各県の状況に合わせて記入
+6. ルート `index.html` にリンクを追加
+
+### 必要パッケージ
+
+```bash
+pip install openpyxl
+```
 
 ## 📝 更新・貢献
 
