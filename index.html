@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>チームみらい 神奈川 活動戦略 v2</title>
+<title>チームみらい 神奈川 活動戦略 v9</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -101,6 +101,7 @@ body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--text
 .sort-btns{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px;}
 .sort-btn{padding:4px 10px;border-radius:15px;border:1px solid var(--border);background:var(--white);font-size:11px;cursor:pointer;color:var(--muted);font-family:'Noto Sans JP',sans-serif;}
 .sort-btn.active{background:#95e3cd;color:white;border-color:var(--green);}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
 </style>
 </head>
 <body>
@@ -109,7 +110,7 @@ body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--text
   <div class="header-top">
     <div class="logo-mark">み</div>
     <div>
-      <div class="header-title">チームみらい 神奈川活動戦略 v10</div>
+      <div class="header-title">チームみらい 神奈川活動戦略</div>
       <div class="header-sub">衆院R8.2 ／ 参院R7.7 データ</div>
     </div>
   </div>
@@ -838,6 +839,16 @@ body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--text
 <div class="section" id="sec-speech">
   <div class="sec-header">街頭演説 実績 × 得票率 分析</div>
 
+  <!-- Datawrapper 演説回数マップ -->
+  <div class="card" style="padding:11px;">
+    <div class="card-label">🗺️ 演説回数 × 得票率 マップ</div>
+    <div style="font-size:10px;color:var(--muted);margin-bottom:8px;">バブルサイズ＝ポスティング枚数　色＝得票率　タップで詳細表示</div>
+    <div style="border-radius:10px;overflow:hidden;margin:0 -2px;">
+      <iframe title="演説回数マップ" aria-label="Symbol map" id="datawrapper-chart-FhYNn" src="https://datawrapper.dwcdn.net/FhYNn/1/" scrolling="no" frameborder="0" style="width: 0; min-width: 100% !important; border: none;" height="653" data-external="1"></iframe>
+      <script type="text/javascript">window.addEventListener("message",function(a){if(void 0!==a.data["datawrapper-height"]){var e=document.querySelectorAll("iframe");for(var t in a.data["datawrapper-height"])for(var r,i=0;r=e[i];i++)if(r.contentWindow===a.source){var d=a.data["datawrapper-height"][t]+"px";r.style.height=d}}});</script>
+    </div>
+  </div>
+
   <!-- ステータスバー -->
   <div id="speech-status-bar" style="background:var(--dark);color:white;border-radius:10px;padding:10px 13px;margin-bottom:11px;display:flex;align-items:center;gap:10px;">
     <div id="speech-status-dot" style="width:8px;height:8px;border-radius:50%;background:#6b7280;flex-shrink:0;"></div>
@@ -922,34 +933,6 @@ body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--text
         style="display:block;margin-top:10px;text-align:center;padding:8px;background:#f5faf6;border:1px solid var(--border);border-radius:8px;font-size:11px;color:var(--green-mid);text-decoration:none;font-weight:700;">
         🔗 ポスティング進捗マップを別タブで開く
       </a>
-    </div>
-
-    <!-- ===== 活動マップ（バブル＋演説ピン） ===== -->
-    <div class="card" style="padding:11px;" id="sp-map-card">
-      <div class="card-label">🗾 活動マップ（ポスティング × 演説ピン）</div>
-      <div style="font-size:10px;color:var(--muted);margin-bottom:7px;">
-        緑の円＝ポスティング枚数　🟠オレンジ＝演説（数字は回数・大きいほど多）　🟣紫★＝議員参加あり
-      </div>
-
-      <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px;" id="sp-map-ctrl">
-        <button class="sort-btn active" id="spmc-post" onclick="spmToggle('posting',this)">ポスティング</button>
-        <button class="sort-btn active" id="spmc-pin"  onclick="spmToggle('speech',this)">演説ピン</button>
-        <button class="sort-btn active" id="spmc-vip"  onclick="spmToggle('vip',this)" style="background:#95e3cd;color:#0a3d22;border-color:var(--green);">★議員参加</button>
-        <button class="sort-btn"        id="spmc-lbl"  onclick="spmToggle('label',this)">エリア名</button>
-      </div>
-
-      <div style="background:#f5faf6;border-radius:10px;border:1px solid var(--border);overflow:hidden;position:relative;">
-        <canvas id="sp-bubble-map" style="width:100%;display:block;"></canvas>
-        <div id="sp-map-tooltip" style="position:absolute;background:var(--white);border:1px solid var(--border);border-radius:9px;padding:8px 10px;font-size:11px;pointer-events:none;display:none;max-width:175px;box-shadow:0 2px 8px rgba(0,0,0,.12);z-index:5;"></div>
-      </div>
-      <div id="sp-map-info" style="font-size:11px;color:var(--muted);margin-top:6px;min-height:16px;padding:0 2px;"></div>
-
-      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;font-size:10px;color:var(--muted);">
-        <span style="display:flex;align-items:center;gap:3px;"><span style="width:9px;height:9px;border-radius:50%;background:#1d9e75;opacity:.9;display:inline-block;"></span>ポスティング多</span>
-        <span style="display:flex;align-items:center;gap:3px;"><span style="width:9px;height:9px;border-radius:50%;background:#c8e6d8;border:1px solid #aac;display:inline-block;"></span>未実施</span>
-        <span style="display:flex;align-items:center;gap:3px;"><span style="width:9px;height:9px;border-radius:50%;background:#ea580c;display:inline-block;"></span>演説（大＝多回数）</span>
-        <span style="display:flex;align-items:center;gap:3px;"><span style="width:9px;height:9px;border-radius:50%;background:#7c3aed;display:inline-block;"></span>★議員参加</span>
-      </div>
     </div>
 
     <!-- 散布図 -->
@@ -1280,7 +1263,6 @@ function sw(t){
   if(t==='speech') {
     const d = document.getElementById('speech-scatter')?._data;
     if (d) setTimeout(()=>{ renderSpeechScatter(d.withSpeech, d.noSpeech); }, 50);
-    setTimeout(spmDraw, 60);
   }
 }
 
@@ -1290,8 +1272,6 @@ renderPosting();
 sortTable('チームみらい率', true, null);
 renderDiffLists();
 renderKawai();
-// バブルマップ初期描画（演説タブ開いた時点でイベント登録済みにする）
-setTimeout(spmDraw, 200);
 
 // ============================================================
 // 演説セクション - Apps Script固定URL版（GitHub Pages対応）
@@ -1462,7 +1442,7 @@ function buildResults(data) {
     </div>`).join('');
 
   renderSpeechPlaceTable('count');
-  setTimeout(()=>{ drawSpeechScatter(withSpeech,noSpeech); drawSpeechBar(withSpeech,noSpeech); spmDraw(); },60);
+  setTimeout(()=>{ drawSpeechScatter(withSpeech,noSpeech); drawSpeechBar(withSpeech,noSpeech); },60);
 
   // インサイト
   if (withSpeech.length>0&&diff!=='—') {
@@ -1514,6 +1494,7 @@ function sortSpeechTable(key,btn) {
   document.querySelectorAll('#sec-speech .sort-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
 }
+
 
 // 散布図
 function drawSpeechScatter(withSpeech, noSpeech) {
@@ -1594,235 +1575,8 @@ window.addEventListener('resize',()=>{
   if(document.getElementById('sec-speech')?.classList.contains('active')){
     const c=document.getElementById('speech-scatter');
     if(c?._scatter) drawSpeechScatter(c._scatter.withSpeech,c._scatter.noSpeech);
-    spmDraw();
   }
 });
-
-// ============================================================
-// 演説タブ内 バブルマップ（ポスティング × 演説ピン）
-// ============================================================
-const SPM_AREAS = [
-  {name:'川崎市中原区',  x:.39,y:.30},{name:'川崎市高津区',  x:.37,y:.27},
-  {name:'川崎市宮前区',  x:.35,y:.24},{name:'川崎市多摩区',  x:.33,y:.22},
-  {name:'川崎市麻生区',  x:.30,y:.19},{name:'川崎市幸区',    x:.42,y:.32},
-  {name:'川崎市川崎区',  x:.45,y:.36},{name:'横浜市港北区',  x:.50,y:.26},
-  {name:'横浜市青葉区',  x:.40,y:.20},{name:'横浜市都筑区',  x:.47,y:.22},
-  {name:'横浜市神奈川区',x:.54,y:.32},{name:'横浜市西区',    x:.57,y:.37},
-  {name:'横浜市中区',    x:.60,y:.40},{name:'横浜市鶴見区',  x:.52,y:.36},
-  {name:'横浜市保土ケ谷区',x:.52,y:.30},{name:'横浜市戸塚区',x:.54,y:.40},
-  {name:'横浜市旭区',    x:.48,y:.31},{name:'横浜市瀬谷区',  x:.45,y:.35},
-  {name:'横浜市南区',    x:.57,y:.42},{name:'横浜市港南区',  x:.60,y:.46},
-  {name:'横浜市磯子区',  x:.63,y:.46},{name:'横浜市金沢区',  x:.64,y:.51},
-  {name:'横浜市栄区',    x:.58,y:.50},{name:'横浜市泉区',    x:.51,y:.46},
-  {name:'横浜市緑区',    x:.46,y:.26},{name:'相模原市中央区',x:.28,y:.25},
-  {name:'相模原市南区',  x:.27,y:.30},{name:'相模原市緑区',  x:.22,y:.18},
-  {name:'大和市',        x:.38,y:.38},{name:'海老名市',      x:.32,y:.38},
-  {name:'座間市',        x:.30,y:.35},{name:'厚木市',        x:.26,y:.40},
-  {name:'藤沢市',        x:.46,y:.55},{name:'茅ヶ崎市',      x:.39,y:.57},
-  {name:'鎌倉市',        x:.52,y:.60},{name:'逗子市',        x:.58,y:.58},
-  {name:'葉山町',        x:.61,y:.62},{name:'横須賀市',      x:.63,y:.67},
-  {name:'三浦市',        x:.68,y:.78},{name:'平塚市',        x:.32,y:.55},
-  {name:'大磯町',        x:.28,y:.58},{name:'秦野市',        x:.22,y:.48},
-  {name:'伊勢原市',      x:.27,y:.47},{name:'小田原市',      x:.17,y:.62},
-  {name:'綾瀬市',        x:.35,y:.43},{name:'愛川町',        x:.20,y:.36},
-];
-const SPM_POSTING = {"横浜市鶴見区":200,"横浜市神奈川区":200,"横浜市西区":340,"横浜市中区":1800,"横浜市保土ケ谷区":20,"横浜市旭区":0,"横浜市瀬谷区":0,"横浜市泉区":0,"横浜市南区":0,"横浜市港南区":0,"横浜市磯子区":0,"横浜市金沢区":0,"横浜市戸塚区":3065,"横浜市栄区":2002,"横浜市港北区":5915,"横浜市緑区":0,"横浜市都筑区":1500,"横浜市青葉区":2403,"川崎市川崎区":500,"川崎市幸区":2354,"川崎市中原区":2286,"川崎市高津区":1290,"川崎市宮前区":2462,"川崎市多摩区":512,"川崎市麻生区":550,"相模原市緑区":172,"相模原市中央区":3490,"相模原市南区":2395,"大和市":1465,"座間市":0,"海老名市":0,"厚木市":0,"綾瀬市":0,"愛川町":0,"伊勢原市":25,"秦野市":0,"平塚市":0,"茅ヶ崎市":3000,"藤沢市":3950,"鎌倉市":3099,"逗子市":0,"葉山町":0,"横須賀市":0,"三浦市":0,"大磯町":184};
-const SPM_VOTE = {"横浜市鶴見区":10.5,"横浜市神奈川区":12.4,"横浜市西区":13.6,"横浜市中区":11.8,"横浜市保土ケ谷区":10.2,"横浜市旭区":8.9,"横浜市瀬谷区":8.0,"横浜市泉区":9.7,"横浜市南区":9.4,"横浜市港南区":10.2,"横浜市磯子区":9.4,"横浜市金沢区":9.4,"横浜市戸塚区":10.7,"横浜市栄区":9.5,"横浜市港北区":13.4,"横浜市緑区":10.0,"横浜市都筑区":11.9,"横浜市青葉区":12.9,"川崎市川崎区":8.7,"川崎市幸区":11.7,"川崎市中原区":14.3,"川崎市高津区":12.4,"川崎市宮前区":11.6,"川崎市多摩区":11.6,"川崎市麻生区":11.9,"相模原市緑区":7.1,"相模原市中央区":7.7,"相模原市南区":9.0,"大和市":8.4,"座間市":8.0,"海老名市":9.3,"厚木市":7.8,"綾瀬市":6.5,"愛川町":4.8,"伊勢原市":7.6,"秦野市":7.6,"平塚市":8.1,"茅ヶ崎市":10.1,"藤沢市":10.1,"鎌倉市":11.3,"逗子市":11.1,"葉山町":10.1,"横須賀市":6.7,"三浦市":6.1};
-
-let spmLayers = {posting:true, speech:true, vip:true, label:false};
-let spmHover = null;
-
-function spmToggle(k, btn) {
-  spmLayers[k] = !spmLayers[k];
-  const on = spmLayers[k];
-  if(k==='vip') {
-    btn.style.background = on ? '#95e3cd' : '';
-    btn.style.color      = on ? '#0a3d22' : '';
-    btn.style.borderColor= on ? 'var(--green)' : '';
-    btn.classList.toggle('active', on);
-  } else {
-    btn.classList.toggle('active', on);
-  }
-  spmDraw();
-}
-
-function spmDraw() {
-  const canvas = document.getElementById('sp-bubble-map');
-  if(!canvas) return;
-  const wrap = canvas.parentElement;
-  const dpr = window.devicePixelRatio || 1;
-  const W = Math.max(wrap.offsetWidth, 280);
-  const H = Math.round(W * 0.82);
-  canvas.width  = W * dpr; canvas.height = H * dpr;
-  canvas.style.width = W+'px'; canvas.style.height = H+'px';
-  const ctx = canvas.getContext('2d');
-  ctx.scale(dpr, dpr);
-  ctx.clearRect(0, 0, W, H);
-
-  // 演説エリア集計（_speechPlaces を利用、なければ空）
-  const spMap = {};
-  (_speechPlaces||[]).forEach(p => {
-    if(!spMap[p.area]) spMap[p.area]={count:0,vipCount:0,places:[]};
-    spMap[p.area].count    += p.count;
-    spMap[p.area].vipCount += p.vipCount;
-    spMap[p.area].places.push(p.place);
-  });
-
-  const MAX_POST = 6000;
-  function postR(p)    { return p>0 ? 9 + Math.sqrt(p/MAX_POST)*22 : 9; }
-  function postAlpha(p){ return p>0 ? 0.18 + Math.min(p/MAX_POST,1)*0.70 : 0.12; }
-  function pinR(c)     { return 6 + c * 3.0; }
-
-  // エリア円
-  SPM_AREAS.forEach(a => {
-    const cx = a.x * W, cy = a.y * H;
-    const pv = SPM_POSTING[a.name] || 0;
-    const r  = postR(pv);
-    ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI*2);
-    if(spmLayers.posting) {
-      ctx.fillStyle = pv > 0
-        ? `rgba(29,158,117,${postAlpha(pv).toFixed(2)})`
-        : 'rgba(180,200,185,0.18)';
-    } else {
-      ctx.fillStyle = 'rgba(180,200,185,0.18)';
-    }
-    ctx.fill();
-    if(spmHover === a.name) {
-      ctx.strokeStyle='#0f6e56'; ctx.lineWidth=2; ctx.stroke();
-    }
-    if(spmLayers.label) {
-      const short = a.name.replace('横浜市','').replace('川崎市','').replace('相模原市','');
-      ctx.font='8px sans-serif'; ctx.fillStyle='rgba(20,50,30,.7)';
-      ctx.textAlign='center'; ctx.fillText(short, cx, cy + r + 10);
-    }
-  });
-
-  // 演説ピン
-  if(spmLayers.speech) {
-    SPM_AREAS.forEach(a => {
-      const sp = spMap[a.name];
-      if(!sp || sp.count===0) return;
-      const cx = a.x * W, cy = a.y * H;
-      const pv = SPM_POSTING[a.name] || 0;
-      const baseR = postR(pv);
-      const sr = pinR(sp.count);
-      const offset = baseR + sr + 2;
-      const px = cx + offset * 0.52;
-      const py = cy - offset * 0.52;
-      const hasVip = sp.vipCount > 0 && spmLayers.vip;
-      const color  = hasVip ? '#7c3aed' : '#ea580c';
-      const isHov  = spmHover === a.name+'_pin';
-
-      if(hasVip) {
-        ctx.beginPath(); ctx.arc(px, py, sr+3, 0, Math.PI*2);
-        ctx.fillStyle='rgba(124,58,237,0.14)'; ctx.fill();
-      }
-      ctx.beginPath(); ctx.arc(px, py, sr, 0, Math.PI*2);
-      ctx.fillStyle = color; ctx.fill();
-      ctx.strokeStyle='white'; ctx.lineWidth = isHov ? 2.5 : 1.5; ctx.stroke();
-      if(isHov){
-        ctx.beginPath(); ctx.arc(px, py, sr+4, 0, Math.PI*2);
-        ctx.strokeStyle=color; ctx.lineWidth=1.5; ctx.stroke();
-      }
-      ctx.font=`bold ${Math.max(Math.round(sr*.85),8)}px sans-serif`;
-      ctx.fillStyle='white'; ctx.textAlign='center'; ctx.textBaseline='middle';
-      ctx.fillText(sp.count, px, py); ctx.textBaseline='alphabetic';
-      if(hasVip){
-        ctx.font=`${Math.max(Math.round(sr*.65),6)}px serif`;
-        ctx.fillStyle='#fde68a'; ctx.textAlign='center'; ctx.textBaseline='middle';
-        ctx.fillText('★', px+sr*.7, py-sr*.7); ctx.textBaseline='alphabetic';
-      }
-    });
-  }
-
-  canvas._spm = {spMap, W, H};
-}
-
-function spmGetHit(mx, my) {
-  const c = document.getElementById('sp-bubble-map');
-  if(!c||!c._spm) return null;
-  const {spMap,W,H} = c._spm;
-  const MAX_POST=6000;
-  function postR(p){ return p>0?9+Math.sqrt(p/MAX_POST)*22:9; }
-  function pinR(n){ return 6+n*3.0; }
-  for(const a of SPM_AREAS){
-    const sp=spMap[a.name];
-    if(sp&&sp.count>0){
-      const pv=SPM_POSTING[a.name]||0;
-      const offset=postR(pv)+pinR(sp.count)+2;
-      const px=a.x*W+offset*.52, py=a.y*H-offset*.52;
-      if(Math.hypot(mx-px,my-py)<=pinR(sp.count)+6) return {type:'pin',area:a.name};
-    }
-  }
-  for(const a of SPM_AREAS){
-    const pv=SPM_POSTING[a.name]||0;
-    const r=(pv>0?9+Math.sqrt(pv/MAX_POST)*22:9)+5;
-    if(Math.hypot(mx-a.x*W,my-a.y*H)<=r) return {type:'area',area:a.name};
-  }
-  return null;
-}
-
-function spmShowTip(hit, mx, my) {
-  const tt = document.getElementById('sp-map-tooltip');
-  const info = document.getElementById('sp-map-info');
-  const c = document.getElementById('sp-bubble-map');
-  if(!c||!c._spm) return;
-  const {spMap} = c._spm;
-  const a = hit.area;
-  const sp = spMap[a];
-  const pv = SPM_POSTING[a]||0;
-  const vr = SPM_VOTE[a]||'—';
-  let html='';
-  if(hit.type==='pin' && sp){
-    const pl=[...new Set((sp.places||[]).filter(Boolean))].join('・');
-    html=`<div style="font-weight:700;font-size:12px;margin-bottom:4px;">${a}</div>`
-        +`<div style="display:flex;justify-content:space-between;gap:10px;font-size:11px;color:var(--muted);"><span>演説回数</span><span style="color:#ea580c;font-weight:700;">${sp.count}回</span></div>`
-        +(sp.vipCount>0?`<div style="display:flex;justify-content:space-between;gap:10px;font-size:11px;color:var(--muted);"><span>議員参加</span><span style="color:#7c3aed;font-weight:700;">★${sp.vipCount}回</span></div>`:'')
-        +`<div style="display:flex;justify-content:space-between;gap:10px;font-size:11px;color:var(--muted);"><span>得票率</span><span style="font-weight:700;">${vr}%</span></div>`
-        +(pl?`<div style="font-size:10px;color:var(--muted);margin-top:3px;">${pl}</div>`:'');
-    info.textContent = `${a} ／ 演説${sp.count}回${sp.vipCount>0?' ★議員'+sp.vipCount+'回':''}`;
-  } else {
-    html=`<div style="font-weight:700;font-size:12px;margin-bottom:4px;">${a}</div>`
-        +`<div style="display:flex;justify-content:space-between;gap:10px;font-size:11px;color:var(--muted);"><span>ポスティング</span><span style="font-weight:700;">${pv>0?pv.toLocaleString()+'枚':'未実施'}</span></div>`
-        +`<div style="display:flex;justify-content:space-between;gap:10px;font-size:11px;color:var(--muted);"><span>得票率</span><span style="font-weight:700;">${vr}%</span></div>`;
-    info.textContent = `${a} ／ ポスティング${pv>0?pv.toLocaleString()+'枚':'未実施'} ／ 得票率${vr}%`;
-  }
-  tt.innerHTML = html;
-  const rect = c.getBoundingClientRect();
-  const cw = parseFloat(c.style.width);
-  const lp = mx + 12;
-  tt.style.left = (lp + 180 > cw ? mx - 188 : lp) + 'px';
-  tt.style.top  = (my - 10) + 'px';
-  tt.style.display = 'block';
-}
-
-(function spmEvents(){
-  const c = document.getElementById('sp-bubble-map');
-  if(!c) return;
-  function onMove(mx,my){
-    const hit=spmGetHit(mx,my);
-    if(hit){
-      c.style.cursor='pointer';
-      spmHover = hit.type==='pin' ? hit.area+'_pin' : hit.area;
-      spmDraw(); spmShowTip(hit,mx,my);
-    } else {
-      c.style.cursor='default';
-      if(spmHover){ spmHover=null; spmDraw(); }
-      document.getElementById('sp-map-tooltip').style.display='none';
-      document.getElementById('sp-map-info').textContent='';
-    }
-  }
-  c.addEventListener('mousemove',e=>{const r=c.getBoundingClientRect();onMove(e.clientX-r.left,e.clientY-r.top);});
-  c.addEventListener('click',   e=>{const r=c.getBoundingClientRect();const hit=spmGetHit(e.clientX-r.left,e.clientY-r.top);if(hit)spmShowTip(hit,e.clientX-r.left,e.clientY-r.top);});
-  c.addEventListener('mouseleave',()=>{document.getElementById('sp-map-tooltip').style.display='none';document.getElementById('sp-map-info').textContent='';spmHover=null;spmDraw();});
-  // タッチ
-  c.addEventListener('touchend',e=>{
-    e.preventDefault();
-    const r=c.getBoundingClientRect(),t=e.changedTouches[0];
-    const hit=spmGetHit(t.clientX-r.left,t.clientY-r.top);
-    if(hit){spmHover=hit.type==='pin'?hit.area+'_pin':hit.area;spmDraw();spmShowTip(hit,t.clientX-r.left,t.clientY-r.top);}
-  });
-})();
 
 
 </script>
