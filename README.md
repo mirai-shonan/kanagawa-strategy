@@ -29,13 +29,11 @@
 ### 新規都道府県の追加手順
 
 1. `prefectures/_template/` を `prefectures/xxx/` にコピー
-2. 選管Excelを `prefectures/xxx/raw/` に配置（ファイル名にキーワードを含める）
+2. 選管データを `prefectures/xxx/raw/` に配置（ファイル名にキーワードを含める）
    - `*sangi*senkyoku*.xlsx` — 参院選挙区（候補者別開票区別）→ candidate.csv
    - `*sangi*hirei*district*.xlsx` — 参院比例（党派別開票区別）→ senate.csv
    - `*shugi*hirei*.xlsx` — 衆院比例（開票調シート）→ house.csv
-
-   ※神奈川県選管の場合、令和8年2月衆院選はExcel未公開のためR8.2のhouse.csvは
-   　手動管理が必要です（公開され次第、上記スクリプトで自動生成可能）。
+   - `*shugi*hirei*.pdf` — 衆院比例（PDF版・Excelがない場合のフォールバック）→ house.csv
 3. 変換スクリプトでCSVを生成:
    ```bash
    python3 tools/convert_excel.py prefectures/xxx
@@ -47,8 +45,10 @@
 ### 必要パッケージ
 
 ```bash
-pip install openpyxl
+pip install openpyxl pdfplumber
 ```
+
+`pdfplumber` はPDFパース用（衆院比例がPDFのみ公開の場合に必要）。
 
 ## 📝 更新・貢献
 

@@ -34,6 +34,12 @@ except ImportError:
     print("Error: openpyxl が必要です。 pip install openpyxl でインストールしてください。", file=sys.stderr)
     sys.exit(1)
 
+try:
+    import pdfplumber
+    HAS_PDFPLUMBER = True
+except ImportError:
+    HAS_PDFPLUMBER = False
+
 
 # ============================================================
 # 共通ヘルパー
@@ -362,6 +368,133 @@ def parse_house_proportional(filepath):
 
 
 # ============================================================
+# 衆院比例（PDF版）パーサー — r8hirei.pdf形式
+# ============================================================
+
+def _normalize_pdf_area(name):
+    """PDFセル中の自治体名を正規化（半角・全角空白を除去）"""
+    if not name:
+        return ''
+    return str(name).replace(' ', '').replace('\u3000', '').replace('\xa0', '').strip()
+
+
+def parse_house_pdf(filepath):
+    """
+    衆院比例（党派別開票区別）のPDFをパースする。
+    神奈川県選管 r8hirei.pdf 形式に対応。
+
+    PDFには2種類のテーブルが含まれる:
+    - 「党派別開票区別得票数」テーブル（複数ページに政党を分割）
+    - 「開票区別投票総数」テーブル（合計列を取得するため）
+    """
+    if not HAS_PDFPLUMBER:
+        print("  Error: pdfplumber が必要です。 pip install pdfplumber でインストールしてください。", file=sys.stderr)
+        return None
+
+    municipality_totals = {}  # area → total votes
+    party_data = {}           # area → {party_name: votes}
+
+    with pdfplumber.open(filepath) as pdf:
+        for page in pdf.pages:
+            tables = page.extract_tables()
+            for table in tables:
+                if not table or len(table) < 3:
+                    continue
+
+                header = table[0]
+                # 投票総数テーブル判定: 「得票総数」を含む列がある
+                is_total_table = any(c and '得票総数' in str(c) for c in header)
+                # 党派別テーブル判定: 2行目に党名がある
+                second_row = table[1] if len(table) > 1 else []
+                is_party_table = any(
+                    c and any(kw in str(c) for kw in ['みらい', '民主党', '共産党', '維新', '保守', 'れいわ', '参政', '改革', '社会民主', '公明'])
+                    for c in second_row
+                )
+
+                if is_total_table:
+                    # 開票区名 → 得票総数（Ａ）の列を特定
+                    area_col = 0
+                    total_col = None
+                    for i, c in enumerate(header):
+                        if c and '得票総数' in str(c):
+                            total_col = i
+                            break
+                    if total_col is None:
+                        continue
+                    for row in table[1:]:
+                        if len(row) <= max(area_col, total_col):
+                            continue
+                        area = _normalize_pdf_area(row[area_col])
+                        total_str = (row[total_col] or '').replace(',', '').strip()
+                        if not area or not total_str:
+                            continue
+                        try:
+                            municipality_totals[area] = int(total_str)
+                        except ValueError:
+                            continue
+
+                elif is_party_table:
+                    # 党名行から各列の党名を取得
+                    party_names = [str(c).strip() if c else '' for c in second_row]
+                    # データ行
+                    for row in table[2:]:
+                        if not row or not row[0]:
+                            continue
+                        area = _normalize_pdf_area(row[0])
+                        if not area or area in ('開票区名',):
+                            continue
+                        if area not in party_data:
+                            party_data[area] = {}
+                        for col_idx in range(1, len(row)):
+                            if col_idx >= len(party_names):
+                                break
+                            pname = party_names[col_idx]
+                            if not pname:
+                                continue
+                            val_str = (row[col_idx] or '').replace(',', '').strip()
+                            if not val_str:
+                                continue
+                            try:
+                                party_data[area][pname] = int(val_str)
+                            except ValueError:
+                                continue
+
+    # チームみらいのデータを抽出
+    results = []
+    for area, parties in party_data.items():
+        if 'チームみらい' not in parties:
+            continue
+
+        # 政令指定都市の親市行はスキップ（名前単独で「横浜市」「川崎市」など）
+        if area in DESIGNATED_CITIES:
+            continue
+
+        # 郡名のみの行はスキップ
+        if is_gun(area):
+            continue
+
+        # 集計行はスキップ（県計、指定都市計、その他市計、町村計）
+        if is_total_row(area):
+            continue
+
+        # 郡名前置を除去
+        clean_area = strip_gun_prefix(area)
+
+        team_votes = parties['チームみらい']
+        total = municipality_totals.get(area)
+        rate = round(team_votes / total * 100, 1) if total and total > 0 else 0
+
+        results.append({
+            '地域': clean_area,
+            '得票数': team_votes,
+            '得票率': rate,
+            '合計': total or 0,
+        })
+
+    return results
+
+
+# ============================================================
 # CSV出力 + ファイル探索
 # ============================================================
 
@@ -375,15 +508,23 @@ def write_csv(rows, filepath, fieldnames):
     print(f"  → {filepath} ({len(rows)} rows)", file=sys.stderr)
 
 
-def find_excel_files(raw_dir, *required_keywords, exclude_keywords=()):
-    """raw_dir 内で全ての必須キーワードを含み、除外キーワードを含まないExcelファイルを探す"""
+def find_files(raw_dir, exts, *required_keywords):
+    """raw_dir 内で指定拡張子かつ全キーワードを含むファイルを探す"""
     matches = []
-    for path in sorted(glob.glob(os.path.join(raw_dir, '*.xlsx')) + glob.glob(os.path.join(raw_dir, '*.xls'))):
-        name = os.path.basename(path).lower()
-        if all(kw.lower() in name for kw in required_keywords):
-            if not any(ex.lower() in name for ex in exclude_keywords):
+    for ext in exts:
+        for path in sorted(glob.glob(os.path.join(raw_dir, f'*.{ext}'))):
+            name = os.path.basename(path).lower()
+            if all(kw.lower() in name for kw in required_keywords):
                 matches.append(path)
     return matches
+
+
+def find_excel_files(raw_dir, *required_keywords):
+    return find_files(raw_dir, ['xlsx', 'xls'], *required_keywords)
+
+
+def find_pdf_files(raw_dir, *required_keywords):
+    return find_files(raw_dir, ['pdf'], *required_keywords)
 
 
 def convert_prefecture(prefecture_dir):
@@ -423,15 +564,28 @@ def convert_prefecture(prefecture_dir):
         else:
             print(f"  Warning: パース失敗", file=sys.stderr)
 
-    # 衆院比例（開票調シート） → house.csv
+    # 衆院比例（Excel: 開票調シート） → house.csv
     files = find_excel_files(raw_dir, 'shugi', 'hirei')
+    house_done = False
     for f in files:
-        print(f"衆院比例: {os.path.basename(f)}", file=sys.stderr)
+        print(f"衆院比例 (Excel): {os.path.basename(f)}", file=sys.stderr)
         results = parse_house_proportional(f)
         if results:
             write_csv(results, os.path.join(data_dir, 'house.csv'),
                       ['地域', '得票数', '得票率', '合計'])
             converted += 1
+            house_done = True
+
+    # 衆院比例（PDF版） → house.csv （Excelで取得済みでなければ）
+    if not house_done:
+        pdfs = find_pdf_files(raw_dir, 'shugi', 'hirei')
+        for f in pdfs:
+            print(f"衆院比例 (PDF): {os.path.basename(f)}", file=sys.stderr)
+            results = parse_house_pdf(f)
+            if results:
+                write_csv(results, os.path.join(data_dir, 'house.csv'),
+                          ['地域', '得票数', '得票率', '合計'])
+                converted += 1
 
     if converted == 0:
         print("\nWarning: 変換可能なExcelファイルが見つかりませんでした。", file=sys.stderr)
