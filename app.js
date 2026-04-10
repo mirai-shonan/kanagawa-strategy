@@ -310,11 +310,20 @@ window.addEventListener('resize', ()=>{
 });
 
 // ===== タブ切り替え =====
-function sw(t){
+function sw(t, updateHash = true){
+  const sec = document.getElementById('sec-'+t);
+  if (!sec) return;  // 不正なタブ名の場合は何もしない
   document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
-  document.getElementById('sec-'+t).classList.add('active');
-  event.target.classList.add('active');
+  sec.classList.add('active');
+  // クリック以外（hashchange等）でも対応するため、onclick属性からタブボタンを探す
+  const btn = [...document.querySelectorAll('.tab-btn')].find(b =>
+    b.getAttribute('onclick')?.includes(`'${t}'`));
+  if (btn) btn.classList.add('active');
+  // URLハッシュを更新（hashchange由来の呼び出しでは更新しない）
+  if (updateHash && location.hash.slice(1) !== t) {
+    location.hash = t;
+  }
   window.scrollTo({top:0,behavior:'smooth'});
   if(t==='posting') setTimeout(renderScatter, 50);
   if(t==='speech') {
@@ -322,6 +331,12 @@ function sw(t){
     if (d) setTimeout(()=>{ renderSpeechScatter(d.withSpeech, d.noSpeech); }, 50);
   }
 }
+
+// ブラウザの戻る/進む、外部リンクからのハッシュ変更に対応
+window.addEventListener('hashchange', () => {
+  const tab = location.hash.slice(1) || 'overview';
+  sw(tab, false);
+});
 
 // ============================================================
 // 演説セクション - Google Sheets連携版
@@ -657,5 +672,10 @@ async function initApp() {
   sortTable('チームみらい率', true, null);
   renderDiffLists();
   renderKawai();
+  // URL ハッシュに対応するタブがあれば、そのタブを開く（ロード時はURL書き換え不要）
+  const initialTab = location.hash.slice(1);
+  if (initialTab && document.getElementById('sec-' + initialTab)) {
+    sw(initialTab, false);
+  }
 }
 initApp();
