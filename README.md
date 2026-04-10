@@ -39,6 +39,28 @@ tools/
 README.md
 ```
 
+## 🔗 タブとURL（Hash routing）
+
+タブを切り替えると URL のハッシュが変わります。これにより:
+- 特定タブのリンクを共有できる（例: `https://.../#growth`）
+- ブラウザの戻る/進むでタブ遷移できる
+- リロードしても同じタブが開いたままになる
+
+| URL | タブ |
+|---|---|
+| `#overview` | 概況 |
+| `#all` | 全自治体 |
+| `#compare` | 衆参比較 |
+| `#elected` | 当選議員 |
+| `#cost` | コスパ |
+| `#growth` | 伸びしろ |
+| `#events` | イベント |
+| `#posting` | ポスティング |
+| `#speech` | 演説 |
+| `#academic` | 学術・若者 |
+| `#family` | 子育て |
+| `#senior` | 祖父母世代 |
+
 ## セットアップ
 
 ### 必要パッケージ
@@ -154,6 +176,7 @@ python3 -m http.server 8000
      - 学術・子育て・シニアの各ターゲットセクション
    - **触らない部分:** ヘッダー、概況の統計カード、全自治体テーブル、ポスティング、演説（これらは `app.js` がCONFIG/データから自動レンダリング）
    - **触ってはいけない要素ID:** `overview-stats`, `party-bars`, `top10-list`, `all-tbody`, `diff-up-list`, `diff-down-list`, `kawai-list`, `posting-*`, `speech-*`, `app-footer`, `header-title`, `header-sub`
+   - **タブのIDは英語**（`overview`, `all`, `compare`, `elected`, `cost`, `growth`, `events`, `posting`, `speech`, `academic`, `family`, `senior`）。Hash routing で使われるので変更しないでください
 
 8. **ローカルで動作確認**
    ```bash
