@@ -215,8 +215,9 @@ document.addEventListener('click', e=>{
 });
 
 // ===== 全自治体テーブル =====
+// 注: filteredData は CSV 読み込み完了後 (buildAreaMaps内) で初期化される
 let currentSort = {key:'チームみらい率', asc:false};
-let filteredData = [...DATA];
+let filteredData = [];
 
 function renderTable(data){
   const tbody = document.getElementById('all-tbody');
@@ -335,6 +336,7 @@ function buildAreaMaps() {
   Object.keys(AREA_RATE_MAP).forEach(k => delete AREA_RATE_MAP[k]);
   DATA.forEach(d => { AREA_RATE_MAP[d['地域']] = d['チームみらい率']; });
   AREA_NAMES = DATA.map(d => d['地域']).sort();
+  filteredData = [...DATA];
 }
 
 window.addEventListener('load', () => {
