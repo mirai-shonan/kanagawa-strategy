@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>チームみらい 活動戦略ダッシュボード</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/style.css">
+</head>
+<body>
+<div class="header">
+  <div class="header-top">
+    <div class="logo-mark">み</div>
+    <div>
+      <div class="header-title">チームみらい 活動戦略ダッシュボード</div>
+      <div class="header-sub">都道府県別 選挙データ・戦略分析</div>
+    </div>
+  </div>
+</div>
+
+<div style="padding:14px;">
+  <div class="card">
+    <div class="card-label">都道府県一覧</div>
+    <a href="kanagawa/index.html" style="display:block;padding:12px;border:1px solid var(--border);border-radius:10px;margin-bottom:8px;text-decoration:none;color:var(--text);font-weight:700;font-size:13px;">
+      神奈川県
+      <span style="font-size:11px;color:var(--muted);font-weight:400;margin-left:8px;">衆院R8.2 ／ 参院R7.7</span>
+    </a>
+    <!-- 新しい都道府県が追加されたら、ここにリンクを追加 -->
+  </div>
+
+  <div class="card" style="background:var(--green-light);">
+    <div class="card-label">新しい都道府県を追加するには</div>
+    <div style="font-size:12px;line-height:1.7;color:#0a3d22;">
+      <strong>1.</strong> <code>_template/</code> を新しいディレクトリにコピー<br>
+      <strong>2.</strong> <code>data.js</code> に選管データを入力<br>
+      <strong>3.</strong> <code>index.html</code> に戦略コンテンツを記入<br>
+      <strong>4.</strong> このページにリンクを追加
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  チームみらい 活動戦略ダッシュボード
+</div>
+</body>
+</html>
