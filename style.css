@@ -93,3 +93,6 @@ body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--text
 .sort-btns{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px;}
 .sort-btn{padding:4px 10px;border-radius:15px;border:1px solid var(--border);background:var(--white);font-size:11px;cursor:pointer;color:var(--muted);font-family:'Noto Sans JP',sans-serif;}
 .sort-btn.active{background:#95e3cd;color:white;border-color:var(--green);}
+
+/* アニメーション */
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
